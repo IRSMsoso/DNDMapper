@@ -26,6 +26,18 @@ bool Canvas::paintTile(float worldx, float worldy, sf::Color newColor)
 	return false;
 }
 
+bool Canvas::paintTile(sf::Vector2f worldxy, sf::Color newColor)
+{
+	unsigned int tileX = static_cast<int>(worldxy.x / 5.f);
+	unsigned int tileY = static_cast<int>(worldxy.y / 5.f);
+
+	if (tileY < tileGrid.size() && tileX < tileGrid.at(tileY).size()) {
+		tileGrid.at(tileY).at(tileX).changeColor(newColor);
+		return true;
+	}
+	return false;
+}
+
 std::vector<std::vector<Tile>>* Canvas::getTileGrid(){
 	return &tileGrid;
 }

@@ -9,6 +9,7 @@ public:
 	~Canvas();
 
 	bool paintTile(float x, float y, sf::Color);
+	bool paintTile(sf::Vector2f, sf::Color);
 
 	std::vector<std::vector<Tile>>* getTileGrid();
 

@@ -64,6 +64,10 @@ int main()
 					panLockLoc = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 					window.setMouseCursor(handCursor);
 				}
+
+				if (pollingEvent.mouseButton.button == sf::Mouse::Button::Left) {
+					canvas.paintTile(window.mapPixelToCoords(sf::Mouse::getPosition(window)), sf::Color::White);
+				}
 			}
 
 			if (pollingEvent.type == sf::Event::MouseButtonReleased) {
