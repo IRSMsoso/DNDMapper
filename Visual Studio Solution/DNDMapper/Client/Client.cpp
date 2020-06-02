@@ -21,6 +21,9 @@ int main()
 	sf::View camera(sf::FloatRect(0.f, 0.f, WINDOWX, WINDOWY));
 	window.setView(camera);
 
+	bool isPanning = false;
+	sf::Vector2f panLockLoc(0, 0);
+
 	Canvas canvas;
 
 
@@ -47,9 +50,33 @@ int main()
 				sf::Vector2f moveVector =  beforeMouseLoc - afterMouseLoc;
 				camera.move(moveVector);
 				std::cout << "Moving: " << moveVector.x << ", " << moveVector.y << std::endl;
-				window.setView(camera);
 			}
+			
+			if (pollingEvent.type == sf::Event::MouseButtonPressed) {
+				if (pollingEvent.mouseButton.button == sf::Mouse::Button::Middle) {
+					isPanning = true;
+					panLockLoc = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+				}
+			}
+
+			if (pollingEvent.type == sf::Event::MouseButtonReleased) {
+				if (pollingEvent.mouseButton.button == sf::Mouse::Button::Middle) {
+					isPanning = false;
+				}
+			}
+
 		}
+
+
+		if (isPanning) {
+			sf::Vector2f currentMouseLoc = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+			sf::Vector2f moveVector = panLockLoc - currentMouseLoc;
+			camera.move(moveVector);
+
+		}
+
+
+		window.setView(camera);
 		window.clear(sf::Color::White);
 		
 
