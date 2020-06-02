@@ -26,6 +26,12 @@ int main()
 
 	Canvas canvas;
 
+	sf::Cursor handCursor, defaultCursor;
+	handCursor.loadFromSystem(sf::Cursor::Hand);
+	defaultCursor.loadFromSystem(sf::Cursor::Arrow);
+
+	window.setMouseCursor(defaultCursor);
+
 
 	//Window Loop
 	while (window.isOpen()) {
@@ -56,12 +62,14 @@ int main()
 				if (pollingEvent.mouseButton.button == sf::Mouse::Button::Middle) {
 					isPanning = true;
 					panLockLoc = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+					window.setMouseCursor(handCursor);
 				}
 			}
 
 			if (pollingEvent.type == sf::Event::MouseButtonReleased) {
 				if (pollingEvent.mouseButton.button == sf::Mouse::Button::Middle) {
 					isPanning = false;
+					window.setMouseCursor(defaultCursor);
 				}
 			}
 
