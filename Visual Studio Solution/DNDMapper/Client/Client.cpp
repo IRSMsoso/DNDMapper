@@ -16,6 +16,8 @@ int main()
 	//Creating manager, passing in window settings.
 	Manager manager(settings);
 
+	Tab tab;
+
 	manager.mainLoop();
 
 	return 0;

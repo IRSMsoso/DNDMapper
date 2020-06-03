@@ -2,10 +2,10 @@
 #include <SFML/Graphics.hpp>
 #include "Canvas.h"
 #include <iostream>
+#include "Camera.h"
 
 
-const unsigned int WINDOWX = 800;
-const unsigned int WINDOWY = 800;
+
 const float MAXZOOM = .5;
 const float MINZOOM = 1.5;
 const float ZOOMSPEED = 0.9;
@@ -23,8 +23,8 @@ private:
 	//Window
 	sf::RenderWindow window;
 
-	//Camera View
-	sf::View camera;
+	//Camera Object
+	Camera camera;
 
 	//Navigation Tools
 	bool isPanning = false;
@@ -39,5 +39,7 @@ private:
 
 	//Event interpret
 	void interpretEvent(sf::Event);
+
+
 
 };

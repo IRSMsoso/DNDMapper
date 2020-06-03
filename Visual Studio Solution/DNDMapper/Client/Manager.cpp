@@ -1,10 +1,10 @@
 #include "Manager.h"
 
 //Construct the Manager with the specific window settings.
-Manager::Manager(sf::ContextSettings settings): window(sf::VideoMode(WINDOWX, WINDOWY), "Dungeons and Dragons!", sf::Style::Default, settings), camera(sf::FloatRect(0.f, 0.f, WINDOWX*.2, WINDOWY*.2)) {
+Manager::Manager(sf::ContextSettings settings): window(sf::VideoMode(WINDOWX, WINDOWY), "Dungeons and Dragons!", sf::Style::Default, settings) {
 
 
-	window.setView(camera);
+	window.setView(*camera.getView());
 	
 
 	//Setup Initial Variable Values
@@ -36,12 +36,12 @@ void Manager::mainLoop(){
 		if (isPanning) {
 			sf::Vector2f currentMouseLoc = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 			sf::Vector2f moveVector = panLockLoc - currentMouseLoc;
-			camera.move(moveVector);
+			camera.move(moveVector.x, moveVector.y);
 
 		}
 
 
-		window.setView(camera);
+		window.setView(*camera.getView());
 		window.clear(sf::Color::White);
 
 
@@ -79,6 +79,13 @@ void Manager::mainLoop(){
 				window.draw(cornerBeads);
 			}
 		}
+
+
+		//Drawing the Camera, along with all of the UI nested under it.
+		window.draw(camera);
+
+
+
 		//std::cout << "Factor: " << zoomFactor << std::endl;
 
 		window.display();
@@ -93,20 +100,20 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 	if (pollingEvent.type == sf::Event::MouseWheelScrolled) {
 		sf::Vector2f beforeMouseLoc = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 		if (pollingEvent.mouseWheelScroll.delta > 0 && zoomFactor * ZOOMSPEED >= MAXZOOM) {
-			camera.zoom(ZOOMSPEED);
+			camera.getView()->zoom(ZOOMSPEED);
 			zoomFactor *= ZOOMSPEED;
 			std::cout << "Zoom in" << std::endl;
 		}
 		if (pollingEvent.mouseWheelScroll.delta < 0 && zoomFactor / ZOOMSPEED <= MINZOOM) {
-			camera.zoom(1 / ZOOMSPEED);
+			camera.getView()->zoom(1 / ZOOMSPEED);
 			zoomFactor /= ZOOMSPEED;
 			std::cout << "Zoom out" << std::endl;
 		}
-		window.setView(camera);
+		window.setView(*camera.getView());
 		sf::Vector2f afterMouseLoc = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 		//std::cout << "Before: " << beforeMouseLoc.x << ", " << beforeMouseLoc.y << ", After: " << afterMouseLoc.x << ", " << afterMouseLoc.y << std::endl;
 		sf::Vector2f moveVector = beforeMouseLoc - afterMouseLoc;
-		camera.move(moveVector);
+		camera.move(moveVector.x, moveVector.y);
 		//std::cout << "Moving: " << moveVector.x << ", " << moveVector.y << std::endl;
 	}
 
