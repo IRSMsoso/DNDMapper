@@ -1,10 +1,10 @@
 #include "Manager.h"
 
 //Construct the Manager with the specific window settings.
-Manager::Manager(sf::ContextSettings settings): window(sf::VideoMode(WINDOWX, WINDOWY), "Dungeons and Dragons!", sf::Style::Default, settings) {
+Manager::Manager(sf::ContextSettings settings): window(sf::VideoMode(WINDOWX, WINDOWY), "Dungeons and Dragons!", sf::Style::Default, settings), camera(sf::FloatRect(0.f, 0.f, WINDOWX*.2, WINDOWY*.2)) {
 
 
-	window.setView(camera.getView());
+	window.setView(camera);
 	
 
 	//Setup Initial Variable Values
@@ -41,7 +41,7 @@ void Manager::mainLoop(){
 		}
 
 
-		window.setView(camera.getView());
+		window.setView(camera);
 		window.clear(sf::Color::White);
 
 
@@ -82,8 +82,11 @@ void Manager::mainLoop(){
 
 
 		//Drawing the Camera, along with all of the UI nested under it.
-		window.draw(camera);
+		//window.draw(camera);
 
+		//Update and Draw the UI
+		ui.update(&window, zoomFactor);
+		window.draw(ui);
 
 
 		//std::cout << "Factor: " << zoomFactor << std::endl;
@@ -109,7 +112,7 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 			zoomFactor /= ZOOMSPEED;
 			std::cout << "Zoom out" << std::endl;
 		}
-		window.setView(camera.getView());
+		window.setView(camera);
 		sf::Vector2f afterMouseLoc = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 		//std::cout << "Before: " << beforeMouseLoc.x << ", " << beforeMouseLoc.y << ", After: " << afterMouseLoc.x << ", " << afterMouseLoc.y << std::endl;
 		sf::Vector2f moveVector = beforeMouseLoc - afterMouseLoc;

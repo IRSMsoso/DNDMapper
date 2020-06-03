@@ -1,7 +1,7 @@
 #include "Tab.h"
 
 Tab::Tab() {
-	backShape.setSize(sf::Vector2f((WINDOWX *.2) / 3, (WINDOWX * .2) / 2));
+	backShape.setSize(sf::Vector2f(30, 120));
 	backShape.setFillColor(sf::Color(100, 100, 100, 255));
 }
 

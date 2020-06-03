@@ -2,7 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
-const unsigned int WINDOWX = 800;
+const unsigned int WINDOWX = 1400;
 const unsigned int WINDOWY = 800;
 
 class Tab: public sf::Drawable, public sf::Transformable{

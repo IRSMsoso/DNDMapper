@@ -2,7 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include "Canvas.h"
 #include <iostream>
-#include "Camera.h"
+#include "UI.h"
 
 
 
@@ -24,7 +24,10 @@ private:
 	sf::RenderWindow window;
 
 	//Camera Object
-	Camera camera;
+	sf::View camera;
+
+	//UI Element
+	UI ui;
 
 	//Navigation Tools
 	bool isPanning = false;
@@ -39,7 +42,5 @@ private:
 
 	//Event interpret
 	void interpretEvent(sf::Event);
-
-
 
 };
