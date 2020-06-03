@@ -9,7 +9,9 @@ public:
 
 	void move(float, float);
 
-	sf::View* getView();
+	sf::View getView();
+
+	void zoom(float);
 
 private:
 

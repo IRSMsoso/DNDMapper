@@ -4,7 +4,7 @@
 Manager::Manager(sf::ContextSettings settings): window(sf::VideoMode(WINDOWX, WINDOWY), "Dungeons and Dragons!", sf::Style::Default, settings) {
 
 
-	window.setView(*camera.getView());
+	window.setView(camera.getView());
 	
 
 	//Setup Initial Variable Values
@@ -41,7 +41,7 @@ void Manager::mainLoop(){
 		}
 
 
-		window.setView(*camera.getView());
+		window.setView(camera.getView());
 		window.clear(sf::Color::White);
 
 
@@ -100,16 +100,16 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 	if (pollingEvent.type == sf::Event::MouseWheelScrolled) {
 		sf::Vector2f beforeMouseLoc = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 		if (pollingEvent.mouseWheelScroll.delta > 0 && zoomFactor * ZOOMSPEED >= MAXZOOM) {
-			camera.getView()->zoom(ZOOMSPEED);
+			camera.zoom(ZOOMSPEED);
 			zoomFactor *= ZOOMSPEED;
 			std::cout << "Zoom in" << std::endl;
 		}
 		if (pollingEvent.mouseWheelScroll.delta < 0 && zoomFactor / ZOOMSPEED <= MINZOOM) {
-			camera.getView()->zoom(1 / ZOOMSPEED);
+			camera.zoom(1 / ZOOMSPEED);
 			zoomFactor /= ZOOMSPEED;
 			std::cout << "Zoom out" << std::endl;
 		}
-		window.setView(*camera.getView());
+		window.setView(camera.getView());
 		sf::Vector2f afterMouseLoc = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 		//std::cout << "Before: " << beforeMouseLoc.x << ", " << beforeMouseLoc.y << ", After: " << afterMouseLoc.x << ", " << afterMouseLoc.y << std::endl;
 		sf::Vector2f moveVector = beforeMouseLoc - afterMouseLoc;
