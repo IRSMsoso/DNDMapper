@@ -13,17 +13,15 @@ const float BEADRADIUS = 0.3;
 
 class Manager{
 public:
-	Manager(sf::RenderWindow*);
+	Manager(sf::ContextSettings);
 	~Manager();
 
 	//Main loop. Called as its own thread.
 	void mainLoop();
 
-	void addEvent(sf::Event);
-
 private:
 	//Window
-	sf::RenderWindow* window;
+	sf::RenderWindow window;
 
 	//Camera View
 	sf::View camera;
@@ -39,13 +37,7 @@ private:
 	//Cursors
 	sf::Cursor handCursor, defaultCursor;
 
-	//Event Queue
-	std::vector<sf::Event> eventQueue;
-
 	//Event interpret
 	void interpretEvent(sf::Event);
 
-	//Mutex
-	sf::Mutex mutex;
 };
-
