@@ -1,8 +1,9 @@
 #pragma once
-#include <SFML/Graphics.hpp>
+#include "Token.h"
 class Tile{
 public:
 	Tile();
+	Tile(sf::Color);
 	~Tile();
 
 	void changeColor(sf::Color);
@@ -10,6 +11,6 @@ public:
 
 private:
 	sf::Color backgroundColor;
-	//Occupying Token
+	std::vector<Token> tokenList;
 };
 

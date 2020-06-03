@@ -8,6 +8,8 @@ Canvas::Canvas(){
 		}
 		tileGrid.push_back(newRow);
 	}
+
+	size = sf::Vector2i(20, 20);
 }
 
 Canvas::~Canvas(){
@@ -40,4 +42,24 @@ bool Canvas::paintTile(sf::Vector2f worldxy, sf::Color newColor)
 
 std::vector<std::vector<Tile>>* Canvas::getTileGrid(){
 	return &tileGrid;
+}
+
+//Helper Function. Expands the canvas to accommodate out of bounds clicks.
+bool Canvas::expand()
+{
+	return false;
+}
+
+void Canvas::removeRow(unsigned int locY){
+	tileGrid.erase(tileGrid.begin() + locY);
+}
+
+void Canvas::removeColumn(unsigned int locX){
+	for (int y = 0; y < tileGrid.size(); y++) {
+		tileGrid.at(y).erase(tileGrid.at(y).begin() + locX);
+	}
+}
+
+void Canvas::addRowToBottom(){
+	
 }
