@@ -1,30 +1,22 @@
 #include "Tab.h"
 
-Tab::Tab() {
-	backShape.setSize(sf::Vector2f(30, 120));
-	backShape.setFillColor(sf::Color(100, 100, 100, 255));
+Tab::Tab(sf::RenderWindow* newWindow): UIElement(newWindow){
+
+
+	changeUIRectangle(sf::IntRect(0, 300, 100, 500));
+
+
+	shape.setSize(sf::Vector2f(uiRectangle.width, uiRectangle.height));
+	shape.setFillColor(sf::Color(55, 55, 55, 200));
+
 }
 
-Tab::~Tab(){
-
+Tab::~Tab()
+{
 }
-
-void Tab::setScale(sf::Vector2f factor){
-	Transformable::setScale(factor);
-	backShape.setScale(factor);
-}
-
 
 void Tab::draw(sf::RenderTarget& target, sf::RenderStates states) const{
-	// apply the entity's transform -- combine it with the one that was passed by the caller
-	//states.transform *= getTransform(); // getTransform() is defined by sf::Transformable
+	states.transform *= getTransform(); //Combine all the next draws with this object's transform, meaning these next objects can stay at 0, 0.
 
-	// draw the vertex array
-	target.draw(backShape, states);
-}
-
-void Tab::move(float x, float y){
-	std::cout << "toolPanel Moved " << x << ", " << y << std::endl;
-	sf::Transformable::move(x, y);
-	backShape.move(x, y);
+	target.draw(shape, states);
 }

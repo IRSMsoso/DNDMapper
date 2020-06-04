@@ -18,8 +18,8 @@ Canvas::~Canvas(){
 
 bool Canvas::paintTile(float worldx, float worldy, sf::Color newColor)
 {
-	unsigned int tileX = static_cast<int>(worldx / 5.f);
-	unsigned int tileY = static_cast<int>(worldy / 5.f);
+	unsigned int tileX = static_cast<int>(worldx / TILESIZE);
+	unsigned int tileY = static_cast<int>(worldy / TILESIZE);
 
 	if (tileY < tileGrid.size() && tileX < tileGrid.at(tileY).size()) {
 		tileGrid.at(tileY).at(tileX).changeColor(newColor);
@@ -30,8 +30,8 @@ bool Canvas::paintTile(float worldx, float worldy, sf::Color newColor)
 
 bool Canvas::paintTile(sf::Vector2f worldxy, sf::Color newColor)
 {
-	unsigned int tileX = static_cast<int>(worldxy.x / 5.f);
-	unsigned int tileY = static_cast<int>(worldxy.y / 5.f);
+	unsigned int tileX = static_cast<int>(worldxy.x / TILESIZE);
+	unsigned int tileY = static_cast<int>(worldxy.y / TILESIZE);
 
 	if (tileY < tileGrid.size() && tileX < tileGrid.at(tileY).size()) {
 		tileGrid.at(tileY).at(tileX).changeColor(newColor);

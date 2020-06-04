@@ -1,22 +1,29 @@
 #include "UI.h"
 
-UI::UI(){
-
+UI::UI(sf::RenderWindow* newWindow){
+	window = newWindow;
+	
+	elements.push_back(new Tab(window));
 }
 
 UI::~UI(){
 
 }
 
-void UI::update(sf::RenderWindow* window, float newScale){
-	setPosition(window->mapPixelToCoords(sf::Vector2i(0, 200)));
-	setScale(sf::Vector2f(newScale, newScale));
+void UI::drawElements(){
+	for (int i = 0; i < elements.size(); i++) {
+		window->draw(*elements.at(i));
+	}
 }
 
-void UI::draw(sf::RenderTarget& target, sf::RenderStates states) const{
-	// apply the entity's transform -- combine it with the one that was passed by the caller
-	states.transform *= getTransform(); // getTransform() is defined by sf::Transformable
+void UI::updateElementPositions(){
+	for (int i = 0; i < elements.size(); i++) {
+		elements.at(i)->updatePosition();
+	}
+}
 
-	// draw the vertex array
-	target.draw(toolTab, states);
+void UI::updateElementScales(float newScale){
+	for (int i = 0; i < elements.size(); i++) {
+		elements.at(i)->updateScale(newScale);
+	}
 }

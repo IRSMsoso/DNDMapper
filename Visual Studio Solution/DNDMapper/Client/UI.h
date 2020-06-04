@@ -1,20 +1,20 @@
 #pragma once
+#include <SFML/Graphics.hpp>
+#include <vector>
 #include "Tab.h"
 
-class UI: public sf::Transformable, public sf::Drawable{
-public:
 
-	UI();
+class UI: public sf::Transformable{
+public:
+	UI(sf::RenderWindow*);
 	~UI();
 
-	void update(sf::RenderWindow*, float);
+	void drawElements();
+	void updateElementPositions();
+	void updateElementScales(float);
 
 private:
-
-	virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
-
-
-	//UI Elements
-	Tab toolTab;
+	sf::RenderWindow* window;
+	std::vector<UIElement*> elements;
 };
 

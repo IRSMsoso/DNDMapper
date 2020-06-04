@@ -6,10 +6,12 @@
 
 
 
+const int WINDOWX = 1400;
+const int WINDOWY = 800;
 const float MAXZOOM = .5;
 const float MINZOOM = 1.5;
 const float ZOOMSPEED = 0.9;
-const float BEADRADIUS = 0.3;
+const float BEADRADIUS = 1.5;
 
 class Manager{
 public:
@@ -26,7 +28,7 @@ private:
 	//Camera Object
 	sf::View camera;
 
-	//UI Element
+	//UI Object
 	UI ui;
 
 	//Navigation Tools

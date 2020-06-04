@@ -1,7 +1,7 @@
 #include "Manager.h"
 
 //Construct the Manager with the specific window settings.
-Manager::Manager(sf::ContextSettings settings): window(sf::VideoMode(WINDOWX, WINDOWY), "Dungeons and Dragons!", sf::Style::Default, settings), camera(sf::FloatRect(0.f, 0.f, WINDOWX*.2, WINDOWY*.2)) {
+Manager::Manager(sf::ContextSettings settings): window(sf::VideoMode(WINDOWX, WINDOWY), "Dungeons and Dragons!", sf::Style::Default, settings), camera(sf::FloatRect(0.f, 0.f, WINDOWX, WINDOWY)), ui(&window){
 
 
 	window.setView(camera);
@@ -46,10 +46,10 @@ void Manager::mainLoop(){
 
 
 		//Drawing Tiles
-		sf::RectangleShape tileBrush(sf::Vector2f(5.f, 5.f));
+		sf::RectangleShape tileBrush(sf::Vector2f(TILESIZE, TILESIZE));
 		for (int y = 0; y < canvas.getTileGrid()->size(); y++) {
 			for (int x = 0; x < canvas.getTileGrid()->at(y).size(); x++) {
-				tileBrush.setPosition(x * 5, y * 5);
+				tileBrush.setPosition(x * TILESIZE, y * TILESIZE);
 				tileBrush.setFillColor(canvas.getTileGrid()->at(y).at(x).getColor());
 				window.draw(tileBrush);
 			}
@@ -62,7 +62,7 @@ void Manager::mainLoop(){
 		for (int y = 1; y < canvas.getTileGrid()->size(); y++) {
 			for (int x = 1; x < canvas.getTileGrid()->at(y).size(); x++) {
 				cornerBeads.setScale(zoomFactor, zoomFactor);
-				cornerBeads.setPosition(x * 5, y * 5);
+				cornerBeads.setPosition(x * TILESIZE, y * TILESIZE);
 
 				sf::Color TL = canvas.getTileGrid()->at(y - 1).at(x - 1).getColor();
 				sf::Color TR = canvas.getTileGrid()->at(y - 1).at(x).getColor();
@@ -85,8 +85,9 @@ void Manager::mainLoop(){
 		//window.draw(camera);
 
 		//Update and Draw the UI
-		ui.update(&window, zoomFactor);
-		window.draw(ui);
+		ui.updateElementScales(zoomFactor);
+		ui.updateElementPositions();
+		ui.drawElements();
 
 
 		//std::cout << "Factor: " << zoomFactor << std::endl;
