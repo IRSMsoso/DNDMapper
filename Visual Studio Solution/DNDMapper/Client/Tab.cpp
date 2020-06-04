@@ -3,7 +3,7 @@
 Tab::Tab(sf::RenderWindow* newWindow): UIElement(newWindow){
 
 
-	changeUIRectangle(sf::IntRect(0, 300, 100, 500));
+	changeUIRectangle(sf::IntRect(0, 300, 60, 500));
 
 
 	shape.setSize(sf::Vector2f(uiRectangle.width, uiRectangle.height));

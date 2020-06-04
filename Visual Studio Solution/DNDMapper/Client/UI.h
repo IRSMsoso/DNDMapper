@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include "Tab.h"
+#include "PaintTool.h"
 
 
 class UI: public sf::Transformable{

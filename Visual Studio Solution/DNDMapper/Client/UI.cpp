@@ -4,6 +4,7 @@ UI::UI(sf::RenderWindow* newWindow){
 	window = newWindow;
 	
 	elements.push_back(new Tab(window));
+	elements.push_back(new PaintTool(window));
 }
 
 UI::~UI(){
