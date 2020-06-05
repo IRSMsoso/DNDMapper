@@ -15,6 +15,7 @@ public:
 	bool paintTile(float x, float y, sf::Color);
 	bool paintTile(sf::Vector2f, sf::Color);
 	bool fogTile(sf::Vector2f);
+	bool unfogTile(sf::Vector2f);
 	bool isFogged(sf::Vector2i);
 	bool eraseTile(sf::Vector2f);
 

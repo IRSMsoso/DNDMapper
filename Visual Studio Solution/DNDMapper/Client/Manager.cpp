@@ -59,6 +59,9 @@ void Manager::mainLoop(){
 			if (selectedTool == ToolType::paintingTool) {
 				canvas.eraseTile(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
 			}
+			if (selectedTool == ToolType::fogTool) {
+				canvas.unfogTile(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
+			}
 		}
 
 
@@ -75,7 +78,7 @@ void Manager::mainLoop(){
 				window.draw(tileBrush);
 				if (canvas.isFogged(sf::Vector2i(x, y))) {
 					tileBrush.setPosition(x * TILESIZE, y * TILESIZE);
-					tileBrush.setFillColor(sf::Color(55,55,55,55));
+					tileBrush.setFillColor(sf::Color(0,0,0,100));
 					window.draw(tileBrush);
 
 				}

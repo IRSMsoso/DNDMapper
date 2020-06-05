@@ -18,6 +18,10 @@ void Tile::setFog() {
 	isFogged = true;
 }
 
+void Tile::removeFog() {
+	isFogged = false;
+}
+
 bool Tile::checkFog() {
 	if (isFogged) {
 		return true;
