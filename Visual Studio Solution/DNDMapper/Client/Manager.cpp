@@ -5,6 +5,7 @@ Manager::Manager(sf::ContextSettings settings): window(sf::VideoMode(WINDOWX, WI
 
 
 	window.setView(camera);
+	window.setKeyRepeatEnabled(false);
 	
 
 	//Setup Initial Variable Values
@@ -43,6 +44,11 @@ void Manager::mainLoop(){
 			sf::Vector2f moveVector = panLockLoc - currentMouseLoc;
 			camera.move(moveVector.x, moveVector.y);
 
+		}
+
+		//Color Picker Logic
+		if (isColorPicking) {
+			auto capture = window.cap
 		}
 
 
@@ -108,6 +114,10 @@ void Manager::mainLoop(){
 		ui.drawElements();
 
 
+		//Colorwheel Drawing
+		if(isColorPicking)
+			window.draw(colorWheel);
+
 		//std::cout << "Factor: " << zoomFactor << std::endl;
 
 		window.display();
@@ -120,21 +130,31 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 		window.close();
 
 	if (pollingEvent.type == sf::Event::MouseWheelScrolled) {
-		sf::Vector2f beforeMouseLoc = window.mapPixelToCoords(sf::Mouse::getPosition(window));
-		if (pollingEvent.mouseWheelScroll.delta > 0 && zoomFactor * ZOOMSPEED >= MAXZOOM) {
-			camera.zoom(ZOOMSPEED);
-			zoomFactor *= ZOOMSPEED;
-			//std::cout << "Zoom in" << std::endl;
+		if (isColorPicking == false) { //If the user isn't picking a color, zoom.
+			sf::Vector2f beforeMouseLoc = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+			if (pollingEvent.mouseWheelScroll.delta > 0 && zoomFactor * ZOOMSPEED >= MAXZOOM) {
+				camera.zoom(ZOOMSPEED);
+				zoomFactor *= ZOOMSPEED;
+				//std::cout << "Zoom in" << std::endl;
+			}
+			if (pollingEvent.mouseWheelScroll.delta < 0 && zoomFactor / ZOOMSPEED <= MINZOOM) {
+				camera.zoom(1 / ZOOMSPEED);
+				zoomFactor /= ZOOMSPEED;
+				//std::cout << "Zoom out" << std::endl;
+			}
+			window.setView(camera);
+			sf::Vector2f afterMouseLoc = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+			sf::Vector2f moveVector = beforeMouseLoc - afterMouseLoc;
+			camera.move(moveVector.x, moveVector.y);
 		}
-		if (pollingEvent.mouseWheelScroll.delta < 0 && zoomFactor / ZOOMSPEED <= MINZOOM) {
-			camera.zoom(1 / ZOOMSPEED);
-			zoomFactor /= ZOOMSPEED;
-			//std::cout << "Zoom out" << std::endl;
+		else {
+			if (pollingEvent.mouseWheelScroll.delta > 0) {
+				colorWheel.changeMiddle(10);
+			}
+			if (pollingEvent.mouseWheelScroll.delta < 0) {
+				colorWheel.changeMiddle(-10);
+			}
 		}
-		window.setView(camera);
-		sf::Vector2f afterMouseLoc = window.mapPixelToCoords(sf::Mouse::getPosition(window));
-		sf::Vector2f moveVector = beforeMouseLoc - afterMouseLoc;
-		camera.move(moveVector.x, moveVector.y);
 	}
 
 	if (pollingEvent.type == sf::Event::MouseButtonPressed) {
@@ -160,6 +180,21 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 		if (pollingEvent.mouseButton.button == sf::Mouse::Button::Middle) {
 			isPanning = false;
 			window.setMouseCursor(defaultCursor);
+		}
+	}
+
+	
+
+	if (pollingEvent.type == sf::Event::KeyPressed) {
+		if (pollingEvent.key.code == sf::Keyboard::E) {
+			isColorPicking = true;
+			colorWheel.setPosition(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
+		}
+	}
+
+	if (pollingEvent.type == sf::Event::KeyReleased) {
+		if (pollingEvent.key.code == sf::Keyboard::E) {
+			isColorPicking = false;
 		}
 	}
 }

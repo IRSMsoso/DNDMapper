@@ -3,6 +3,7 @@
 #include "Canvas.h"
 #include <iostream>
 #include "UI.h"
+#include "ColorWheel.h"
 
 
 
@@ -41,6 +42,10 @@ private:
 
 	//Editing Members
 	sf::Color selectedColor;
+
+	//Color Wheel
+	ColorWheel colorWheel;
+	bool isColorPicking;
 
 	//Canvas
 	Canvas canvas;
