@@ -17,6 +17,8 @@ Manager::Manager(sf::ContextSettings settings): window(sf::VideoMode(WINDOWX, WI
 	window.setMouseCursor(defaultCursor);
 
 	selectedTool = ToolType::paintingTool;
+	
+	selectedColor = sf::Color::Yellow;
 }
 
 Manager::~Manager(){
@@ -35,11 +37,20 @@ void Manager::mainLoop(){
 		}
 
 
+		//Panning Logic
 		if (isPanning) {
 			sf::Vector2f currentMouseLoc = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 			sf::Vector2f moveVector = panLockLoc - currentMouseLoc;
 			camera.move(moveVector.x, moveVector.y);
 
+		}
+
+
+		//Tool Click Logic
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
+			if (selectedTool == ToolType::paintingTool) {
+				canvas.paintTile(window.mapPixelToCoords(sf::Mouse::getPosition(window)), selectedColor);
+			}
 		}
 
 
@@ -136,11 +147,6 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 			if (newTool != ToolType::none){
 				selectedTool = newTool;
 				std::cout << "Selected Tool: " << selectedTool << std::endl;
-			}
-			else {
-				if (selectedTool == ToolType::paintingTool) {
-					canvas.paintTile(window.mapPixelToCoords(sf::Mouse::getPosition(window)), sf::Color::White);
-				}
 			}
 		}
 	}

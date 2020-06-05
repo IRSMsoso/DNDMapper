@@ -34,10 +34,13 @@ private:
 	//Tool Selected
 	ToolType selectedTool;
 
-	//Navigation Tools
+	//Navigation Members
 	bool isPanning = false;
 	sf::Vector2f panLockLoc;
 	float zoomFactor;
+
+	//Editing Members
+	sf::Color selectedColor;
 
 	//Canvas
 	Canvas canvas;
