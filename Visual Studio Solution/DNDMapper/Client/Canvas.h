@@ -4,6 +4,7 @@
 #include "Token.h"
 
 const float TILESIZE = 25.f;
+const sf::Color defaultColor = sf::Color(55, 55, 55, 255);
 
 class Canvas {
 public:
@@ -12,6 +13,7 @@ public:
 
 	bool paintTile(float x, float y, sf::Color);
 	bool paintTile(sf::Vector2f, sf::Color);
+	bool eraseTile(sf::Vector2f);
 
 	std::vector<std::vector<Tile>>* getTileGrid();
 

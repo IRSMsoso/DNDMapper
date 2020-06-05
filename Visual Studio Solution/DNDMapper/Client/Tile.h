@@ -2,7 +2,6 @@
 #include "Token.h"
 class Tile{
 public:
-	Tile();
 	Tile(sf::Color);
 	~Tile();
 

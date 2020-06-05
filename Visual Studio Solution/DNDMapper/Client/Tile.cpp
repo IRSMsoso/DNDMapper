@@ -1,9 +1,5 @@
 #include "Tile.h"
 
-Tile::Tile(){
-	sf::Color grey(55, 55, 55, 255);
-	backgroundColor = grey;
-}
 
 Tile::Tile(sf::Color newColor){
 	backgroundColor = newColor;
