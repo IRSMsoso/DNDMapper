@@ -6,6 +6,9 @@ PaintTool::PaintTool(sf::RenderWindow* newWindow) : UIElement(newWindow) {
 
 	changeUIRectangle(sf::IntRect(0, 740, paintSprite.getTextureRect().width, paintSprite.getTextureRect().height));
 	std::cout << "PaintBucket Texture Rect: " << uiRectangle.left << ", " << uiRectangle.top << ", " << uiRectangle.width << ", " << uiRectangle.height << std::endl;
+
+
+	toolType = ToolType::paintingTool;
 }
 
 PaintTool::~PaintTool()

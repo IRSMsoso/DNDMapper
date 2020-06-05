@@ -1,6 +1,13 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <iostream>
 
+
+enum ToolType {
+	none, //No need to interact, like Tab
+	paintingTool, //DM Only
+
+};
 
 class UIElement: public sf::Drawable, public sf::Transformable{
 public:
@@ -18,10 +25,16 @@ public:
 
 	bool getIsClickable();
 
+	ToolType getToolType();
+
+	bool isClicked(sf::Vector2i);
+
 protected:
 	sf::RenderWindow* window;
 	sf::IntRect uiRectangle;
 
 	bool isClickable;
+
+	ToolType toolType;
 };
 

@@ -15,6 +15,8 @@ Manager::Manager(sf::ContextSettings settings): window(sf::VideoMode(WINDOWX, WI
 	defaultCursor.loadFromSystem(sf::Cursor::Arrow);
 	//Set cursor to default to start
 	window.setMouseCursor(defaultCursor);
+
+	selectedTool = ToolType::paintingTool;
 }
 
 Manager::~Manager(){
@@ -106,31 +108,40 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 		if (pollingEvent.mouseWheelScroll.delta > 0 && zoomFactor * ZOOMSPEED >= MAXZOOM) {
 			camera.zoom(ZOOMSPEED);
 			zoomFactor *= ZOOMSPEED;
-			std::cout << "Zoom in" << std::endl;
+			//std::cout << "Zoom in" << std::endl;
 		}
 		if (pollingEvent.mouseWheelScroll.delta < 0 && zoomFactor / ZOOMSPEED <= MINZOOM) {
 			camera.zoom(1 / ZOOMSPEED);
 			zoomFactor /= ZOOMSPEED;
-			std::cout << "Zoom out" << std::endl;
+			//std::cout << "Zoom out" << std::endl;
 		}
 		window.setView(camera);
 		sf::Vector2f afterMouseLoc = window.mapPixelToCoords(sf::Mouse::getPosition(window));
-		//std::cout << "Before: " << beforeMouseLoc.x << ", " << beforeMouseLoc.y << ", After: " << afterMouseLoc.x << ", " << afterMouseLoc.y << std::endl;
 		sf::Vector2f moveVector = beforeMouseLoc - afterMouseLoc;
 		camera.move(moveVector.x, moveVector.y);
-		//std::cout << "Moving: " << moveVector.x << ", " << moveVector.y << std::endl;
 	}
 
 	if (pollingEvent.type == sf::Event::MouseButtonPressed) {
+		sf::Vector2i mouseWindowLocation = sf::Mouse::getPosition(window);
+
 		if (pollingEvent.mouseButton.button == sf::Mouse::Button::Middle) {
 			isPanning = true;
-			panLockLoc = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+			panLockLoc = window.mapPixelToCoords(mouseWindowLocation);
 			window.setMouseCursor(handCursor);
-			std::cout << "Middle Pressed" << std::endl;
 		}
 
 		if (pollingEvent.mouseButton.button == sf::Mouse::Button::Left) {
-			canvas.paintTile(window.mapPixelToCoords(sf::Mouse::getPosition(window)), sf::Color::White);
+			ToolType newTool = ui.getToolClicked(mouseWindowLocation);
+
+			if (newTool != ToolType::none){
+				selectedTool = newTool;
+				std::cout << "Selected Tool: " << selectedTool << std::endl;
+			}
+			else {
+				if (selectedTool == ToolType::paintingTool) {
+					canvas.paintTile(window.mapPixelToCoords(sf::Mouse::getPosition(window)), sf::Color::White);
+				}
+			}
 		}
 	}
 
@@ -138,7 +149,6 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 		if (pollingEvent.mouseButton.button == sf::Mouse::Button::Middle) {
 			isPanning = false;
 			window.setMouseCursor(defaultCursor);
-			std::cout << "Middle Released" << std::endl;
 		}
 	}
 }

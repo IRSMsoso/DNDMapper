@@ -28,3 +28,15 @@ void UI::updateElementScales(float newScale){
 		elements.at(i)->updateScale(newScale);
 	}
 }
+
+ToolType UI::getToolClicked(sf::Vector2i mouseLoc)
+{
+	for (int i = 0; i < elements.size(); i++) {
+		if (elements.at(i)->isClicked(mouseLoc)) {
+			return elements.at(i)->getToolType();
+		}
+	}
+
+
+	return ToolType::none;
+}

@@ -31,6 +31,9 @@ private:
 	//UI Object
 	UI ui;
 
+	//Tool Selected
+	ToolType selectedTool;
+
 	//Navigation Tools
 	bool isPanning = false;
 	sf::Vector2f panLockLoc;

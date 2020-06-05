@@ -14,6 +14,8 @@ public:
 	void updateElementPositions();
 	void updateElementScales(float);
 
+	ToolType getToolClicked(sf::Vector2i);
+
 private:
 	sf::RenderWindow* window;
 	std::vector<UIElement*> elements;
