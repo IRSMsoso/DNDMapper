@@ -159,17 +159,25 @@
   <ItemGroup>
     <ClCompile Include="Canvas.cpp" />
     <ClCompile Include="Client.cpp" />
+    <ClCompile Include="ExpandButton.cpp" />
     <ClCompile Include="Manager.cpp" />
+    <ClCompile Include="PaintTool.cpp" />
+    <ClCompile Include="Tab.cpp" />
     <ClCompile Include="Tile.cpp" />
     <ClCompile Include="Token.cpp" />
     <ClCompile Include="UI.cpp" />
+    <ClCompile Include="UIElement.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Canvas.h" />
+    <ClInclude Include="ExpandButton.h" />
     <ClInclude Include="Manager.h" />
+    <ClInclude Include="PaintTool.h" />
+    <ClInclude Include="Tab.h" />
     <ClInclude Include="Tile.h" />
     <ClInclude Include="Token.h" />
     <ClInclude Include="UI.h" />
+    <ClInclude Include="UIElement.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,9 +1,42 @@
 #include "UI.h"
 
-UI::UI(){
-
+UI::UI(sf::RenderWindow* newWindow){
+	window = newWindow;
+	
+	elements.push_back(new Tab(window));
+	elements.push_back(new PaintTool(window));
 }
 
 UI::~UI(){
 
+}
+
+void UI::drawElements(){
+	for (int i = 0; i < elements.size(); i++) {
+		window->draw(*elements.at(i));
+	}
+}
+
+void UI::updateElementPositions(){
+	for (int i = 0; i < elements.size(); i++) {
+		elements.at(i)->updatePosition();
+	}
+}
+
+void UI::updateElementScales(float newScale){
+	for (int i = 0; i < elements.size(); i++) {
+		elements.at(i)->updateScale(newScale);
+	}
+}
+
+ToolType UI::getToolClicked(sf::Vector2i mouseLoc)
+{
+	for (int i = 0; i < elements.size(); i++) {
+		if (elements.at(i)->isClicked(mouseLoc)) {
+			return elements.at(i)->getToolType();
+		}
+	}
+
+
+	return ToolType::none;
 }

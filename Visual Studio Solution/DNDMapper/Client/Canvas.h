@@ -3,6 +3,7 @@
 #include "Tile.h"
 #include "Token.h"
 
+const float TILESIZE = 25.f;
 
 class Canvas {
 public:
