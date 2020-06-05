@@ -27,8 +27,5 @@ bool Tile::checkFog() {
 
 sf::Color Tile::getColor()
 {
-	if (isFogged == true) {
-		backgroundColor = sf::Color(255, 0, 0, 150);
-	}
 	return backgroundColor;
 }

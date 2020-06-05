@@ -52,14 +52,14 @@ bool Canvas::fogTile(sf::Vector2f worldxy)
 	return false;
 }
 
-bool Canvas::isFogged(sf::Vector2f worldxy) 
+bool Canvas::isFogged(sf::Vector2i vectorPos) 
 {
-	unsigned int tileX = static_cast<int>(worldxy.x / TILESIZE);
-	unsigned int tileY = static_cast<int>(worldxy.y / TILESIZE);
+	unsigned int posX = static_cast<int>(vectorPos.x);
+	unsigned int posY = static_cast<int>(vectorPos.y);
 	bool yes;
 
-	if (tileY < tileGrid.size() && tileX < tileGrid.at(tileY).size()) {
-		yes = tileGrid.at(tileY).at(tileX).checkFog();
+	if (posY < tileGrid.size() && posX < tileGrid.at(posY).size()) {
+		yes = tileGrid.at(posY).at(posX).checkFog();
 		if (yes) {
 			std::cout << "yes";
 			return true;

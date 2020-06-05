@@ -73,10 +73,11 @@ void Manager::mainLoop(){
 				tileBrush.setPosition(x * TILESIZE, y * TILESIZE);
 				tileBrush.setFillColor(canvas.getTileGrid()->at(y).at(x).getColor());
 				window.draw(tileBrush);
-				if (canvas.isFogged(window.mapPixelToCoords(sf::Mouse::getPosition(window)))) {
+				if (canvas.isFogged(sf::Vector2i(x, y))) {
 					tileBrush.setPosition(x * TILESIZE, y * TILESIZE);
-					tileBrush.setFillColor(canvas.getTileGrid()->at(y).at(x).getColor());
+					tileBrush.setFillColor(sf::Color(55,55,55,55));
 					window.draw(tileBrush);
+
 				}
 			}
 		}
