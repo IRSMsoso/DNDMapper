@@ -4,7 +4,7 @@ Canvas::Canvas(){
 	for (int y = 0; y < 20; y++) {
 		std::vector<Tile> newRow;
 		for (int  x= 0; x < 20; x++) {
-			newRow.push_back(Tile());
+			newRow.push_back(Tile(defaultColor));
 		}
 		tileGrid.push_back(newRow);
 	}
@@ -37,6 +37,19 @@ bool Canvas::paintTile(sf::Vector2f worldxy, sf::Color newColor)
 		tileGrid.at(tileY).at(tileX).changeColor(newColor);
 		return true;
 	}
+	return false;
+}
+
+bool Canvas::eraseTile(sf::Vector2f worldxy)
+{
+	unsigned int tileX = static_cast<int>(worldxy.x / TILESIZE);
+	unsigned int tileY = static_cast<int>(worldxy.y / TILESIZE);
+
+	if (tileY < tileGrid.size() && tileX < tileGrid.at(tileY).size()) {
+		tileGrid.at(tileY).at(tileX).changeColor(defaultColor);
+		return true;
+	}
+
 	return false;
 }
 

@@ -18,7 +18,7 @@ Manager::Manager(sf::ContextSettings settings): window(sf::VideoMode(WINDOWX, WI
 
 	selectedTool = ToolType::paintingTool;
 	
-	selectedColor = sf::Color::Yellow;
+	selectedColor = sf::Color::White;
 }
 
 Manager::~Manager(){
@@ -50,6 +50,11 @@ void Manager::mainLoop(){
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
 			if (selectedTool == ToolType::paintingTool) {
 				canvas.paintTile(window.mapPixelToCoords(sf::Mouse::getPosition(window)), selectedColor);
+			}
+		}
+		else if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right)) {
+			if (selectedTool == ToolType::paintingTool) {
+				canvas.eraseTile(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
 			}
 		}
 
