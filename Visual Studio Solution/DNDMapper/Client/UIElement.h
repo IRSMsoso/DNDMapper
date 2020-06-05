@@ -6,7 +6,7 @@
 enum ToolType {
 	none, //No need to interact, like Tab
 	paintingTool, //DM Only
-
+	fogTool, //DM Only
 };
 
 class UIElement: public sf::Drawable, public sf::Transformable{

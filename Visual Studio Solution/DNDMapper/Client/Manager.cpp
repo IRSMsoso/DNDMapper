@@ -18,7 +18,7 @@ Manager::Manager(sf::ContextSettings settings): window(sf::VideoMode(WINDOWX, WI
 
 	selectedTool = ToolType::paintingTool;
 	
-	selectedColor = sf::Color::White;
+	selectedColor = sf::Color::Blue;
 }
 
 Manager::~Manager(){
@@ -51,6 +51,9 @@ void Manager::mainLoop(){
 			if (selectedTool == ToolType::paintingTool) {
 				canvas.paintTile(window.mapPixelToCoords(sf::Mouse::getPosition(window)), selectedColor);
 			}
+			if (selectedTool == ToolType::fogTool) {
+				canvas.fogTile(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
+			}
 		}
 		else if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right)) {
 			if (selectedTool == ToolType::paintingTool) {
@@ -70,6 +73,11 @@ void Manager::mainLoop(){
 				tileBrush.setPosition(x * TILESIZE, y * TILESIZE);
 				tileBrush.setFillColor(canvas.getTileGrid()->at(y).at(x).getColor());
 				window.draw(tileBrush);
+				if (canvas.isFogged(window.mapPixelToCoords(sf::Mouse::getPosition(window)))) {
+					tileBrush.setPosition(x * TILESIZE, y * TILESIZE);
+					tileBrush.setFillColor(canvas.getTileGrid()->at(y).at(x).getColor());
+					window.draw(tileBrush);
+				}
 			}
 		}
 

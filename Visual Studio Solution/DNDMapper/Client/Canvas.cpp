@@ -40,6 +40,35 @@ bool Canvas::paintTile(sf::Vector2f worldxy, sf::Color newColor)
 	return false;
 }
 
+bool Canvas::fogTile(sf::Vector2f worldxy)
+{
+	unsigned int tileX = static_cast<int>(worldxy.x / TILESIZE);
+	unsigned int tileY = static_cast<int>(worldxy.y / TILESIZE);
+
+	if (tileY < tileGrid.size() && tileX < tileGrid.at(tileY).size()) {
+		tileGrid.at(tileY).at(tileX).setFog();
+		return true;
+	}
+	return false;
+}
+
+bool Canvas::isFogged(sf::Vector2f worldxy) 
+{
+	unsigned int tileX = static_cast<int>(worldxy.x / TILESIZE);
+	unsigned int tileY = static_cast<int>(worldxy.y / TILESIZE);
+	bool yes;
+
+	if (tileY < tileGrid.size() && tileX < tileGrid.at(tileY).size()) {
+		yes = tileGrid.at(tileY).at(tileX).checkFog();
+		if (yes) {
+			std::cout << "yes";
+			return true;
+		}
+	}
+	std::cout << "no";
+	return false;
+}
+
 bool Canvas::eraseTile(sf::Vector2f worldxy)
 {
 	unsigned int tileX = static_cast<int>(worldxy.x / TILESIZE);

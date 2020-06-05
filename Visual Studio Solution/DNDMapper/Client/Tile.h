@@ -6,10 +6,14 @@ public:
 	~Tile();
 
 	void changeColor(sf::Color);
+	void setFog();
+	bool checkFog();
 	sf::Color getColor();
+
 
 private:
 	sf::Color backgroundColor;
 	std::vector<Token> tokenList;
+	bool isFogged;
 };
 
