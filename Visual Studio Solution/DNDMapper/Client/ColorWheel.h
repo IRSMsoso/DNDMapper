@@ -4,7 +4,7 @@
 #include <iostream>
 
 const double PI = atan(1) * 4;
-const unsigned int RADIUS = 100;
+const unsigned int WHEELRADIUS = 100;
 const unsigned int VERTEXES = 40;
 
 class ColorWheel: public sf::Transformable, public sf::Drawable{

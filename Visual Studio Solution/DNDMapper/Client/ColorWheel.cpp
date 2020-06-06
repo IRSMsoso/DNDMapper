@@ -4,7 +4,7 @@ ColorWheel::ColorWheel(): fan(sf::PrimitiveType::TriangleFan){
 
 	fan.append(sf::Vertex(sf::Vector2f(0, 0), sf::Color(0, 0, 0, 255)));
 	for (int i = 0; i < VERTEXES; i++) {
-		fan.append(sf::Vertex(sf::Vector2f(RADIUS * cosf((2 * PI / (float)VERTEXES)*(float)i), RADIUS * sinf((2 * PI / (float)VERTEXES)*(float)i)), sf::Color(255, 0, 0, 255)));
+		fan.append(sf::Vertex(sf::Vector2f(WHEELRADIUS * cosf((2 * PI / (float)VERTEXES)*(float)i), WHEELRADIUS * sinf((2 * PI / (float)VERTEXES)*(float)i)), sf::Color(255, 0, 0, 255)));
 	}
 	fan.append(sf::Vertex(fan[1].position, fan[1].color));
 	

@@ -48,7 +48,14 @@ void Manager::mainLoop(){
 
 		//Color Picker Logic
 		if (isColorPicking) {
-			auto capture = window.cap
+			sf::Vector2f wheel = colorWheel.getPosition();
+			sf::Vector2f mouse = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+			sf::Vector2f vectorBetween = wheel - mouse;
+			float distance = sqrt(pow(vectorBetween.x, 2) + pow(vectorBetween.y, 2));
+			sf::Vector2f unitVector = vectorBetween / distance;
+			if (distance > WHEELRADIUS) {
+				sf::Mouse::setPosition(sf::Vector2i(sf::Vector2f(sf::Mouse::getPosition()) + unitVector * (distance - WHEELRADIUS)));
+			}
 		}
 
 
