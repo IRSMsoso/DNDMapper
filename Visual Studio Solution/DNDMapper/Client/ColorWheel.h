@@ -5,7 +5,7 @@
 
 const double PI = atan(1) * 4;
 const unsigned int WHEELRADIUS = 100;
-const unsigned int VERTEXES = 40;
+const unsigned int VERTEXES = 42; //Should be divisible by 6
 
 class ColorWheel: public sf::Transformable, public sf::Drawable{
 public:
