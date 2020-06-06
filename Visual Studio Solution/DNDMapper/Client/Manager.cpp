@@ -19,6 +19,7 @@ Manager::Manager(sf::ContextSettings settings): window(sf::VideoMode(WINDOWX, WI
 	selectedTool = ToolType::paintingTool;
 	
 	selectedColor = sf::Color::Blue;
+	fogCloudTexture.loadFromFile("FogCloud.png");
 }
 
 Manager::~Manager(){
@@ -78,8 +79,9 @@ void Manager::mainLoop(){
 				window.draw(tileBrush);
 				if (canvas.isFogged(sf::Vector2i(x, y))) {
 					tileBrush.setPosition(x * TILESIZE, y * TILESIZE);
-					tileBrush.setFillColor(sf::Color(0,0,0,100));
+					tileBrush.setTexture(&fogCloudTexture);
 					window.draw(tileBrush);
+					tileBrush.setTexture(NULL);
 
 				}
 			}
