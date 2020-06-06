@@ -51,4 +51,7 @@ private:
 	//Event interpret
 	void interpretEvent(sf::Event);
 
+	//Fog Cloud
+	sf::Texture fogCloudTexture;
+
 };
