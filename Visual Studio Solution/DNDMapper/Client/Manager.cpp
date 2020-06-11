@@ -147,11 +147,30 @@ void Manager::mainLoop(){
 
 //Logic for all of the event handling. Called from main loop.
 void Manager::interpretEvent(sf::Event pollingEvent){
-	if (pollingEvent.type == sf::Event::Closed)
-		window.close();
 
-	if (pollingEvent.type == sf::Event::MouseWheelScrolled) {
-		if (mouseAction != MouseAction::colorPicking) { //If the user isn't picking a color, zoom.
+
+	//Switch Statement Logic.
+	switch (pollingEvent.type) {
+
+
+	case sf::Event::Closed:
+		window.close();
+		break;
+
+
+	case sf::Event::MouseWheelScrolled:
+
+		switch (mouseAction) {
+		case MouseAction::colorPicking:
+			if (pollingEvent.mouseWheelScroll.delta > 0) {
+				colorWheel.changeMiddle(10);
+			}
+			if (pollingEvent.mouseWheelScroll.delta < 0) {
+				colorWheel.changeMiddle(-10);
+			}
+			break;
+
+		default:
 			sf::Vector2f beforeMouseLoc = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 			if (pollingEvent.mouseWheelScroll.delta > 0 && zoomFactor * ZOOMSPEED >= MAXZOOM) {
 				camera.zoom(ZOOMSPEED);
@@ -168,27 +187,24 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 			sf::Vector2f moveVector = beforeMouseLoc - afterMouseLoc;
 			camera.move(moveVector.x, moveVector.y);
 		}
-		else {
-			if (pollingEvent.mouseWheelScroll.delta > 0) {
-				colorWheel.changeMiddle(10);
-			}
-			if (pollingEvent.mouseWheelScroll.delta < 0) {
-				colorWheel.changeMiddle(-10);
-			}
-		}
-	}
+		break;
 
-	if (pollingEvent.type == sf::Event::MouseButtonPressed) {
+
+	case sf::Event::MouseButtonPressed:
+	{ //Scope needed to prevent initialization error on mouseWindowLocation variable.
 		sf::Vector2i mouseWindowLocation = sf::Mouse::getPosition(window);
 
-		if (pollingEvent.mouseButton.button == sf::Mouse::Button::Middle) {
+		switch (pollingEvent.mouseButton.button) {
+		case sf::Mouse::Button::Middle:
 			isPanning = true;
 			panLockLoc = window.mapPixelToCoords(mouseWindowLocation);
 			window.setMouseCursor(handCursor);
-		}
+			break;
 
-		if (pollingEvent.mouseButton.button == sf::Mouse::Button::Left) {
-			if (mouseAction == MouseAction::none) {
+		case sf::Mouse::Button::Left:
+			switch (mouseAction) {
+			case MouseAction::none:
+			{ //Scope needed to prevent initialization error on newTool variable.
 				ToolType::ToolType newTool = ui.getToolClicked(mouseWindowLocation);
 
 				if (newTool != ToolType::none) {
@@ -196,15 +212,20 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 					std::cout << "Selected Tool: " << selectedTool << std::endl;
 				}
 				else {
-					if (selectedTool == ToolType::paintingTool) {
+					switch (selectedTool) {
+					case ToolType::paintingTool:
 						mouseAction = MouseAction::painting;
-					}
-					else if (selectedTool == ToolType::fogTool) {
+						break;
+
+					case ToolType::fogTool:
 						mouseAction = MouseAction::fogging;
+						break;
 					}
 				}
 			}
-			else if (mouseAction == MouseAction::colorPicking) {
+			break;
+
+			case MouseAction::colorPicking:
 				std::cout << "Picked Color\n";
 				sf::Texture screenshotTexture;
 				screenshotTexture.create(window.getSize().x, window.getSize().y);
@@ -214,64 +235,91 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 				selectedColor = screenshot.getPixel(mouseLoc.x, mouseLoc.y);
 
 				mouseAction = MouseAction::none;
+				break;
+			}
+			break;
+
+		case sf::Mouse::Button::Right:
+
+			switch (mouseAction) {
+			case MouseAction::none:
+				switch (selectedTool) {
+				case ToolType::paintingTool:
+					mouseAction = MouseAction::erasing;
+					break;
+
+				case ToolType::fogTool:
+					mouseAction = MouseAction::unfogging;
+					break;
+				}
+				break;
 			}
 
+			break;
 		}
-		else if (pollingEvent.mouseButton.button == sf::Mouse::Button::Right) {
-			if (mouseAction == MouseAction::none) {
-				if (selectedTool == ToolType::paintingTool) {
-					mouseAction = MouseAction::erasing;
-				}
-				else if (selectedTool = ToolType::fogTool) {
-					mouseAction = MouseAction::unfogging;
-				}
-			}
-		}
+		break;
 	}
 
+	case sf::Event::MouseButtonReleased:
 
-	if (pollingEvent.type == sf::Event::MouseButtonReleased) {
-		if (pollingEvent.mouseButton.button == sf::Mouse::Button::Middle) {
+		switch (pollingEvent.mouseButton.button) {
+
+		case sf::Mouse::Button::Middle:
 			isPanning = false;
 			window.setMouseCursor(defaultCursor);
+			break;
+
+		case sf::Mouse::Button::Left:
+			switch (mouseAction) {
+			case MouseAction::painting:
+				mouseAction = MouseAction::none;
+				break;
+
+			case MouseAction::fogging:
+				mouseAction = MouseAction::none;
+				break;
+			}
+			break;
+
+		case sf::Mouse::Button::Right:
+			switch (mouseAction) {
+			case MouseAction::erasing:
+				mouseAction = MouseAction::none;
+				break;
+
+			case MouseAction::unfogging:
+				mouseAction = MouseAction::none;
+				break;
+			}
 		}
+		break;
 
-		if (pollingEvent.mouseButton.button == sf::Mouse::Button::Left) {
-			if (mouseAction == MouseAction::painting) {
-				mouseAction = MouseAction::none;
-			}
-			else if (mouseAction == MouseAction::fogging) {
-				mouseAction = MouseAction::none;
-			}
-		}
 
-		if (pollingEvent.mouseButton.button == sf::Mouse::Button::Right) {
-			if (mouseAction == MouseAction::erasing) {
-				mouseAction = MouseAction::none;
-			}
-			else if (mouseAction == MouseAction::unfogging) {
-				mouseAction = MouseAction::none;
-			}
-		}
-	}
+	case sf::Event::KeyPressed:
 
-	
-
-	if (pollingEvent.type == sf::Event::KeyPressed) {
-		if (pollingEvent.key.code == sf::Keyboard::E) {
+		switch (pollingEvent.key.code) {
+		case sf::Keyboard::E:
 			if (mouseAction == MouseAction::none)
-			previousAction = mouseAction;
+				previousAction = mouseAction;
 			mouseAction = MouseAction::colorPicking;
 			colorWheel.setPosition(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
+			break;
 		}
-	}
+		break;
 
-	if (pollingEvent.type == sf::Event::KeyReleased) {
-		if (pollingEvent.key.code == sf::Keyboard::E) {
+
+
+	case sf::Event::KeyReleased:
+
+		switch (pollingEvent.key.code) {
+		case sf::Keyboard::E:
 			if (mouseAction == MouseAction::colorPicking) {
 				mouseAction = previousAction;
 				previousAction = MouseAction::none;
 			}
+			break;
 		}
+		break;
+
 	}
 }
