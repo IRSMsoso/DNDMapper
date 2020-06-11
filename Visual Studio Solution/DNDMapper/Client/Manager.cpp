@@ -91,6 +91,7 @@ void Manager::mainLoop(){
 				tileBrush.setFillColor(canvas.getTileGrid()->at(y).at(x).getColor());
 				window.draw(tileBrush);
 				if (canvas.isFogged(sf::Vector2i(x, y))) {
+					tileBrush.setFillColor(sf::Color::White); //Prevents the fog texture from being too dark on dark tiles.
 					tileBrush.setPosition(x * TILESIZE, y * TILESIZE);
 					tileBrush.setTexture(&fogCloudTexture);
 					window.draw(tileBrush);
