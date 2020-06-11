@@ -199,6 +199,9 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 					if (selectedTool == ToolType::paintingTool) {
 						mouseAction = MouseAction::painting;
 					}
+					else if (selectedTool == ToolType::fogTool) {
+						mouseAction = MouseAction::fogging;
+					}
 				}
 			}
 			else if (mouseAction == MouseAction::colorPicking) {
@@ -219,6 +222,9 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 				if (selectedTool == ToolType::paintingTool) {
 					mouseAction = MouseAction::erasing;
 				}
+				else if (selectedTool = ToolType::fogTool) {
+					mouseAction = MouseAction::unfogging;
+				}
 			}
 		}
 	}
@@ -234,10 +240,16 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 			if (mouseAction == MouseAction::painting) {
 				mouseAction = MouseAction::none;
 			}
+			else if (mouseAction == MouseAction::fogging) {
+				mouseAction = MouseAction::none;
+			}
 		}
 
 		if (pollingEvent.mouseButton.button == sf::Mouse::Button::Right) {
 			if (mouseAction == MouseAction::erasing) {
+				mouseAction = MouseAction::none;
+			}
+			else if (mouseAction == MouseAction::unfogging) {
 				mouseAction = MouseAction::none;
 			}
 		}
