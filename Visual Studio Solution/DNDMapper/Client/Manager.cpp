@@ -18,11 +18,13 @@ Manager::Manager(sf::ContextSettings settings): window(sf::VideoMode(WINDOWX, WI
 	window.setMouseCursor(defaultCursor);
 
 	selectedTool = ToolType::paintingTool;
-	
-	selectedColor = sf::Color::Green;
 
 	mouseAction == MouseAction::none;
 	previousAction == MouseAction::none;
+  
+	selectedColor = sf::Color::White;
+	fogCloudTexture.loadFromFile("FogCloud.png");
+  
 }
 
 Manager::~Manager(){
@@ -68,7 +70,13 @@ void Manager::mainLoop(){
 		}
 		else if (mouseAction == MouseAction::erasing) {
 			canvas.eraseTile(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
-		}
+    }
+    else if (mouseAction == MouseAction::fogging) {
+      canvas.fogTile(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
+    }
+    else if (mouseAction == MouseAction::unfogging) {
+      canvas.unfogTile(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
+    }
 
 
 		window.setView(camera);
@@ -82,6 +90,13 @@ void Manager::mainLoop(){
 				tileBrush.setPosition(x * TILESIZE, y * TILESIZE);
 				tileBrush.setFillColor(canvas.getTileGrid()->at(y).at(x).getColor());
 				window.draw(tileBrush);
+				if (canvas.isFogged(sf::Vector2i(x, y))) {
+					tileBrush.setPosition(x * TILESIZE, y * TILESIZE);
+					tileBrush.setTexture(&fogCloudTexture);
+					window.draw(tileBrush);
+					tileBrush.setTexture(NULL);
+
+				}
 			}
 		}
 

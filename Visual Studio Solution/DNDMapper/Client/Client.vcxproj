@@ -161,6 +161,7 @@
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="ColorWheel.cpp" />
     <ClCompile Include="ExpandButton.cpp" />
+    <ClCompile Include="FogTool.cpp" />
     <ClCompile Include="Manager.cpp" />
     <ClCompile Include="PaintTool.cpp" />
     <ClCompile Include="Tab.cpp" />
@@ -173,6 +174,7 @@
     <ClInclude Include="Canvas.h" />
     <ClInclude Include="ColorWheel.h" />
     <ClInclude Include="ExpandButton.h" />
+    <ClInclude Include="FogTool.h" />
     <ClInclude Include="Manager.h" />
     <ClInclude Include="PaintTool.h" />
     <ClInclude Include="Tab.h" />

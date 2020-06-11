@@ -3,6 +3,7 @@
 #include <vector>
 #include "Tab.h"
 #include "PaintTool.h"
+#include "FogTool.h"
 
 
 class UI: public sf::Transformable{

@@ -5,6 +5,7 @@ UI::UI(sf::RenderWindow* newWindow){
 	
 	elements.push_back(new Tab(window));
 	elements.push_back(new PaintTool(window));
+	elements.push_back(new FogTool(window));
 }
 
 UI::~UI(){
