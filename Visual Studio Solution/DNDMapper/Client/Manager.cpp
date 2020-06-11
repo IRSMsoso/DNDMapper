@@ -19,7 +19,10 @@ Manager::Manager(sf::ContextSettings settings): window(sf::VideoMode(WINDOWX, WI
 
 	selectedTool = ToolType::paintingTool;
 	
-	selectedColor = sf::Color::White;
+	selectedColor = sf::Color::Green;
+
+	mouseAction == MouseAction::none;
+	previousAction == MouseAction::none;
 }
 
 Manager::~Manager(){
@@ -46,8 +49,8 @@ void Manager::mainLoop(){
 
 		}
 
-		//Color Picker Logic
-		if (isColorPicking) {
+		//Keeping mouse in color wheel.
+		if (mouseAction == MouseAction::colorPicking) {
 			sf::Vector2f wheel = colorWheel.getPosition();
 			sf::Vector2f mouse = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 			sf::Vector2f vectorBetween = wheel - mouse;
@@ -60,15 +63,11 @@ void Manager::mainLoop(){
 
 
 		//Tool Click Logic
-		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
-			if (selectedTool == ToolType::paintingTool) {
-				canvas.paintTile(window.mapPixelToCoords(sf::Mouse::getPosition(window)), selectedColor);
-			}
+		if (mouseAction == MouseAction::painting) {
+			canvas.paintTile(window.mapPixelToCoords(sf::Mouse::getPosition(window)), selectedColor);
 		}
-		else if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right)) {
-			if (selectedTool == ToolType::paintingTool) {
-				canvas.eraseTile(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
-			}
+		else if (mouseAction == MouseAction::erasing) {
+			canvas.eraseTile(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
 		}
 
 
@@ -122,7 +121,7 @@ void Manager::mainLoop(){
 
 
 		//Colorwheel Drawing
-		if(isColorPicking)
+		if(mouseAction == MouseAction::colorPicking)
 			window.draw(colorWheel);
 
 		//std::cout << "Factor: " << zoomFactor << std::endl;
@@ -137,7 +136,7 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 		window.close();
 
 	if (pollingEvent.type == sf::Event::MouseWheelScrolled) {
-		if (isColorPicking == false) { //If the user isn't picking a color, zoom.
+		if (mouseAction != MouseAction::colorPicking) { //If the user isn't picking a color, zoom.
 			sf::Vector2f beforeMouseLoc = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 			if (pollingEvent.mouseWheelScroll.delta > 0 && zoomFactor * ZOOMSPEED >= MAXZOOM) {
 				camera.zoom(ZOOMSPEED);
@@ -174,19 +173,58 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 		}
 
 		if (pollingEvent.mouseButton.button == sf::Mouse::Button::Left) {
-			ToolType newTool = ui.getToolClicked(mouseWindowLocation);
+			if (mouseAction == MouseAction::none) {
+				ToolType::ToolType newTool = ui.getToolClicked(mouseWindowLocation);
 
-			if (newTool != ToolType::none){
-				selectedTool = newTool;
-				std::cout << "Selected Tool: " << selectedTool << std::endl;
+				if (newTool != ToolType::none) {
+					selectedTool = newTool;
+					std::cout << "Selected Tool: " << selectedTool << std::endl;
+				}
+				else {
+					if (selectedTool == ToolType::paintingTool) {
+						mouseAction = MouseAction::painting;
+					}
+				}
+			}
+			else if (mouseAction == MouseAction::colorPicking) {
+				std::cout << "Picked Color\n";
+				sf::Texture screenshotTexture;
+				screenshotTexture.create(window.getSize().x, window.getSize().y);
+				screenshotTexture.update(window);
+				sf::Image screenshot = screenshotTexture.copyToImage();
+				sf::Vector2i mouseLoc = sf::Mouse::getPosition(window);
+				selectedColor = screenshot.getPixel(mouseLoc.x, mouseLoc.y);
+
+				mouseAction = MouseAction::none;
+			}
+
+		}
+		else if (pollingEvent.mouseButton.button == sf::Mouse::Button::Right) {
+			if (mouseAction == MouseAction::none) {
+				if (selectedTool == ToolType::paintingTool) {
+					mouseAction = MouseAction::erasing;
+				}
 			}
 		}
 	}
+
 
 	if (pollingEvent.type == sf::Event::MouseButtonReleased) {
 		if (pollingEvent.mouseButton.button == sf::Mouse::Button::Middle) {
 			isPanning = false;
 			window.setMouseCursor(defaultCursor);
+		}
+
+		if (pollingEvent.mouseButton.button == sf::Mouse::Button::Left) {
+			if (mouseAction == MouseAction::painting) {
+				mouseAction = MouseAction::none;
+			}
+		}
+
+		if (pollingEvent.mouseButton.button == sf::Mouse::Button::Right) {
+			if (mouseAction == MouseAction::erasing) {
+				mouseAction = MouseAction::none;
+			}
 		}
 	}
 
@@ -194,14 +232,19 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 
 	if (pollingEvent.type == sf::Event::KeyPressed) {
 		if (pollingEvent.key.code == sf::Keyboard::E) {
-			isColorPicking = true;
+			if (mouseAction == MouseAction::none)
+			previousAction = mouseAction;
+			mouseAction = MouseAction::colorPicking;
 			colorWheel.setPosition(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
 		}
 	}
 
 	if (pollingEvent.type == sf::Event::KeyReleased) {
 		if (pollingEvent.key.code == sf::Keyboard::E) {
-			isColorPicking = false;
+			if (mouseAction == MouseAction::colorPicking) {
+				mouseAction = previousAction;
+				previousAction = MouseAction::none;
+			}
 		}
 	}
 }

@@ -17,7 +17,7 @@ ColorWheel::ColorWheel(): fan(sf::PrimitiveType::TriangleFan){
 		float inverseNormalized = abs(normalized - 1.f);
 		std::cout << inverseNormalized << "\n";
 		fan.append(sf::Vertex(sf::Vector2f(WHEELRADIUS * cosf((2 * PI / (float)VERTEXES)*(float)(i + wedgeNum)), WHEELRADIUS * sinf((2 * PI / (float)VERTEXES)*(float)(i + wedgeNum))), sf::Color(inverseNormalized * 255, 255, 0, 255)));
-
+		
 	}
 	for (int i = 0; i < wedgeNum; i++) {
 		float normalized = sqrt((float)i / (float)wedgeNum);
