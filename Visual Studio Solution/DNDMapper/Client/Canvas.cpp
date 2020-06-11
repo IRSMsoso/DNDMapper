@@ -16,50 +16,50 @@ Canvas::~Canvas(){
 
 }
 
+//Same call as other paintTile function
 bool Canvas::paintTile(float worldx, float worldy, sf::Color newColor)
 {
-	unsigned int tileX = static_cast<int>(worldx / TILESIZE);
-	unsigned int tileY = static_cast<int>(worldy / TILESIZE);
-
-	if (tileY < tileGrid.size() && tileX < tileGrid.at(tileY).size()) {
-		tileGrid.at(tileY).at(tileX).changeColor(newColor);
-		return true;
-	}
-	return false;
+	return paintTile(sf::Vector2f(worldx, worldy), newColor);
 }
 
 bool Canvas::paintTile(sf::Vector2f worldxy, sf::Color newColor)
 {
-	unsigned int tileX = static_cast<int>(worldxy.x / TILESIZE);
-	unsigned int tileY = static_cast<int>(worldxy.y / TILESIZE);
+	if (worldxy.x > 0 && worldxy.y > 0) {
+		int tileX = static_cast<int>(worldxy.x / TILESIZE);
+		int tileY = static_cast<int>(worldxy.y / TILESIZE);
 
-	if (tileY < tileGrid.size() && tileX < tileGrid.at(tileY).size()) {
-		tileGrid.at(tileY).at(tileX).changeColor(newColor);
-		return true;
+		if (tileY < tileGrid.size() && tileX < tileGrid.at(tileY).size()) {
+			tileGrid.at(tileY).at(tileX).changeColor(newColor);
+			return true;
+		}
 	}
 	return false;
 }
 
 bool Canvas::fogTile(sf::Vector2f worldxy)
 {
-	unsigned int tileX = static_cast<int>(worldxy.x / TILESIZE);
-	unsigned int tileY = static_cast<int>(worldxy.y / TILESIZE);
+	if (worldxy.x > 0 && worldxy.y > 0) {
+		int tileX = static_cast<int>(worldxy.x / TILESIZE);
+		int tileY = static_cast<int>(worldxy.y / TILESIZE);
 
-	if (tileY < tileGrid.size() && tileX < tileGrid.at(tileY).size()) {
-		tileGrid.at(tileY).at(tileX).setFog();
-		return true;
+		if (tileY < tileGrid.size() && tileX < tileGrid.at(tileY).size()) {
+			tileGrid.at(tileY).at(tileX).setFog();
+			return true;
+		}
 	}
 	return false;
 }
 
 bool Canvas::unfogTile(sf::Vector2f worldxy)
 {
-	unsigned int tileX = static_cast<int>(worldxy.x / TILESIZE);
-	unsigned int tileY = static_cast<int>(worldxy.y / TILESIZE);
+	if (worldxy.x > 0 && worldxy.y > 0) {
+		int tileX = static_cast<int>(worldxy.x / TILESIZE);
+		int tileY = static_cast<int>(worldxy.y / TILESIZE);
 
-	if (tileY < tileGrid.size() && tileX < tileGrid.at(tileY).size()) {
-		tileGrid.at(tileY).at(tileX).removeFog();
-		return true;
+		if (tileY < tileGrid.size() && tileX < tileGrid.at(tileY).size()) {
+			tileGrid.at(tileY).at(tileX).removeFog();
+			return true;
+		}
 	}
 	return false;
 }
@@ -68,11 +68,9 @@ bool Canvas::isFogged(sf::Vector2i vectorPos)
 {
 	unsigned int posX = static_cast<int>(vectorPos.x);
 	unsigned int posY = static_cast<int>(vectorPos.y);
-	bool yes;
 
 	if (posY < tileGrid.size() && posX < tileGrid.at(posY).size()) {
-		yes = tileGrid.at(posY).at(posX).checkFog();
-		if (yes) {
+		if (tileGrid.at(posY).at(posX).checkFog()) {
 			return true;
 		}
 	}
@@ -81,14 +79,15 @@ bool Canvas::isFogged(sf::Vector2i vectorPos)
 
 bool Canvas::eraseTile(sf::Vector2f worldxy)
 {
-	unsigned int tileX = static_cast<int>(worldxy.x / TILESIZE);
-	unsigned int tileY = static_cast<int>(worldxy.y / TILESIZE);
+	if (worldxy.x > 0 && worldxy.y > 0) {
+		unsigned int tileX = static_cast<int>(worldxy.x / TILESIZE);
+		unsigned int tileY = static_cast<int>(worldxy.y / TILESIZE);
 
-	if (tileY < tileGrid.size() && tileX < tileGrid.at(tileY).size()) {
-		tileGrid.at(tileY).at(tileX).changeColor(defaultColor);
-		return true;
+		if (tileY < tileGrid.size() && tileX < tileGrid.at(tileY).size()) {
+			tileGrid.at(tileY).at(tileX).changeColor(defaultColor);
+			return true;
+		}
 	}
-
 	return false;
 }
 
