@@ -4,6 +4,7 @@
 #include "Tab.h"
 #include "PaintTool.h"
 #include "FogTool.h"
+#include "TokenTool.h"
 
 
 class UI: public sf::Transformable{

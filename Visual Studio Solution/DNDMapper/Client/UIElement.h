@@ -6,8 +6,9 @@ namespace ToolType {
 	enum ToolType {
 		none, //No need to interact, like Tab
 		paintingTool, //DM Only
-    fogTool, //DM Only
-  };
+		fogTool, //DM Only
+		tokenTool, //Only DM can use shift to create, otherwise both.
+	};
 }
 
 class UIElement: public sf::Drawable, public sf::Transformable{

@@ -167,6 +167,7 @@
     <ClCompile Include="Tab.cpp" />
     <ClCompile Include="Tile.cpp" />
     <ClCompile Include="Token.cpp" />
+    <ClCompile Include="TokenTool.cpp" />
     <ClCompile Include="UI.cpp" />
     <ClCompile Include="UIElement.cpp" />
   </ItemGroup>
@@ -180,6 +181,7 @@
     <ClInclude Include="Tab.h" />
     <ClInclude Include="Tile.h" />
     <ClInclude Include="Token.h" />
+    <ClInclude Include="TokenTool.h" />
     <ClInclude Include="UI.h" />
     <ClInclude Include="UIElement.h" />
   </ItemGroup>
