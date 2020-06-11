@@ -70,13 +70,13 @@ void Manager::mainLoop(){
 		}
 		else if (mouseAction == MouseAction::erasing) {
 			canvas.eraseTile(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
-    }
-    else if (mouseAction == MouseAction::fogging) {
-      canvas.fogTile(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
-    }
-    else if (mouseAction == MouseAction::unfogging) {
-      canvas.unfogTile(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
-    }
+		}
+		else if (mouseAction == MouseAction::fogging) {
+			canvas.fogTile(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
+		}
+		else if (mouseAction == MouseAction::unfogging) {
+			canvas.unfogTile(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
+		}
 
 
 		window.setView(camera);
