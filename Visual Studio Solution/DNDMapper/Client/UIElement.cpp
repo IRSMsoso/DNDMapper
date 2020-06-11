@@ -36,7 +36,7 @@ bool UIElement::getIsClickable(){
 	return isClickable;
 }
 
-ToolType UIElement::getToolType()
+ToolType::ToolType UIElement::getToolType()
 {
 	return toolType;
 }

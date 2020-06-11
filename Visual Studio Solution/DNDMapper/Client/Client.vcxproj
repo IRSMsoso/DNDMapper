@@ -159,6 +159,7 @@
   <ItemGroup>
     <ClCompile Include="Canvas.cpp" />
     <ClCompile Include="Client.cpp" />
+    <ClCompile Include="ColorWheel.cpp" />
     <ClCompile Include="ExpandButton.cpp" />
     <ClCompile Include="FogTool.cpp" />
     <ClCompile Include="Manager.cpp" />
@@ -171,6 +172,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Canvas.h" />
+    <ClInclude Include="ColorWheel.h" />
     <ClInclude Include="ExpandButton.h" />
     <ClInclude Include="FogTool.h" />
     <ClInclude Include="Manager.h" />

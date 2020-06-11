@@ -2,12 +2,13 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
-
-enum ToolType {
-	none, //No need to interact, like Tab
-	paintingTool, //DM Only
-	fogTool, //DM Only
-};
+namespace ToolType {
+	enum ToolType {
+		none, //No need to interact, like Tab
+		paintingTool, //DM Only
+    fogTool, //DM Only
+  };
+}
 
 class UIElement: public sf::Drawable, public sf::Transformable{
 public:
@@ -25,7 +26,7 @@ public:
 
 	bool getIsClickable();
 
-	ToolType getToolType();
+	ToolType::ToolType getToolType();
 
 	bool isClicked(sf::Vector2i);
 
@@ -35,6 +36,6 @@ protected:
 
 	bool isClickable;
 
-	ToolType toolType;
+	ToolType::ToolType toolType;
 };
 

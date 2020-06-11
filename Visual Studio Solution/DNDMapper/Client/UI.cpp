@@ -30,7 +30,7 @@ void UI::updateElementScales(float newScale){
 	}
 }
 
-ToolType UI::getToolClicked(sf::Vector2i mouseLoc)
+ToolType::ToolType UI::getToolClicked(sf::Vector2i mouseLoc)
 {
 	for (int i = 0; i < elements.size(); i++) {
 		if (elements.at(i)->isClicked(mouseLoc)) {

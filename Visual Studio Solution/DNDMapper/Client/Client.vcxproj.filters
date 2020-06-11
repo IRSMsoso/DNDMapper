@@ -45,6 +45,9 @@
     <ClCompile Include="PaintTool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ColorWheel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="FogTool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -75,6 +78,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PaintTool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorWheel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FogTool.h">
