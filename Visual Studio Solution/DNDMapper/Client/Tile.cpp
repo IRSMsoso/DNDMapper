@@ -17,15 +17,12 @@ void Tile::changeColor(sf::Color newColor) {
 	needsUpdating = true;
 }
 
-void Tile::setFog() {
-	isFogged = true;
+void Tile::setFog(bool newFog) {
+	isFogged = newFog;
 }
 
-void Tile::removeFog() {
-	isFogged = false;
-}
 
-bool Tile::checkFog() {
+bool Tile::getFog() {
 	if (isFogged) {
 		return true;
 	}
@@ -35,4 +32,14 @@ bool Tile::checkFog() {
 sf::Color Tile::getColor()
 {
 	return color;
+}
+
+bool Tile::shouldUpdate()
+{
+	return needsUpdating;
+}
+
+void Tile::setUpdate(bool newUpdate)
+{
+	needsUpdating = newUpdate;
 }

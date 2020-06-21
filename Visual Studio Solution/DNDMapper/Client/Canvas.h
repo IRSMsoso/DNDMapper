@@ -23,8 +23,8 @@ public:
 
 	std::vector<std::vector<Tile>>* getTileGrid();
 
-	void addRowToBottom();
-	void addColumnToRight();
+	void addRowToBottom(bool);
+	void addColumnToRight(bool);
 
 	void draw(sf::RenderWindow&);
 
@@ -40,5 +40,9 @@ private:
 	std::vector<std::vector<Tile>> tileGrid; // Situated in a y, x format to simulate dealing with tiles from left to right, then top to bottom.
 	sf::Vector2i size;
 
-	sf::VertexArray vertexes;
+	sf::VertexArray tileVertexes;
+	sf::VertexArray fogVertexes;
+
+	//Fog Cloud
+	sf::Texture fogCloudTexture;
 };

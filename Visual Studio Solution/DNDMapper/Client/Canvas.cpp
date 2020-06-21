@@ -1,16 +1,25 @@
 #include "Canvas.h"
 
 Canvas::Canvas(){
+	sf::Clock setupClock;
+
+
 	std::vector<Tile> firstRow;
 	firstRow.push_back(Tile(defaultColor));
 	tileGrid.push_back(firstRow);
 
 	for (int y = 0; y < 50; y++) {
-		addRowToBottom();
-		addColumnToRight();
+		addRowToBottom(false);
+		addColumnToRight(false);
 	}
+	reconstruct();
 
 	size = sf::Vector2i(20, 20);
+
+
+	fogCloudTexture.loadFromFile("FogCloud.png");
+
+	std::cout << "Canvas setup took " << setupClock.getElapsedTime().asSeconds() << " seconds.\n";
 }
 
 Canvas::~Canvas(){
@@ -44,7 +53,7 @@ bool Canvas::fogTile(sf::Vector2f worldxy)
 		int tileY = static_cast<int>(worldxy.y / TILESIZE);
 
 		if (tileY < tileGrid.size() && tileX < tileGrid.at(tileY).size()) {
-			tileGrid.at(tileY).at(tileX).setFog();
+			tileGrid.at(tileY).at(tileX).setFog(true);
 			return true;
 		}
 	}
@@ -58,7 +67,7 @@ bool Canvas::unfogTile(sf::Vector2f worldxy)
 		int tileY = static_cast<int>(worldxy.y / TILESIZE);
 
 		if (tileY < tileGrid.size() && tileX < tileGrid.at(tileY).size()) {
-			tileGrid.at(tileY).at(tileX).removeFog();
+			tileGrid.at(tileY).at(tileX).setFog(false);
 			return true;
 		}
 	}
@@ -71,7 +80,7 @@ bool Canvas::isFogged(sf::Vector2i vectorPos)
 	unsigned int posY = static_cast<int>(vectorPos.y);
 
 	if (posY < tileGrid.size() && posX < tileGrid.at(posY).size()) {
-		if (tileGrid.at(posY).at(posX).checkFog()) {
+		if (tileGrid.at(posY).at(posX).getFog()) {
 			return true;
 		}
 	}
@@ -80,16 +89,7 @@ bool Canvas::isFogged(sf::Vector2i vectorPos)
 
 bool Canvas::eraseTile(sf::Vector2f worldxy)
 {
-	if (worldxy.x > 0 && worldxy.y > 0) {
-		unsigned int tileX = static_cast<int>(worldxy.x / TILESIZE);
-		unsigned int tileY = static_cast<int>(worldxy.y / TILESIZE);
-
-		if (tileY < tileGrid.size() && tileX < tileGrid.at(tileY).size()) {
-			tileGrid.at(tileY).at(tileX).changeColor(defaultColor);
-			return true;
-		}
-	}
-	return false;
+	return paintTile(worldxy, defaultColor);
 }
 
 std::vector<std::vector<Tile>>* Canvas::getTileGrid(){
@@ -114,29 +114,31 @@ void Canvas::removeColumn(unsigned int locX){
 	reconstruct();
 }
 
-void Canvas::addRowToBottom(){
+void Canvas::addRowToBottom(bool shouldReconstruct){
 	std::vector<Tile> newRow;
 	for (int i = 0; i < tileGrid.at(0).size(); i++) {
 		newRow.push_back(Tile(defaultColor));
-		std::cout << "Pushed new row\n";
+		//std::cout << "Pushed new row\n";
 	}
 	tileGrid.push_back(newRow);
-	reconstruct();
+	if (shouldReconstruct)
+		reconstruct();
 }
 
-void Canvas::addColumnToRight(){
+void Canvas::addColumnToRight(bool shouldReconstruct){
 	for (int i = 0; i < tileGrid.size(); i++) {
 		tileGrid.at(i).push_back(Tile(defaultColor));
 		int placeX = tileGrid.at(i).size() - 1;
-		std::cout << "Pushed new column\n";
+		//std::cout << "Pushed new column\n";
 	}
-	reconstruct();
+	if (shouldReconstruct)
+		reconstruct();
 }
 
 void Canvas::draw(sf::RenderWindow& window) {
 	
 
-	window.draw(vertexes);
+	window.draw(tileVertexes, &fogCloudTexture);
 }
 
 
@@ -148,10 +150,10 @@ void Canvas::update(){
 	for (int i = 0; i < sizeY; i++) {
 		for (int w = 0; w < sizeX; w++) {
 
-			if (tileGrid.at(i).at(w).needsUpdating) {
-				sf::Vertex* tileQuad = &vertexes[(w + (i * tileGrid.at(i).size())) * 4];
-				std::cout << "Got the vertexes at: " << w + (i * tileGrid.at(i).size()) * 4 << std::endl;
-				std::cout << "Took the x value: " << w << " + " << i << " * " << tileGrid.at(i).size() << " all times 4\n";
+			if (tileGrid.at(i).at(w).shouldUpdate()) {
+				sf::Vertex* tileQuad = &tileVertexes[(w + (i * tileGrid.at(i).size())) * 4];
+				//std::cout << "Got the vertexes at: " << w + (i * tileGrid.at(i).size()) * 4 << std::endl;
+				//std::cout << "Took the x value: " << w << " + " << i << " * " << tileGrid.at(i).size() << " all times 4\n";
 
 				sf::Color newColor = tileGrid.at(i).at(w).getColor();
 
@@ -160,7 +162,7 @@ void Canvas::update(){
 				tileQuad[2].color = newColor;
 				tileQuad[3].color = newColor;
 
-				tileGrid.at(i).at(w).needsUpdating = false;
+				tileGrid.at(i).at(w).setUpdate(false);
 
 			}
 
@@ -187,7 +189,7 @@ void Canvas::reconstruct(){
 
 		}
 	}
-	vertexes = newVertexes;
-	std::cout << "Reconstructed" << std::endl;
+	tileVertexes = newVertexes;
+	//std::cout << "Reconstructed" << std::endl;
 
 }

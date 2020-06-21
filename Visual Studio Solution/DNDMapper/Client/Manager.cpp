@@ -23,11 +23,14 @@ Manager::Manager(sf::ContextSettings settings): window(sf::VideoMode(WINDOWX, WI
 	previousAction == MouseAction::none;
   
 	selectedColor = sf::Color::White;
-	fogCloudTexture.loadFromFile("FogCloud.png");
+	
   
 	fpsText.setFillColor(sf::Color::Blue);
 	algerFont.loadFromFile("ALGER.TTF");
 	fpsText.setFont(algerFont);
+
+
+	//window.setFramerateLimit(60);
 }
 
 Manager::~Manager(){
