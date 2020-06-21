@@ -10,15 +10,12 @@ public:
 	bool getFog();
 	sf::Color getColor();
 
-	bool shouldUpdate();
-	void setUpdate(bool);
 
 
 private:
 	std::vector<Token> tokenList;
 	sf::Color color;
 	bool isFogged;
-	bool needsUpdating;
 
 };
 

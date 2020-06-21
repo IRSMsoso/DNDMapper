@@ -43,6 +43,8 @@ private:
 	sf::VertexArray tileVertexes;
 	sf::VertexArray fogVertexes;
 
+	std::vector<sf::Vector2i> updateQueue;
+
 	//Fog Cloud
 	sf::Texture fogCloudTexture;
 };

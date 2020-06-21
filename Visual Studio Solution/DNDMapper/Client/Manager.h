@@ -22,7 +22,7 @@ namespace MouseAction {
 const int WINDOWX = 1400;
 const int WINDOWY = 800;
 const float MAXZOOM = .5;
-const float MINZOOM = 1.5;
+const float MINZOOM = 3.0; //1.5
 const float ZOOMSPEED = 0.9;
 const float BEADRADIUS = 1.0;
 

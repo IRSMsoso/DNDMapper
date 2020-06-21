@@ -8,7 +8,7 @@ Canvas::Canvas(){
 	firstRow.push_back(Tile(defaultColor));
 	tileGrid.push_back(firstRow);
 
-	for (int y = 0; y < 2; y++) {
+	for (int y = 0; y < 500; y++) {
 		addRowToBottom(false);
 		addColumnToRight(false);
 	}
@@ -40,6 +40,7 @@ bool Canvas::paintTile(sf::Vector2f worldxy, sf::Color newColor)
 
 		if (tileY < tileGrid.size() && tileX < tileGrid.at(tileY).size()) {
 			tileGrid.at(tileY).at(tileX).changeColor(newColor);
+			updateQueue.push_back(sf::Vector2i(tileX, tileY));
 			return true;
 		}
 	}
@@ -54,6 +55,7 @@ bool Canvas::fogTile(sf::Vector2f worldxy)
 
 		if (tileY < tileGrid.size() && tileX < tileGrid.at(tileY).size()) {
 			tileGrid.at(tileY).at(tileX).setFog(true);
+			updateQueue.push_back(sf::Vector2i(tileX, tileY));
 			return true;
 		}
 	}
@@ -68,6 +70,7 @@ bool Canvas::unfogTile(sf::Vector2f worldxy)
 
 		if (tileY < tileGrid.size() && tileX < tileGrid.at(tileY).size()) {
 			tileGrid.at(tileY).at(tileX).setFog(false);
+			updateQueue.push_back(sf::Vector2i(tileX, tileY));
 			return true;
 		}
 	}
@@ -148,51 +151,41 @@ void Canvas::update(){
 	int sizeY = tileGrid.size();
 	int sizeX = tileGrid.at(0).size();
 
-	for (int i = 0; i < sizeY; i++) {
-		for (int w = 0; w < sizeX; w++) {
+	while(updateQueue.size() > 0){
 
-			if (tileGrid.at(i).at(w).shouldUpdate()) {
-				sf::Vertex* tileQuad = &tileVertexes[(w + (i * tileGrid.at(i).size())) * 4];
-				//std::cout << "Got the vertexes at: " << w + (i * tileGrid.at(i).size()) * 4 << std::endl;
-				//std::cout << "Took the x value: " << w << " + " << i << " * " << tileGrid.at(i).size() << " all times 4\n";
+		int x = updateQueue.at(0).x;
+		int y = updateQueue.at(0).y;
 
-				sf::Color newColor = tileGrid.at(i).at(w).getColor();
+		sf::Vertex* tileQuad = &tileVertexes[(x + (y * tileGrid.at(y).size())) * 4];
+		//std::cout << "Got the vertexes at: " << w + (i * tileGrid.at(i).size()) * 4 << std::endl;
+		//std::cout << "Took the x value: " << w << " + " << i << " * " << tileGrid.at(i).size() << " all times 4\n";
 
-				tileQuad[0].color = newColor;
-				tileQuad[1].color = newColor;
-				tileQuad[2].color = newColor;
-				tileQuad[3].color = newColor;
+		sf::Color newColor = tileGrid.at(y).at(x).getColor();
 
-
-
-				sf::Vertex* fogQuad = &fogVertexes[(w + (i * tileGrid.at(i).size())) * 4];
-
-				if (tileGrid.at(i).at(w).getFog()) {
-					fogQuad[0].color = sf::Color::White;
-					fogQuad[1].color = sf::Color::White;
-					fogQuad[2].color = sf::Color::White;
-					fogQuad[3].color = sf::Color::White;
-				}
-				else {
-					fogQuad[0].color = sf::Color::Transparent;
-					fogQuad[1].color = sf::Color::Transparent;
-					fogQuad[2].color = sf::Color::Transparent;
-					fogQuad[3].color = sf::Color::Transparent;
-				}
+		tileQuad[0].color = newColor;
+		tileQuad[1].color = newColor;
+		tileQuad[2].color = newColor;
+		tileQuad[3].color = newColor;
 
 
 
-				tileGrid.at(i).at(w).setUpdate(false);
+		sf::Vertex* fogQuad = &fogVertexes[(x + (y * tileGrid.at(y).size())) * 4];
 
-			}
-
-			
-
+		if (tileGrid.at(y).at(x).getFog()) {
+			fogQuad[0].color = sf::Color::White;
+			fogQuad[1].color = sf::Color::White;
+			fogQuad[2].color = sf::Color::White;
+			fogQuad[3].color = sf::Color::White;
 		}
+		else {
+			fogQuad[0].color = sf::Color::Transparent;
+			fogQuad[1].color = sf::Color::Transparent;
+			fogQuad[2].color = sf::Color::Transparent;
+			fogQuad[3].color = sf::Color::Transparent;
+		}
+
+		updateQueue.erase(updateQueue.begin());
 	}
-
-
-	
 }
 
 void Canvas::reconstruct(){
