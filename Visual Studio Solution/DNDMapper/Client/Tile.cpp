@@ -3,6 +3,7 @@
 
 Tile::Tile(sf::Color newColor){
 	changeColor(newColor);
+
 	isFogged = false;
 
 	needsUpdating = false;
@@ -19,6 +20,7 @@ void Tile::changeColor(sf::Color newColor) {
 
 void Tile::setFog(bool newFog) {
 	isFogged = newFog;
+	needsUpdating = true;
 }
 
 

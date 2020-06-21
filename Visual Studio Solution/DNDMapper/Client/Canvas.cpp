@@ -8,7 +8,7 @@ Canvas::Canvas(){
 	firstRow.push_back(Tile(defaultColor));
 	tileGrid.push_back(firstRow);
 
-	for (int y = 0; y < 50; y++) {
+	for (int y = 0; y < 2; y++) {
 		addRowToBottom(false);
 		addColumnToRight(false);
 	}
@@ -138,7 +138,8 @@ void Canvas::addColumnToRight(bool shouldReconstruct){
 void Canvas::draw(sf::RenderWindow& window) {
 	
 
-	window.draw(tileVertexes, &fogCloudTexture);
+	window.draw(tileVertexes);
+	window.draw(fogVertexes, &fogCloudTexture);
 }
 
 
@@ -162,6 +163,25 @@ void Canvas::update(){
 				tileQuad[2].color = newColor;
 				tileQuad[3].color = newColor;
 
+
+
+				sf::Vertex* fogQuad = &fogVertexes[(w + (i * tileGrid.at(i).size())) * 4];
+
+				if (tileGrid.at(i).at(w).getFog()) {
+					fogQuad[0].color = sf::Color::White;
+					fogQuad[1].color = sf::Color::White;
+					fogQuad[2].color = sf::Color::White;
+					fogQuad[3].color = sf::Color::White;
+				}
+				else {
+					fogQuad[0].color = sf::Color::Transparent;
+					fogQuad[1].color = sf::Color::Transparent;
+					fogQuad[2].color = sf::Color::Transparent;
+					fogQuad[3].color = sf::Color::Transparent;
+				}
+
+
+
 				tileGrid.at(i).at(w).setUpdate(false);
 
 			}
@@ -177,6 +197,7 @@ void Canvas::update(){
 
 void Canvas::reconstruct(){
 
+	//Tile Vertexes.
 	sf::VertexArray newVertexes(sf::Quads);
 
 	for (int i = 0; i < tileGrid.size(); i++) {
@@ -190,6 +211,43 @@ void Canvas::reconstruct(){
 		}
 	}
 	tileVertexes = newVertexes;
-	//std::cout << "Reconstructed" << std::endl;
+
+
+	//Fog Vertexes.
+	newVertexes.clear();
+
+	for (int i = 0; i < tileGrid.size(); i++) {
+		for (int w = 0; w < tileGrid.at(i).size(); w++) {
+
+			sf::Vertex topLeft(sf::Vertex(sf::Vector2f(w * 25, i * 25)));
+			sf::Vertex topRight(sf::Vector2f((w + 1) * 25, i * 25));
+			sf::Vertex bottomRight(sf::Vector2f((w + 1) * 25, (i + 1) * 25));
+			sf::Vertex bottomLeft(sf::Vector2f(w * 25, (i + 1) * 25));
+
+
+
+			topLeft.texCoords = sf::Vector2f(0, 0);
+			topRight.texCoords = sf::Vector2f(25, 0);
+			bottomRight.texCoords = sf::Vector2f(25, 25);
+			bottomLeft.texCoords = sf::Vector2f(0, 25);
+			if (!tileGrid.at(i).at(w).getFog()) {
+				topLeft.color = sf::Color::Transparent;
+				topRight.color = sf::Color::Transparent;
+				bottomRight.color = sf::Color::Transparent;
+				bottomLeft.color = sf::Color::Transparent;
+			}
+
+			newVertexes.append(topLeft);
+			newVertexes.append(topRight);
+			newVertexes.append(bottomRight);
+			newVertexes.append(bottomLeft);
+
+		}
+	}
+
+	fogVertexes = newVertexes;
+
+
+	std::cout << "Reconstructed" << std::endl;
 
 }
