@@ -2,8 +2,10 @@
 
 
 Tile::Tile(sf::Color newColor){
-	backgroundColor = newColor;
+	changeColor(newColor);
 	isFogged = false;
+
+	needsUpdating = false;
 }
 
 Tile::~Tile(){
@@ -11,7 +13,8 @@ Tile::~Tile(){
 }
 
 void Tile::changeColor(sf::Color newColor) {
-	backgroundColor = newColor;
+	color = newColor;
+	needsUpdating = true;
 }
 
 void Tile::setFog() {
@@ -31,5 +34,5 @@ bool Tile::checkFog() {
 
 sf::Color Tile::getColor()
 {
-	return backgroundColor;
+	return color;
 }

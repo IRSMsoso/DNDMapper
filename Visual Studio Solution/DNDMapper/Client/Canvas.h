@@ -23,13 +23,22 @@ public:
 
 	std::vector<std::vector<Tile>>* getTileGrid();
 
+	void addRowToBottom();
+	void addColumnToRight();
+
+	void draw(sf::RenderWindow&);
+
+	void update();
+	void reconstruct();
+
+
 private:
 	bool expand();
 	void removeRow(unsigned int);
 	void removeColumn(unsigned int);
-	void addRowToBottom();
-	void addColumnToRight();
 
 	std::vector<std::vector<Tile>> tileGrid; // Situated in a y, x format to simulate dealing with tiles from left to right, then top to bottom.
 	sf::Vector2i size;
+
+	sf::VertexArray vertexes;
 };

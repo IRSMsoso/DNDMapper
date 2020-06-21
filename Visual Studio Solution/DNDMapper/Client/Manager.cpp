@@ -25,6 +25,9 @@ Manager::Manager(sf::ContextSettings settings): window(sf::VideoMode(WINDOWX, WI
 	selectedColor = sf::Color::White;
 	fogCloudTexture.loadFromFile("FogCloud.png");
   
+	fpsText.setFillColor(sf::Color::Blue);
+	algerFont.loadFromFile("ALGER.TTF");
+	fpsText.setFont(algerFont);
 }
 
 Manager::~Manager(){
@@ -34,7 +37,19 @@ Manager::~Manager(){
 //The main event loop of the Manager object.
 void Manager::mainLoop(){
 
+	//FPS
+	sf::Clock fpsClock;
+
+
+	//LOOP
 	while (window.isOpen()) {
+
+
+		//FPS
+		sf::Time frameTime = fpsClock.restart();
+		float fps = 1.f / frameTime.asSeconds();
+		fpsText.setString(std::to_string(fps));
+
 
 		//Interpret each event in queue from main thread.
 		sf::Event pollingEvent;
@@ -84,22 +99,10 @@ void Manager::mainLoop(){
 
 
 		//Drawing Tiles
-		sf::RectangleShape tileBrush(sf::Vector2f(TILESIZE, TILESIZE));
-		for (int y = 0; y < canvas.getTileGrid()->size(); y++) {
-			for (int x = 0; x < canvas.getTileGrid()->at(y).size(); x++) {
-				tileBrush.setPosition(x * TILESIZE, y * TILESIZE);
-				tileBrush.setFillColor(canvas.getTileGrid()->at(y).at(x).getColor());
-				window.draw(tileBrush);
-				if (canvas.isFogged(sf::Vector2i(x, y))) {
-					tileBrush.setFillColor(sf::Color::White); //Prevents the fog texture from being too dark on dark tiles.
-					tileBrush.setPosition(x * TILESIZE, y * TILESIZE);
-					tileBrush.setTexture(&fogCloudTexture);
-					window.draw(tileBrush);
-					tileBrush.setTexture(NULL);
+		canvas.update();
+		canvas.draw(window);
 
-				}
-			}
-		}
+		/*
 
 		sf::CircleShape cornerBeads;
 
@@ -120,11 +123,13 @@ void Manager::mainLoop(){
 				float avgB = ((float)TL.b + (float)TR.b + (float)BL.b + (float)BR.b) / 4.f;
 
 				double rgbcircle = abs(((0.299 * avgR + 0.587 * avgG + 0.114 * avgB) / 255) - 1) * 255;
-				cornerBeads.setFillColor(sf::Color(rgbcircle, rgbcircle, rgbcircle, 255));
+				//cornerBeads.setFillColor(sf::Color(rgbcircle, rgbcircle, rgbcircle, 255));
 
-				window.draw(cornerBeads);
+				//window.draw(cornerBeads);
 			}
 		}
+
+		*/
 
 
 		//Drawing the Camera, along with all of the UI nested under it.
@@ -141,6 +146,9 @@ void Manager::mainLoop(){
 			window.draw(colorWheel);
 
 		//std::cout << "Factor: " << zoomFactor << std::endl;
+
+		//FPS Text Drawing
+		window.draw(fpsText);
 
 		window.display();
 	}

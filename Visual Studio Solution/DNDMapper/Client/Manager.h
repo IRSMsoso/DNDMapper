@@ -74,4 +74,7 @@ private:
 	//Fog Cloud
 	sf::Texture fogCloudTexture;
 
+	//FPS Text
+	sf::Text fpsText;
+	sf::Font algerFont;
 };

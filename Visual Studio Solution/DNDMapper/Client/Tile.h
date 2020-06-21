@@ -1,6 +1,6 @@
 #pragma once
 #include "Token.h"
-class Tile{
+class Tile {
 public:
 	Tile(sf::Color);
 	~Tile();
@@ -12,9 +12,13 @@ public:
 	sf::Color getColor();
 
 
+	bool needsUpdating;
+
 private:
-	sf::Color backgroundColor;
 	std::vector<Token> tokenList;
+	sf::Color color;
 	bool isFogged;
+
+	
 };
 

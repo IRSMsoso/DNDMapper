@@ -1,12 +1,13 @@
 #include "Canvas.h"
 
 Canvas::Canvas(){
-	for (int y = 0; y < 20; y++) {
-		std::vector<Tile> newRow;
-		for (int  x= 0; x < 20; x++) {
-			newRow.push_back(Tile(defaultColor));
-		}
-		tileGrid.push_back(newRow);
+	std::vector<Tile> firstRow;
+	firstRow.push_back(Tile(defaultColor));
+	tileGrid.push_back(firstRow);
+
+	for (int y = 0; y < 50; y++) {
+		addRowToBottom();
+		addColumnToRight();
 	}
 
 	size = sf::Vector2i(20, 20);
@@ -103,14 +104,90 @@ bool Canvas::expand()
 
 void Canvas::removeRow(unsigned int locY){
 	tileGrid.erase(tileGrid.begin() + locY);
+	reconstruct();
 }
 
 void Canvas::removeColumn(unsigned int locX){
 	for (int y = 0; y < tileGrid.size(); y++) {
 		tileGrid.at(y).erase(tileGrid.at(y).begin() + locX);
 	}
+	reconstruct();
 }
 
 void Canvas::addRowToBottom(){
+	std::vector<Tile> newRow;
+	for (int i = 0; i < tileGrid.at(0).size(); i++) {
+		newRow.push_back(Tile(defaultColor));
+		std::cout << "Pushed new row\n";
+	}
+	tileGrid.push_back(newRow);
+	reconstruct();
+}
+
+void Canvas::addColumnToRight(){
+	for (int i = 0; i < tileGrid.size(); i++) {
+		tileGrid.at(i).push_back(Tile(defaultColor));
+		int placeX = tileGrid.at(i).size() - 1;
+		std::cout << "Pushed new column\n";
+	}
+	reconstruct();
+}
+
+void Canvas::draw(sf::RenderWindow& window) {
 	
+
+	window.draw(vertexes);
+}
+
+
+void Canvas::update(){
+
+	int sizeY = tileGrid.size();
+	int sizeX = tileGrid.at(0).size();
+
+	for (int i = 0; i < sizeY; i++) {
+		for (int w = 0; w < sizeX; w++) {
+
+			if (tileGrid.at(i).at(w).needsUpdating) {
+				sf::Vertex* tileQuad = &vertexes[(w + (i * tileGrid.at(i).size())) * 4];
+				std::cout << "Got the vertexes at: " << w + (i * tileGrid.at(i).size()) * 4 << std::endl;
+				std::cout << "Took the x value: " << w << " + " << i << " * " << tileGrid.at(i).size() << " all times 4\n";
+
+				sf::Color newColor = tileGrid.at(i).at(w).getColor();
+
+				tileQuad[0].color = newColor;
+				tileQuad[1].color = newColor;
+				tileQuad[2].color = newColor;
+				tileQuad[3].color = newColor;
+
+				tileGrid.at(i).at(w).needsUpdating = false;
+
+			}
+
+			
+
+		}
+	}
+
+
+	
+}
+
+void Canvas::reconstruct(){
+
+	sf::VertexArray newVertexes(sf::Quads);
+
+	for (int i = 0; i < tileGrid.size(); i++) {
+		for (int w = 0; w < tileGrid.at(i).size(); w++) {
+
+			newVertexes.append(sf::Vertex(sf::Vector2f(w * 25, i * 25), tileGrid.at(i).at(w).getColor()));
+			newVertexes.append(sf::Vertex(sf::Vector2f((w + 1) * 25, i * 25), tileGrid.at(i).at(w).getColor()));
+			newVertexes.append(sf::Vertex(sf::Vector2f((w + 1) * 25, (i + 1) * 25), tileGrid.at(i).at(w).getColor()));
+			newVertexes.append(sf::Vertex(sf::Vector2f(w * 25, (i + 1) * 25), tileGrid.at(i).at(w).getColor()));
+
+		}
+	}
+	vertexes = newVertexes;
+	std::cout << "Reconstructed" << std::endl;
+
 }
