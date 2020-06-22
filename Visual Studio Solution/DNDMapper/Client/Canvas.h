@@ -7,6 +7,7 @@
 const float TILESIZE = 25.f;
 const sf::Color defaultColor = sf::Color(55, 55, 55, 255);
 
+
 class Canvas {
 public:
 	Canvas();
@@ -42,9 +43,12 @@ private:
 
 	sf::VertexArray tileVertexes;
 	sf::VertexArray fogVertexes;
+	sf::VertexArray beadVertexes;
 
 	std::vector<sf::Vector2i> updateQueue;
 
 	//Fog Cloud
 	sf::Texture fogCloudTexture;
+
+	
 };

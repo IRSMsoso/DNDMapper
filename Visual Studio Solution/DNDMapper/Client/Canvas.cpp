@@ -8,7 +8,7 @@ Canvas::Canvas(){
 	firstRow.push_back(Tile(defaultColor));
 	tileGrid.push_back(firstRow);
 
-	for (int y = 0; y < 500; y++) {
+	for (int y = 0; y < 50; y++) {
 		addRowToBottom(false);
 		addColumnToRight(false);
 	}
@@ -143,6 +143,7 @@ void Canvas::draw(sf::RenderWindow& window) {
 
 	window.draw(tileVertexes);
 	window.draw(fogVertexes, &fogCloudTexture);
+	window.draw(beadVertexes);
 }
 
 
@@ -196,10 +197,10 @@ void Canvas::reconstruct(){
 	for (int i = 0; i < tileGrid.size(); i++) {
 		for (int w = 0; w < tileGrid.at(i).size(); w++) {
 
-			newVertexes.append(sf::Vertex(sf::Vector2f(w * 25, i * 25), tileGrid.at(i).at(w).getColor()));
-			newVertexes.append(sf::Vertex(sf::Vector2f((w + 1) * 25, i * 25), tileGrid.at(i).at(w).getColor()));
-			newVertexes.append(sf::Vertex(sf::Vector2f((w + 1) * 25, (i + 1) * 25), tileGrid.at(i).at(w).getColor()));
-			newVertexes.append(sf::Vertex(sf::Vector2f(w * 25, (i + 1) * 25), tileGrid.at(i).at(w).getColor()));
+			newVertexes.append(sf::Vertex(sf::Vector2f(w * TILESIZE, i * TILESIZE), tileGrid.at(i).at(w).getColor()));
+			newVertexes.append(sf::Vertex(sf::Vector2f((w + 1) * TILESIZE, i * TILESIZE), tileGrid.at(i).at(w).getColor()));
+			newVertexes.append(sf::Vertex(sf::Vector2f((w + 1) * TILESIZE, (i + 1) * TILESIZE), tileGrid.at(i).at(w).getColor()));
+			newVertexes.append(sf::Vertex(sf::Vector2f(w * TILESIZE, (i + 1) * TILESIZE), tileGrid.at(i).at(w).getColor()));
 
 		}
 	}
@@ -212,10 +213,10 @@ void Canvas::reconstruct(){
 	for (int i = 0; i < tileGrid.size(); i++) {
 		for (int w = 0; w < tileGrid.at(i).size(); w++) {
 
-			sf::Vertex topLeft(sf::Vertex(sf::Vector2f(w * 25, i * 25)));
-			sf::Vertex topRight(sf::Vector2f((w + 1) * 25, i * 25));
-			sf::Vertex bottomRight(sf::Vector2f((w + 1) * 25, (i + 1) * 25));
-			sf::Vertex bottomLeft(sf::Vector2f(w * 25, (i + 1) * 25));
+			sf::Vertex topLeft(sf::Vertex(sf::Vector2f(w * TILESIZE, i * TILESIZE)));
+			sf::Vertex topRight(sf::Vector2f((w + 1) * TILESIZE, i * TILESIZE));
+			sf::Vertex bottomRight(sf::Vector2f((w + 1) * TILESIZE, (i + 1) * TILESIZE));
+			sf::Vertex bottomLeft(sf::Vector2f(w * TILESIZE, (i + 1) * TILESIZE));
 
 
 
@@ -239,6 +240,39 @@ void Canvas::reconstruct(){
 	}
 
 	fogVertexes = newVertexes;
+
+
+
+	newVertexes.clear();
+	newVertexes.setPrimitiveType(sf::Points);
+
+	for (int y = 1; y < tileGrid.size(); y++) {
+		for (int x = 1; x < tileGrid.at(y).size(); x++) {
+
+			sf::Vertex newPoint;
+
+			newPoint.position = sf::Vector2f(x * TILESIZE, y * TILESIZE);
+			
+			sf::Color TL = tileGrid.at(y - 1).at(x - 1).getColor();
+			sf::Color TR = tileGrid.at(y - 1).at(x).getColor();
+			sf::Color BL = tileGrid.at(y).at(x - 1).getColor();
+			sf::Color BR = tileGrid.at(y).at(x).getColor();
+
+
+			float avgR = ((float)TL.r + (float)TR.r + (float)BL.r + (float)BR.r) / 4.f;
+			float avgG = ((float)TL.g + (float)TR.g + (float)BL.g + (float)BR.g) / 4.f;
+			float avgB = ((float)TL.b + (float)TR.b + (float)BL.b + (float)BR.b) / 4.f;
+
+			double rgbcircle = abs(((0.299 * avgR + 0.587 * avgG + 0.114 * avgB) / 255) - 1) * 255;
+
+			newPoint.color = sf::Color(rgbcircle, rgbcircle, rgbcircle, 255);
+
+			newVertexes.append(newPoint);
+
+		}
+	}
+
+	beadVertexes = newVertexes;
 
 
 	std::cout << "Reconstructed" << std::endl;

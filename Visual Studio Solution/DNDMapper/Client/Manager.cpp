@@ -126,9 +126,9 @@ void Manager::mainLoop(){
 				float avgB = ((float)TL.b + (float)TR.b + (float)BL.b + (float)BR.b) / 4.f;
 
 				double rgbcircle = abs(((0.299 * avgR + 0.587 * avgG + 0.114 * avgB) / 255) - 1) * 255;
-				//cornerBeads.setFillColor(sf::Color(rgbcircle, rgbcircle, rgbcircle, 255));
+				cornerBeads.setFillColor(sf::Color(rgbcircle, rgbcircle, rgbcircle, 255));
 
-				//window.draw(cornerBeads);
+				window.draw(cornerBeads);
 			}
 		}
 
