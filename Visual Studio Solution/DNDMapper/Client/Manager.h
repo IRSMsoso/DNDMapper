@@ -14,7 +14,7 @@ namespace MouseAction {
 		fogging,
 		unfogging,
 		colorPicking,
-
+		tokenMoving,
 	};
 }
 
@@ -73,6 +73,8 @@ private:
 	void interpretEvent(sf::Event);
 
 	
+	//Picked up token
+	Token* pickedUpToken;
 
 	//FPS Text
 	sf::Text fpsText;

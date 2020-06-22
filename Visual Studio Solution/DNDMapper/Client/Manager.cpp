@@ -93,7 +93,7 @@ void Manager::mainLoop(){
 		}
 
 
-		//Tool Click Logic
+		//Tool Logic
 		if (mouseAction == MouseAction::painting) {
 			canvas.paintTile(window.mapPixelToCoords(sf::Mouse::getPosition(window)), selectedColor);
 		}
@@ -105,6 +105,9 @@ void Manager::mainLoop(){
 		}
 		else if (mouseAction == MouseAction::unfogging) {
 			canvas.unfogTile(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
+		}
+		else if (mouseAction == MouseAction::tokenMoving) {
+			pickedUpToken->setPosition(window.mapPixelToCoords(sf::Mouse::getPosition(window)) - sf::Vector2f(TILESIZE / 2.f, TILESIZE / 2.f));
 		}
 
 
@@ -217,7 +220,9 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 							canvas.createToken(window.mapPixelToCoords(mouseWindowLocation), selectedColor);
 						}
 						else {
-
+							pickedUpToken = canvas.getClickedToken(window.mapPixelToCoords(mouseWindowLocation));
+							if (pickedUpToken != nullptr)
+								mouseAction = MouseAction::tokenMoving;
 						}
 						break;
 					}
@@ -257,7 +262,7 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 						canvas.eraseToken(window.mapPixelToCoords(mouseWindowLocation));
 					}
 					else {
-
+						
 					}
 					break;
 				}
@@ -287,6 +292,14 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 			case MouseAction::fogging:
 				mouseAction = MouseAction::none;
 				break;
+
+			case MouseAction::tokenMoving:
+				mouseAction = MouseAction::none;
+				if (pickedUpToken != nullptr) {
+
+					pickedUpToken->setPosition(sf::Vector2f(sf::Vector2i(window.mapPixelToCoords(sf::Mouse::getPosition(window)) / TILESIZE)) * TILESIZE);
+					pickedUpToken = nullptr;
+				}
 			}
 			break;
 

@@ -8,7 +8,7 @@ Canvas::Canvas(){
 	firstRow.push_back(Tile(defaultColor));
 	tileGrid.push_back(firstRow);
 
-	for (int y = 0; y < 500; y++) {
+	for (int y = 0; y < 50; y++) {
 		addRowToBottom(false);
 		addColumnToRight(false);
 	}
@@ -115,6 +115,17 @@ bool Canvas::eraseToken(sf::Vector2f worldxy)
 	}
 
 	return false;
+}
+
+Token * Canvas::getClickedToken(sf::Vector2f worldxy)
+{
+	for (int i = tokenList.size() - 1; i >= 0; i--) {
+		if (tokenList.at(i).isClicked(worldxy)) {
+			return &tokenList.at(i);
+		}
+	}
+
+	return nullptr;
 }
 
 bool Canvas::eraseTile(sf::Vector2f worldxy) {

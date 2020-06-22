@@ -23,6 +23,7 @@ public:
 
 	bool createToken(sf::Vector2f, sf::Color);
 	bool eraseToken(sf::Vector2f);
+	Token* getClickedToken(sf::Vector2f);
 
 
 	std::vector<std::vector<Tile>>* getTileGrid();
