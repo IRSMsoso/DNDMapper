@@ -15,14 +15,17 @@ namespace MouseAction {
 		unfogging,
 		colorPicking,
 		tokenMoving,
+		changingName,
 	};
 }
 
 
+const std::string LOWERCASEALPHABET = "abcdefghijklmnopqrstuvwxyz0123456789";
+const std::string UPPERCASEALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ)!@#$%^&*(";
 const int WINDOWX = 1400;
 const int WINDOWY = 800;
 const float MAXZOOM = .5f;
-const float MINZOOM = 3.0f; //1.5
+const float MINZOOM = 1.5f; //1.5
 const float ZOOMSPEED = 0.9f;
 const float BEADRADIUS = 1.0f;
 const float CAMERAMOVESPEED = 200.f;
@@ -74,7 +77,7 @@ private:
 
 	
 	//Picked up token
-	Token* pickedUpToken;
+	Token* selectedToken;
 
 	//FPS Text
 	sf::Text fpsText;

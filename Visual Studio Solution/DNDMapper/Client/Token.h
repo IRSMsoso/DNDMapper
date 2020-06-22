@@ -16,9 +16,13 @@ public:
 	virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
 
 	void setName(std::string newName) { name.setString(newName); }
+	void addNameLetter(char);
+	void removeNameLetter();
 
 private:
 	sf::CircleShape circle;
 	sf::FloatRect hitbox;
 	sf::Text name;
+
+	void updateNameLocation();
 };

@@ -79,17 +79,19 @@ void Manager::mainLoop(){
 		}
 
 		//Camera moving with WASD Logic
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
-			camera.move(0, -CAMERAMOVESPEED * frameTime.asSeconds());
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
-			camera.move(-CAMERAMOVESPEED * frameTime.asSeconds(), 0);
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
-			camera.move(0, CAMERAMOVESPEED * frameTime.asSeconds());
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
-			camera.move(CAMERAMOVESPEED * frameTime.asSeconds(), 0);
+		if (mouseAction != MouseAction::changingName) {
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
+				camera.move(0, -CAMERAMOVESPEED * frameTime.asSeconds());
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
+				camera.move(-CAMERAMOVESPEED * frameTime.asSeconds(), 0);
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
+				camera.move(0, CAMERAMOVESPEED * frameTime.asSeconds());
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
+				camera.move(CAMERAMOVESPEED * frameTime.asSeconds(), 0);
+			}
 		}
 
 
@@ -107,7 +109,7 @@ void Manager::mainLoop(){
 			canvas.unfogTile(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
 		}
 		else if (mouseAction == MouseAction::tokenMoving) {
-			pickedUpToken->setPosition(window.mapPixelToCoords(sf::Mouse::getPosition(window)) - sf::Vector2f(TILESIZE / 2.f, TILESIZE / 2.f));
+			selectedToken->setPosition(window.mapPixelToCoords(sf::Mouse::getPosition(window)) - sf::Vector2f(TILESIZE / 2.f, TILESIZE / 2.f));
 		}
 
 
@@ -220,8 +222,8 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 							canvas.createToken(window.mapPixelToCoords(mouseWindowLocation), selectedColor);
 						}
 						else {
-							pickedUpToken = canvas.getClickedToken(window.mapPixelToCoords(mouseWindowLocation));
-							if (pickedUpToken != nullptr)
+							selectedToken = canvas.getClickedToken(window.mapPixelToCoords(mouseWindowLocation));
+							if (selectedToken != nullptr)
 								mouseAction = MouseAction::tokenMoving;
 						}
 						break;
@@ -249,20 +251,22 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 			switch (mouseAction) {
 			case MouseAction::none:
 				switch (selectedTool) {
-				case ToolType::paintingTool:
+				case ToolType::paintingTool: //Painting tool selected + right click
 					mouseAction = MouseAction::erasing;
 					break;
 
-				case ToolType::fogTool:
+				case ToolType::fogTool: //Fog tool selected + right click
 					mouseAction = MouseAction::unfogging;
 					break;
 
-				case ToolType::tokenTool:
-					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) {
+				case ToolType::tokenTool: //Token tool selected + right click
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) { //Shift Right Click
 						canvas.eraseToken(window.mapPixelToCoords(mouseWindowLocation));
 					}
-					else {
-						
+					else { //Non shift Right Click
+						selectedToken = canvas.getClickedToken(window.mapPixelToCoords(mouseWindowLocation));
+						if(selectedToken != nullptr)
+							mouseAction = MouseAction::changingName;
 					}
 					break;
 				}
@@ -295,10 +299,10 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 
 			case MouseAction::tokenMoving:
 				mouseAction = MouseAction::none;
-				if (pickedUpToken != nullptr) {
+				if (selectedToken != nullptr) {
 
-					pickedUpToken->setPosition(sf::Vector2f(sf::Vector2i(window.mapPixelToCoords(sf::Mouse::getPosition(window)) / TILESIZE)) * TILESIZE);
-					pickedUpToken = nullptr;
+					selectedToken->setPosition(sf::Vector2f(sf::Vector2i(window.mapPixelToCoords(sf::Mouse::getPosition(window)) / TILESIZE)) * TILESIZE);
+					selectedToken = nullptr;
 				}
 			}
 			break;
@@ -319,15 +323,40 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 
 	case sf::Event::KeyPressed:
 
-		switch (pollingEvent.key.code) {
-		case sf::Keyboard::E:
-			if (mouseAction == MouseAction::none)
-				previousAction = mouseAction;
-			mouseAction = MouseAction::colorPicking;
-			colorWheel.setPosition(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
-			break;
+		if (mouseAction == MouseAction::changingName) {
+			
+			if (0 <= pollingEvent.key.code && pollingEvent.key.code <= 35) {
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::RShift)) { //Shift is pressed, add upper case letter.
+					selectedToken->addNameLetter(UPPERCASEALPHABET[pollingEvent.key.code]);
+				}
+				else { //Shift isn't pressed, add lower case letter.
+					selectedToken->addNameLetter(LOWERCASEALPHABET[pollingEvent.key.code]);
+				}
+			}
+			else if (pollingEvent.key.code == sf::Keyboard::Key::Backspace) {
+				selectedToken->removeNameLetter();
+			}
+			else if (pollingEvent.key.code == sf::Keyboard::Key::Space) {
+				selectedToken->addNameLetter(' ');
+			}
+			else if (pollingEvent.key.code == sf::Keyboard::Key::Enter) {
+				selectedToken = nullptr;
+				mouseAction = MouseAction::none;
+			}
 
 		}
+		else {
+			switch (pollingEvent.key.code) {
+			case sf::Keyboard::E:
+				if (mouseAction == MouseAction::none)
+					previousAction = mouseAction;
+				mouseAction = MouseAction::colorPicking;
+				colorWheel.setPosition(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
+				break;
+
+			}
+		}
+
 		break;
 
 
