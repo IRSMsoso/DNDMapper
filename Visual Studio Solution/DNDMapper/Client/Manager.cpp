@@ -69,18 +69,6 @@ void Manager::mainLoop(){
 
 		}
 
-		//Keeping mouse in color wheel.
-		if (mouseAction == MouseAction::colorPicking) {
-			sf::Vector2f wheel = colorWheel.getPosition();
-			sf::Vector2f mouse = window.mapPixelToCoords(sf::Mouse::getPosition(window));
-			sf::Vector2f vectorBetween = wheel - mouse;
-			float distance = sqrt(pow(vectorBetween.x, 2) + pow(vectorBetween.y, 2));
-			sf::Vector2f unitVector = vectorBetween / distance;
-			if (distance > WHEELRADIUS) {
-				sf::Mouse::setPosition(sf::Vector2i(sf::Vector2f(sf::Mouse::getPosition()) + unitVector * (distance - WHEELRADIUS)));
-			}
-		}
-
 
 		//Tool Click Logic
 		if (mouseAction == MouseAction::painting) {
@@ -105,39 +93,6 @@ void Manager::mainLoop(){
 		canvas.update();
 		canvas.draw(window);
 
-		/*
-
-		sf::CircleShape cornerBeads;
-
-		cornerBeads.setRadius(BEADRADIUS);
-		cornerBeads.setOrigin(BEADRADIUS, BEADRADIUS);
-		for (int y = 1; y < canvas.getTileGrid()->size(); y++) {
-			for (int x = 1; x < canvas.getTileGrid()->at(y).size(); x++) {
-				cornerBeads.setScale(zoomFactor, zoomFactor);
-				cornerBeads.setPosition(x * TILESIZE, y * TILESIZE);
-
-				sf::Color TL = canvas.getTileGrid()->at(y - 1).at(x - 1).getColor();
-				sf::Color TR = canvas.getTileGrid()->at(y - 1).at(x).getColor();
-				sf::Color BL = canvas.getTileGrid()->at(y).at(x - 1).getColor();
-				sf::Color BR = canvas.getTileGrid()->at(y).at(x).getColor();
-
-				float avgR = ((float)TL.r + (float)TR.r + (float)BL.r + (float)BR.r) / 4.f;
-				float avgG = ((float)TL.g + (float)TR.g + (float)BL.g + (float)BR.g) / 4.f;
-				float avgB = ((float)TL.b + (float)TR.b + (float)BL.b + (float)BR.b) / 4.f;
-
-				double rgbcircle = abs(((0.299 * avgR + 0.587 * avgG + 0.114 * avgB) / 255) - 1) * 255;
-				cornerBeads.setFillColor(sf::Color(rgbcircle, rgbcircle, rgbcircle, 255));
-
-				window.draw(cornerBeads);
-			}
-		}
-
-		*/
-
-
-		//Drawing the Camera, along with all of the UI nested under it.
-		//window.draw(camera);
-
 		//Update and Draw the UI
 		ui.updateElementScales(zoomFactor);
 		ui.updateElementPositions();
@@ -148,11 +103,12 @@ void Manager::mainLoop(){
 		if(mouseAction == MouseAction::colorPicking)
 			window.draw(colorWheel);
 
-		//std::cout << "Factor: " << zoomFactor << std::endl;
 
 		//FPS Text Drawing
 		window.draw(fpsText);
 
+
+		//DISPLAY
 		window.display();
 	}
 }
