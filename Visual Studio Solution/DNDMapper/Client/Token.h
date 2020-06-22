@@ -4,7 +4,7 @@
 
 class Token: public sf::Drawable{
 public:
-	Token(sf::Color, sf::Vector2f);
+	Token(sf::Color, sf::Vector2f, sf::Font&);
 	~Token();
 
 	void setSize(sf::Vector2i);
@@ -15,7 +15,10 @@ public:
 
 	virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
 
+	void setName(std::string newName) { name.setString(newName); }
+
 private:
 	sf::CircleShape circle;
 	sf::FloatRect hitbox;
+	sf::Text name;
 };

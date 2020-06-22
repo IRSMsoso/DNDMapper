@@ -57,4 +57,7 @@ private:
 	
 	//List of tokens
 	std::vector<Token> tokenList;
+
+	//Font for tokens
+	sf::Font tokenFont;
 };

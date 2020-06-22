@@ -19,6 +19,8 @@ Canvas::Canvas(){
 
 	fogCloudTexture.loadFromFile("FogCloud.png");
 
+	tokenFont.loadFromFile("arial.TTF");
+
 	std::cout << "Canvas setup took " << setupClock.getElapsedTime().asSeconds() << " seconds.\n";
 }
 
@@ -93,7 +95,7 @@ bool Canvas::createToken(sf::Vector2f worldxy, sf::Color newColor){
 
 		if (tileY < tileGrid.size() && tileX < tileGrid.at(tileY).size()) {
 			
-			Token newToken(newColor, sf::Vector2f(tileX * TILESIZE, tileY * TILESIZE));
+			Token newToken(newColor, sf::Vector2f(tileX * TILESIZE, tileY * TILESIZE), tokenFont);
 			tokenList.push_back(newToken);
 
 			std::cout << "Created Token\n";

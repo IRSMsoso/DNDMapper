@@ -1,7 +1,7 @@
 #include "Token.h"
 
 
-Token::Token(sf::Color newColor, sf::Vector2f location){
+Token::Token(sf::Color newColor, sf::Vector2f location, sf::Font& newFont) {
 	circle.setRadius(10);
 	circle.setFillColor(newColor);
 
@@ -20,6 +20,12 @@ Token::Token(sf::Color newColor, sf::Vector2f location){
 	setPosition(location);
 	setSize(sf::Vector2i(1, 1));
 
+	
+	name.setCharacterSize(20);
+	name.setFont(newFont);
+	name.setFillColor(sf::Color::White);
+	name.setString("Test");
+
 	std::cout << "Token created at " << location.x << ", " << location.y << std::endl;
 }
 
@@ -36,6 +42,7 @@ void Token::setSize(sf::Vector2i newSize){
 
 void Token::setPosition(sf::Vector2f newLocation){
 	circle.setPosition(newLocation + sf::Vector2f(2.5, 2.5));
+	name.setPosition(newLocation - sf::Vector2f(0, 20));
 
 	hitbox.left = newLocation.x;
 	hitbox.top = newLocation.y;
@@ -50,5 +57,6 @@ bool Token::isClicked(sf::Vector2f worldxy)
 void Token::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 
 	target.draw(circle);
+	target.draw(name);
 
 }

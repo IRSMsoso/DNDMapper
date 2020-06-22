@@ -9,6 +9,8 @@ public:
 
 	virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
 
+
+
 private:
 	sf::CircleShape tokenToolButton;
 };
