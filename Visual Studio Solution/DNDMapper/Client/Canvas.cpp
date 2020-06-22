@@ -8,7 +8,7 @@ Canvas::Canvas(){
 	firstRow.push_back(Tile(defaultColor));
 	tileGrid.push_back(firstRow);
 
-	for (int y = 0; y < 50; y++) {
+	for (int y = 0; y < 500; y++) {
 		addRowToBottom(false);
 		addColumnToRight(false);
 	}

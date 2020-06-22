@@ -21,10 +21,11 @@ namespace MouseAction {
 
 const int WINDOWX = 1400;
 const int WINDOWY = 800;
-const float MAXZOOM = .5;
-const float MINZOOM = 3.0; //1.5
-const float ZOOMSPEED = 0.9;
-const float BEADRADIUS = 1.0;
+const float MAXZOOM = .5f;
+const float MINZOOM = 3.0f; //1.5
+const float ZOOMSPEED = 0.9f;
+const float BEADRADIUS = 1.0f;
+const float CAMERAMOVESPEED = 200.f;
 
 class Manager{
 public:
@@ -76,4 +77,5 @@ private:
 	//FPS Text
 	sf::Text fpsText;
 	sf::Font algerFont;
+
 };

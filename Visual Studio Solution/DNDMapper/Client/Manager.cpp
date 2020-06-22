@@ -19,8 +19,8 @@ Manager::Manager(sf::ContextSettings settings): window(sf::VideoMode(WINDOWX, WI
 
 	selectedTool = ToolType::paintingTool;
 
-	mouseAction == MouseAction::none;
-	previousAction == MouseAction::none;
+	mouseAction = MouseAction::none;
+	previousAction = MouseAction::none;
   
 	selectedColor = sf::Color::White;
 	
@@ -76,6 +76,20 @@ void Manager::mainLoop(){
 			sf::Vector2f moveVector = panLockLoc - currentMouseLoc;
 			camera.move(moveVector.x, moveVector.y);
 
+		}
+
+		//Camera moving with WASD Logic
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
+			camera.move(0, -CAMERAMOVESPEED * frameTime.asSeconds());
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
+			camera.move(-CAMERAMOVESPEED * frameTime.asSeconds(), 0);
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
+			camera.move(0, CAMERAMOVESPEED * frameTime.asSeconds());
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
+			camera.move(CAMERAMOVESPEED * frameTime.asSeconds(), 0);
 		}
 
 
@@ -299,6 +313,7 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 			mouseAction = MouseAction::colorPicking;
 			colorWheel.setPosition(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
 			break;
+
 		}
 		break;
 
