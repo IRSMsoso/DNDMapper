@@ -43,6 +43,8 @@ void Manager::mainLoop(){
 	//FPS
 	sf::Clock fpsClock;
 
+	//Testing Token Threshhold.
+	//int threshhold = 0;
 
 	//LOOP
 	while (window.isOpen()) {
@@ -53,13 +55,20 @@ void Manager::mainLoop(){
 		float fps = 1.f / frameTime.asSeconds();
 		fpsText.setString(std::to_string(fps));
 
+		/*
+		//Testing Token Threshhold.
+		if (fps > 80) {
+			canvas.createToken(sf::Vector2f(0, 0), sf::Color::White);
+			threshhold += 1;
+			std::cout << threshhold << std::endl;
+		}
+		*/
 
 		//Interpret each event in queue from main thread.
 		sf::Event pollingEvent;
 		while (window.pollEvent(pollingEvent)) {
 			interpretEvent(pollingEvent);
 		}
-
 
 		//Panning Logic
 		if (isPanning) {
@@ -188,6 +197,15 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 					case ToolType::fogTool:
 						mouseAction = MouseAction::fogging;
 						break;
+
+					case ToolType::tokenTool:
+						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) {
+							canvas.createToken(window.mapPixelToCoords(mouseWindowLocation), selectedColor);
+						}
+						else {
+
+						}
+						break;
 					}
 				}
 			}
@@ -218,6 +236,15 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 
 				case ToolType::fogTool:
 					mouseAction = MouseAction::unfogging;
+					break;
+
+				case ToolType::tokenTool:
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) {
+						canvas.eraseToken(window.mapPixelToCoords(mouseWindowLocation));
+					}
+					else {
+
+					}
 					break;
 				}
 				break;

@@ -2,14 +2,25 @@
 
 
 Token::Token(sf::Color newColor, sf::Vector2f location){
-	circle.setRadius(12.5);
+	circle.setRadius(10);
 	circle.setFillColor(newColor);
-	circle.setOutlineColor(sf::Color::White);
-	circle.setOutlineThickness(1);
 
-	hitbox = sf::FloatRect(location, sf::Vector2f(25, 25));
+	if (newColor.r * 0.299 + newColor.g * 0.587 + newColor.b * 0.114 > 186) {
+		circle.setOutlineColor(sf::Color::Black);
+		circle.setOutlineThickness(2);
+	}
+	else {
+		circle.setOutlineColor(sf::Color::White);
+		circle.setOutlineThickness(1);
+	}
+
+	
 
 
+	setPosition(location);
+	setSize(sf::Vector2i(1, 1));
+
+	std::cout << "Token created at " << location.x << ", " << location.y << std::endl;
 }
 
 Token::~Token(){
@@ -24,8 +35,20 @@ void Token::setSize(sf::Vector2i newSize){
 }
 
 void Token::setPosition(sf::Vector2f newLocation){
-	circle.setPosition(newLocation);
+	circle.setPosition(newLocation + sf::Vector2f(2.5, 2.5));
 
 	hitbox.left = newLocation.x;
 	hitbox.top = newLocation.y;
+}
+
+bool Token::isClicked(sf::Vector2f worldxy)
+{
+
+	return hitbox.contains(worldxy);
+}
+
+void Token::draw(sf::RenderTarget& target, sf::RenderStates states) const {
+
+	target.draw(circle);
+
 }

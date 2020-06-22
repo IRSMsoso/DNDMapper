@@ -27,13 +27,11 @@ Canvas::~Canvas(){
 }
 
 //Same call as other paintTile function
-bool Canvas::paintTile(float worldx, float worldy, sf::Color newColor)
-{
+bool Canvas::paintTile(float worldx, float worldy, sf::Color newColor) {
 	return paintTile(sf::Vector2f(worldx, worldy), newColor);
 }
 
-bool Canvas::paintTile(sf::Vector2f worldxy, sf::Color newColor)
-{
+bool Canvas::paintTile(sf::Vector2f worldxy, sf::Color newColor) {
 	if (worldxy.x > 0 && worldxy.y > 0) {
 		int tileX = static_cast<int>(worldxy.x / TILESIZE);
 		int tileY = static_cast<int>(worldxy.y / TILESIZE);
@@ -47,8 +45,7 @@ bool Canvas::paintTile(sf::Vector2f worldxy, sf::Color newColor)
 	return false;
 }
 
-bool Canvas::fogTile(sf::Vector2f worldxy)
-{
+bool Canvas::fogTile(sf::Vector2f worldxy) {
 	if (worldxy.x > 0 && worldxy.y > 0) {
 		int tileX = static_cast<int>(worldxy.x / TILESIZE);
 		int tileY = static_cast<int>(worldxy.y / TILESIZE);
@@ -62,8 +59,7 @@ bool Canvas::fogTile(sf::Vector2f worldxy)
 	return false;
 }
 
-bool Canvas::unfogTile(sf::Vector2f worldxy)
-{
+bool Canvas::unfogTile(sf::Vector2f worldxy) {
 	if (worldxy.x > 0 && worldxy.y > 0) {
 		int tileX = static_cast<int>(worldxy.x / TILESIZE);
 		int tileY = static_cast<int>(worldxy.y / TILESIZE);
@@ -77,8 +73,7 @@ bool Canvas::unfogTile(sf::Vector2f worldxy)
 	return false;
 }
 
-bool Canvas::isFogged(sf::Vector2i vectorPos) 
-{
+bool Canvas::isFogged(sf::Vector2i vectorPos) {
 	unsigned int posX = static_cast<int>(vectorPos.x);
 	unsigned int posY = static_cast<int>(vectorPos.y);
 
@@ -90,8 +85,39 @@ bool Canvas::isFogged(sf::Vector2i vectorPos)
 	return false;
 }
 
-bool Canvas::eraseTile(sf::Vector2f worldxy)
+bool Canvas::createToken(sf::Vector2f worldxy, sf::Color newColor){
+
+	if (worldxy.x >= 0 && worldxy.y >= 0) {
+		int tileX = static_cast<int>(worldxy.x / TILESIZE);
+		int tileY = static_cast<int>(worldxy.y / TILESIZE);
+
+		if (tileY < tileGrid.size() && tileX < tileGrid.at(tileY).size()) {
+			
+			Token newToken(newColor, sf::Vector2f(tileX * TILESIZE, tileY * TILESIZE));
+			tokenList.push_back(newToken);
+
+			std::cout << "Created Token\n";
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool Canvas::eraseToken(sf::Vector2f worldxy)
 {
+
+	for (int i = tokenList.size() - 1; i >= 0; i--) {
+		if (tokenList.at(i).isClicked(worldxy)) {
+			tokenList.erase(tokenList.begin() + i);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool Canvas::eraseTile(sf::Vector2f worldxy) {
 	return paintTile(worldxy, defaultColor);
 }
 
@@ -144,6 +170,13 @@ void Canvas::draw(sf::RenderWindow& window) {
 	window.draw(tileVertexes);
 	window.draw(fogVertexes, &fogCloudTexture);
 	window.draw(beadVertexes);
+
+	//int numDrawn = 0;
+	for (int i = 0; i < tokenList.size(); i++) {
+		window.draw(tokenList.at(i));
+		//numDrawn += 1;
+	}
+	//std::cout << numDrawn << " tokens drawn\n";
 }
 
 

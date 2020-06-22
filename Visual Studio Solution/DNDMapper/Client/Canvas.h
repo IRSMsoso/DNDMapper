@@ -21,6 +21,9 @@ public:
 	bool unfogTile(sf::Vector2f);
 	bool isFogged(sf::Vector2i);
 
+	bool createToken(sf::Vector2f, sf::Color);
+	bool eraseToken(sf::Vector2f);
+
 
 	std::vector<std::vector<Tile>>* getTileGrid();
 
@@ -51,4 +54,6 @@ private:
 	sf::Texture fogCloudTexture;
 
 	
+	//List of tokens
+	std::vector<Token> tokenList;
 };
