@@ -15,14 +15,24 @@ public:
 
 	virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
 
-	void setName(std::string newName) { name.setString(newName); }
+	void setName(std::string newName) { name = newName; updateName(); }
 	void addNameLetter(char);
 	void removeNameLetter();
+	void setIsEditing(bool);
+
+	void update();
 
 private:
 	sf::CircleShape circle;
 	sf::FloatRect hitbox;
-	sf::Text name;
+	std::string name;
+	sf::Text nameText;
 
+	bool beingEdited;
+	bool cursorVisible;
+
+	void updateName();
 	void updateNameLocation();
+
+	sf::Clock cursorBlink;
 };

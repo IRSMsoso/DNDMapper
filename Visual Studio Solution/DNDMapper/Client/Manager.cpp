@@ -78,6 +78,11 @@ void Manager::mainLoop(){
 
 		}
 
+		//Update the selected token (Mainly for blinking cursor logic).
+		if (mouseAction == MouseAction::changingName && selectedToken != nullptr) {
+			selectedToken->update();
+		}
+
 		//Camera moving with WASD Logic
 		if (mouseAction != MouseAction::changingName) {
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
@@ -233,6 +238,7 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 			break;
 
 			case MouseAction::colorPicking:
+			{
 				std::cout << "Picked Color\n";
 				sf::Texture screenshotTexture;
 				screenshotTexture.create(window.getSize().x, window.getSize().y);
@@ -241,6 +247,13 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 				sf::Vector2i mouseLoc = sf::Mouse::getPosition(window);
 				selectedColor = screenshot.getPixel(mouseLoc.x, mouseLoc.y);
 
+				mouseAction = MouseAction::none;
+				break;
+			}
+
+			case MouseAction::changingName:
+				selectedToken->setIsEditing(false);
+				selectedToken = nullptr;
 				mouseAction = MouseAction::none;
 				break;
 			}
@@ -265,7 +278,8 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 					}
 					else { //Non shift Right Click
 						selectedToken = canvas.getClickedToken(window.mapPixelToCoords(mouseWindowLocation));
-						if(selectedToken != nullptr)
+						if (selectedToken != nullptr)
+							selectedToken->setIsEditing(true);
 							mouseAction = MouseAction::changingName;
 					}
 					break;
@@ -340,6 +354,7 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 				selectedToken->addNameLetter(' ');
 			}
 			else if (pollingEvent.key.code == sf::Keyboard::Key::Enter) {
+				selectedToken->setIsEditing(false);
 				selectedToken = nullptr;
 				mouseAction = MouseAction::none;
 			}

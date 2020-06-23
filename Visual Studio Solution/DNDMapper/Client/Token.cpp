@@ -21,12 +21,14 @@ Token::Token(sf::Color newColor, sf::Vector2f location, sf::Font& newFont) {
 	setPosition(location);
 	setSize(sf::Vector2i(1, 1));
 
+	beingEdited = false;
 	
-	name.setCharacterSize(20);
-	name.setFont(newFont);
-	name.setFillColor(sf::Color::White);
-	name.setString("Test");
+	nameText.setCharacterSize(20);
+	nameText.setFont(newFont);
+	nameText.setFillColor(sf::Color::White);
+	name = "Test";
 
+	updateName();
 	updateNameLocation();
 
 	std::cout << "Token created at " << location.x << ", " << location.y << std::endl;
@@ -61,25 +63,83 @@ bool Token::isClicked(sf::Vector2f worldxy)
 void Token::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 
 	target.draw(circle);
-	target.draw(name);
+	target.draw(nameText);
 
 }
 
 void Token::addNameLetter(char c){
-	name.setString(name.getString() + c);
+
+	if (beingEdited) {
+		std::string newString = name;
+		newString.pop_back();
+		name = newString;
+	}
+
+	name += c;
+
+	if (beingEdited)
+		name += '|';
+
+	updateName();
 	updateNameLocation();
 }
 
 void Token::removeNameLetter(){
-	std::string newString = name.getString();
-	newString.pop_back();
-	name.setString(newString);
+
+	if (name.size() > 1) {
+		std::string newString = name;
+		newString.pop_back();
+		newString.pop_back();
+		newString.push_back('|');
+
+		name = newString;
+	}
+
+	updateName();
 	updateNameLocation();
 }
 
+void Token::setIsEditing(bool newBeingEdited){
+	beingEdited = newBeingEdited;
+
+	if (beingEdited) {
+		name += '|';
+	}
+	else {
+		std::string newString = name;
+		newString.pop_back();
+		name = newString;
+	}
+
+	updateName();
+	updateNameLocation();
+}
+
+void Token::update(){
+	if (cursorBlink.getElapsedTime() > sf::seconds(1)) {
+		cursorBlink.restart();
+		cursorVisible = !cursorVisible;
+		updateName();
+	}
+}
+
+void Token::updateName(){
+	if ((!cursorVisible) && beingEdited) {
+		std::cout << "Yes\n";
+		std::string newName = name;
+		if (newName.back() == '|') {
+			newName.pop_back();
+			nameText.setString(newName);
+		}
+	}
+	else {
+		nameText.setString(name);
+	}
+}
+
 void Token::updateNameLocation(){
-	sf::FloatRect bounds = name.getGlobalBounds();
+	sf::FloatRect bounds = nameText.getGlobalBounds();
 	std::cout << "Bounds: " << bounds.left << ", " << bounds.top << ", " << bounds.width << ", " << bounds.height << std::endl;
-	name.setOrigin(bounds.width / 2.f, bounds.height);
-	name.setPosition(circle.getPosition() + sf::Vector2f(0, -20));
+	nameText.setOrigin(bounds.width / 2.f, nameText.getCharacterSize());
+	nameText.setPosition(circle.getPosition() + sf::Vector2f(0, -20));
 }
