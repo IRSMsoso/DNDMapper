@@ -278,9 +278,10 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 					}
 					else { //Non shift Right Click
 						selectedToken = canvas.getClickedToken(window.mapPixelToCoords(mouseWindowLocation));
-						if (selectedToken != nullptr)
+						if (selectedToken != nullptr) {
 							selectedToken->setIsEditing(true);
 							mouseAction = MouseAction::changingName;
+						}
 					}
 					break;
 				}
@@ -339,12 +340,18 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 
 		if (mouseAction == MouseAction::changingName) {
 			
-			if (0 <= pollingEvent.key.code && pollingEvent.key.code <= 35) {
+			int newKey = -1;
+			std::cout << "Size: " << (sizeof(ALLOWEDKEYS) / sizeof(*ALLOWEDKEYS)) << std::endl;
+			for (int i = 0; i < (sizeof(ALLOWEDKEYS) / sizeof(*ALLOWEDKEYS)); i++) {
+				if (ALLOWEDKEYS[i] == pollingEvent.key.code)
+					newKey = i;
+			}
+			if (newKey != -1) {
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::RShift)) { //Shift is pressed, add upper case letter.
-					selectedToken->addNameLetter(UPPERCASEALPHABET[pollingEvent.key.code]);
+					selectedToken->addNameLetter(UPPERCASEALPHABET[newKey]);
 				}
 				else { //Shift isn't pressed, add lower case letter.
-					selectedToken->addNameLetter(LOWERCASEALPHABET[pollingEvent.key.code]);
+					selectedToken->addNameLetter(LOWERCASEALPHABET[newKey]);
 				}
 			}
 			else if (pollingEvent.key.code == sf::Keyboard::Key::Backspace) {

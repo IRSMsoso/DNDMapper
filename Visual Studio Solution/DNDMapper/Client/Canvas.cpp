@@ -126,7 +126,7 @@ Token * Canvas::getClickedToken(sf::Vector2f worldxy)
 			return &tokenList.at(i);
 		}
 	}
-
+	std::cout << "Couldn't find token\n";
 	return nullptr;
 }
 
