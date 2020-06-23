@@ -357,9 +357,6 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 			else if (pollingEvent.key.code == sf::Keyboard::Key::Backspace) {
 				selectedToken->removeNameLetter();
 			}
-			else if (pollingEvent.key.code == sf::Keyboard::Key::Space) {
-				selectedToken->addNameLetter(' ');
-			}
 			else if (pollingEvent.key.code == sf::Keyboard::Key::Enter) {
 				selectedToken->setIsEditing(false);
 				selectedToken = nullptr;

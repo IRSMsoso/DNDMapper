@@ -20,9 +20,9 @@ namespace MouseAction {
 }
 
 
-const std::string LOWERCASEALPHABET = "abcdefghijklmnopqrstuvwxyz0123456789";
-const std::string UPPERCASEALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ)!@#$%^&*(";
-const int ALLOWEDKEYS[] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35};
+const std::string LOWERCASEALPHABET = "abcdefghijklmnopqrstuvwxyz0123456789[];,.'/\\`=- ";
+const std::string UPPERCASEALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ)!@#$%^&*({}:<>\"?|~+_ ";
+const int ALLOWEDKEYS[] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,46,47,48,49,50,51,52,53,54,55,56,57};
 const int WINDOWX = 1400;
 const int WINDOWY = 800;
 const float MAXZOOM = .5f;
