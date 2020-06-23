@@ -2,14 +2,15 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
-class Token: public sf::Drawable{
+class Token: public sf::Drawable, public sf::Transformable {
 public:
 	Token(sf::Color, sf::Vector2f, sf::Font&);
 	~Token();
 
 	void setSize(sf::Vector2i);
+	sf::Vector2i getSize() { return size; }
 
-	void setPosition(sf::Vector2f);
+	void setPosition(const sf::Vector2f&);
 
 	bool isClicked(sf::Vector2f);
 
@@ -24,7 +25,7 @@ public:
 
 private:
 	sf::CircleShape circle;
-	sf::FloatRect hitbox;
+	sf::Vector2i size;
 	std::string name;
 	sf::Text nameText;
 

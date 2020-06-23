@@ -83,6 +83,7 @@ void Manager::mainLoop(){
 			selectedToken->update();
 		}
 
+
 		//Camera moving with WASD Logic
 		if (mouseAction != MouseAction::changingName) {
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
@@ -100,7 +101,7 @@ void Manager::mainLoop(){
 		}
 
 
-		//Tool Logic
+		//Mouse Action Logic
 		if (mouseAction == MouseAction::painting) {
 			canvas.paintTile(window.mapPixelToCoords(sf::Mouse::getPosition(window)), selectedColor);
 		}
@@ -114,7 +115,16 @@ void Manager::mainLoop(){
 			canvas.unfogTile(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
 		}
 		else if (mouseAction == MouseAction::tokenMoving) {
-			selectedToken->setPosition(window.mapPixelToCoords(sf::Mouse::getPosition(window)) - sf::Vector2f(TILESIZE / 2.f, TILESIZE / 2.f));
+			selectedToken->setPosition(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
+		}
+		else if (mouseAction == MouseAction::tokenResizing) {
+			sf::Vector2f currentMouse = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+
+			sf::Vector2i newSize = originalSize + sf::Vector2i((currentMouse - mouseOrigin) / TILESIZE);
+			if (newSize.x > 0 && newSize.y > 0)
+				selectedToken->setSize(newSize);
+
+
 		}
 
 
@@ -224,7 +234,16 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 
 					case ToolType::tokenTool:
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) {
-							canvas.createToken(window.mapPixelToCoords(mouseWindowLocation), selectedColor);
+							selectedToken = canvas.getClickedToken(window.mapPixelToCoords(mouseWindowLocation));
+							if (selectedToken == nullptr) {
+								canvas.createToken(window.mapPixelToCoords(mouseWindowLocation), selectedColor);
+							}
+							else {
+								mouseAction = MouseAction::tokenResizing;
+								mouseOrigin = window.mapPixelToCoords(mouseWindowLocation);
+								originalSize = selectedToken->getSize();
+							}
+
 						}
 						else {
 							selectedToken = canvas.getClickedToken(window.mapPixelToCoords(mouseWindowLocation));
@@ -316,9 +335,13 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 				mouseAction = MouseAction::none;
 				if (selectedToken != nullptr) {
 
-					selectedToken->setPosition(sf::Vector2f(sf::Vector2i(window.mapPixelToCoords(sf::Mouse::getPosition(window)) / TILESIZE)) * TILESIZE);
+					selectedToken->setPosition((sf::Vector2f(sf::Vector2i(window.mapPixelToCoords(sf::Mouse::getPosition(window)) / TILESIZE)) * TILESIZE) + sf::Vector2f(TILESIZE / 2.f, TILESIZE / 2.f));
 					selectedToken = nullptr;
 				}
+
+			case MouseAction::tokenResizing:
+				selectedToken = nullptr;
+				mouseAction = MouseAction::none;
 			}
 			break;
 

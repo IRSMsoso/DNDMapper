@@ -15,6 +15,7 @@ namespace MouseAction {
 		unfogging,
 		colorPicking,
 		tokenMoving,
+		tokenResizing,
 		changingName,
 	};
 }
@@ -77,8 +78,12 @@ private:
 	void interpretEvent(sf::Event);
 
 	
-	//Picked up token
+	//Selected up token
 	Token* selectedToken;
+
+	//Resizing original mouse location.
+	sf::Vector2f mouseOrigin;
+	sf::Vector2i originalSize;
 
 	//FPS Text
 	sf::Text fpsText;

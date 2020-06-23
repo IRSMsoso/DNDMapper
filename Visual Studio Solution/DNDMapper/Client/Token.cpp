@@ -6,13 +6,14 @@ Token::Token(sf::Color newColor, sf::Vector2f location, sf::Font& newFont) {
 	circle.setOrigin(10, 10);
 	circle.setFillColor(newColor);
 
+
 	if (newColor.r * 0.299 + newColor.g * 0.587 + newColor.b * 0.114 > 186) {
 		circle.setOutlineColor(sf::Color::Black);
-		circle.setOutlineThickness(2);
+		circle.setOutlineThickness(1);
 	}
 	else {
 		circle.setOutlineColor(sf::Color::White);
-		circle.setOutlineThickness(1);
+		circle.setOutlineThickness(.5);
 	}
 
 	
@@ -39,25 +40,24 @@ Token::~Token(){
 }
 
 void Token::setSize(sf::Vector2i newSize){
-	hitbox.width = 25 * newSize.x;
-	hitbox.height = 25 * newSize.y;
+	size = newSize;
 
-	circle.setScale(newSize.x, newSize.y);
-}
-
-void Token::setPosition(sf::Vector2f newLocation){
-	circle.setPosition(newLocation + sf::Vector2f(12.5, 12.5));
+	circle.setScale(size.x, size.y);
 
 	updateNameLocation();
+}
 
-	hitbox.left = newLocation.x;
-	hitbox.top = newLocation.y;
+void Token::setPosition(const sf::Vector2f& newLocation){
+	Transformable::setPosition(newLocation);
+
+	circle.setPosition(getPosition());
+
+	updateNameLocation();
 }
 
 bool Token::isClicked(sf::Vector2f worldxy)
 {
-
-	return hitbox.contains(worldxy);
+	return circle.getGlobalBounds().contains(worldxy);
 }
 
 void Token::draw(sf::RenderTarget& target, sf::RenderStates states) const {
@@ -141,5 +141,5 @@ void Token::updateNameLocation(){
 	sf::FloatRect bounds = nameText.getGlobalBounds();
 	std::cout << "Bounds: " << bounds.left << ", " << bounds.top << ", " << bounds.width << ", " << bounds.height << std::endl;
 	nameText.setOrigin(bounds.width / 2.f, nameText.getCharacterSize());
-	nameText.setPosition(circle.getPosition() + sf::Vector2f(0, -20));
+	nameText.setPosition(sf::Vector2f(circle.getPosition().x, circle.getGlobalBounds().top - 15));
 }

@@ -95,7 +95,7 @@ bool Canvas::createToken(sf::Vector2f worldxy, sf::Color newColor){
 
 		if (tileY < tileGrid.size() && tileX < tileGrid.at(tileY).size()) {
 			
-			Token newToken(newColor, sf::Vector2f(tileX * TILESIZE, tileY * TILESIZE), tokenFont);
+			Token newToken(newColor, sf::Vector2f(tileX * TILESIZE, tileY * TILESIZE) + sf::Vector2f(TILESIZE / 2.f, TILESIZE / 2.f), tokenFont);
 			tokenList.push_back(newToken);
 
 			std::cout << "Created Token\n";
