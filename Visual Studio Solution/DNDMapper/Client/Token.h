@@ -23,6 +23,8 @@ public:
 
 	void update();
 
+	void snap();
+
 private:
 	sf::CircleShape circle;
 	sf::Vector2i size;

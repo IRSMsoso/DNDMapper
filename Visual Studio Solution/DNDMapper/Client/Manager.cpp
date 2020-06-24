@@ -335,13 +335,16 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 				mouseAction = MouseAction::none;
 				if (selectedToken != nullptr) {
 
-					selectedToken->setPosition((sf::Vector2f(sf::Vector2i(window.mapPixelToCoords(sf::Mouse::getPosition(window)) / TILESIZE)) * TILESIZE) + sf::Vector2f(TILESIZE / 2.f, TILESIZE / 2.f));
+					selectedToken->snap();
 					selectedToken = nullptr;
 				}
+				break;
 
 			case MouseAction::tokenResizing:
+				selectedToken->snap();
 				selectedToken = nullptr;
 				mouseAction = MouseAction::none;
+				break;
 			}
 			break;
 

@@ -123,6 +123,29 @@ void Token::update(){
 	}
 }
 
+void Token::snap(){
+	float positionx = getPosition().x;
+	float positiony = getPosition().y;
+	float newPositionx;
+	float newPositiony;
+
+	if (size.x % 2 == 1) {
+		newPositionx = ((float)((int)(positionx / 25.f)) * 25.f + 12.5f);
+	}
+	else {
+		newPositionx = ((float)((int)((positionx - 12.5f) / 25.f)) * 25.f + 25.f);
+	}
+
+	if (size.y % 2 == 1) {
+		newPositiony = ((float)((int)(positiony / 25.f)) * 25.f + 12.5f);
+	}
+	else {
+		newPositiony = ((float)((int)((positiony - 12.5f) / 25.f)) * 25.f + 25.f);
+	}
+
+	setPosition(sf::Vector2f(newPositionx, newPositiony));
+}
+
 void Token::updateName(){
 	if ((!cursorVisible) && beingEdited) {
 		std::cout << "Yes\n";
