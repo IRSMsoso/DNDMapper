@@ -19,12 +19,18 @@ Manager::Manager(sf::ContextSettings settings): window(sf::VideoMode(WINDOWX, WI
 
 	selectedTool = ToolType::paintingTool;
 
-	mouseAction == MouseAction::none;
-	previousAction == MouseAction::none;
+	mouseAction = MouseAction::none;
+	previousAction = MouseAction::none;
   
 	selectedColor = sf::Color::White;
-	fogCloudTexture.loadFromFile("FogCloud.png");
+	
   
+	fpsText.setFillColor(sf::Color::Blue);
+	algerFont.loadFromFile("ALGER.TTF");
+	fpsText.setFont(algerFont);
+
+
+	//window.setFramerateLimit(60);
 }
 
 Manager::~Manager(){
@@ -34,14 +40,35 @@ Manager::~Manager(){
 //The main event loop of the Manager object.
 void Manager::mainLoop(){
 
+	//FPS
+	sf::Clock fpsClock;
+
+	//Testing Token Threshhold.
+	//int threshhold = 0;
+
+	//LOOP
 	while (window.isOpen()) {
+
+
+		//FPS
+		sf::Time frameTime = fpsClock.restart();
+		float fps = 1.f / frameTime.asSeconds();
+		fpsText.setString(std::to_string(fps));
+
+		/*
+		//Testing Token Threshhold.
+		if (fps > 80) {
+			canvas.createToken(sf::Vector2f(0, 0), sf::Color::White);
+			threshhold += 1;
+			std::cout << threshhold << std::endl;
+		}
+		*/
 
 		//Interpret each event in queue from main thread.
 		sf::Event pollingEvent;
 		while (window.pollEvent(pollingEvent)) {
 			interpretEvent(pollingEvent);
 		}
-
 
 		//Panning Logic
 		if (isPanning) {
@@ -51,20 +78,30 @@ void Manager::mainLoop(){
 
 		}
 
-		//Keeping mouse in color wheel.
-		if (mouseAction == MouseAction::colorPicking) {
-			sf::Vector2f wheel = colorWheel.getPosition();
-			sf::Vector2f mouse = window.mapPixelToCoords(sf::Mouse::getPosition(window));
-			sf::Vector2f vectorBetween = wheel - mouse;
-			float distance = sqrt(pow(vectorBetween.x, 2) + pow(vectorBetween.y, 2));
-			sf::Vector2f unitVector = vectorBetween / distance;
-			if (distance > WHEELRADIUS) {
-				sf::Mouse::setPosition(sf::Vector2i(sf::Vector2f(sf::Mouse::getPosition()) + unitVector * (distance - WHEELRADIUS)));
+		//Update the selected token (Mainly for blinking cursor logic).
+		if (mouseAction == MouseAction::changingName && selectedToken != nullptr) {
+			selectedToken->update();
+		}
+
+
+		//Camera moving with WASD Logic
+		if (mouseAction != MouseAction::changingName) {
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
+				camera.move(0, -CAMERAMOVESPEED * frameTime.asSeconds());
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
+				camera.move(-CAMERAMOVESPEED * frameTime.asSeconds(), 0);
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
+				camera.move(0, CAMERAMOVESPEED * frameTime.asSeconds());
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
+				camera.move(CAMERAMOVESPEED * frameTime.asSeconds(), 0);
 			}
 		}
 
 
-		//Tool Click Logic
+		//Mouse Action Logic
 		if (mouseAction == MouseAction::painting) {
 			canvas.paintTile(window.mapPixelToCoords(sf::Mouse::getPosition(window)), selectedColor);
 		}
@@ -77,6 +114,18 @@ void Manager::mainLoop(){
 		else if (mouseAction == MouseAction::unfogging) {
 			canvas.unfogTile(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
 		}
+		else if (mouseAction == MouseAction::tokenMoving) {
+			selectedToken->setPosition(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
+		}
+		else if (mouseAction == MouseAction::tokenResizing) {
+			sf::Vector2f currentMouse = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+
+			sf::Vector2i newSize = originalSize + sf::Vector2i((currentMouse - mouseOrigin) / TILESIZE);
+			if (newSize.x > 0 && newSize.y > 0)
+				selectedToken->setSize(newSize);
+
+
+		}
 
 
 		window.setView(camera);
@@ -84,51 +133,8 @@ void Manager::mainLoop(){
 
 
 		//Drawing Tiles
-		sf::RectangleShape tileBrush(sf::Vector2f(TILESIZE, TILESIZE));
-		for (int y = 0; y < canvas.getTileGrid()->size(); y++) {
-			for (int x = 0; x < canvas.getTileGrid()->at(y).size(); x++) {
-				tileBrush.setPosition(x * TILESIZE, y * TILESIZE);
-				tileBrush.setFillColor(canvas.getTileGrid()->at(y).at(x).getColor());
-				window.draw(tileBrush);
-				if (canvas.isFogged(sf::Vector2i(x, y))) {
-					tileBrush.setFillColor(sf::Color::White); //Prevents the fog texture from being too dark on dark tiles.
-					tileBrush.setPosition(x * TILESIZE, y * TILESIZE);
-					tileBrush.setTexture(&fogCloudTexture);
-					window.draw(tileBrush);
-					tileBrush.setTexture(NULL);
-
-				}
-			}
-		}
-
-		sf::CircleShape cornerBeads;
-
-		cornerBeads.setRadius(BEADRADIUS);
-		cornerBeads.setOrigin(BEADRADIUS, BEADRADIUS);
-		for (int y = 1; y < canvas.getTileGrid()->size(); y++) {
-			for (int x = 1; x < canvas.getTileGrid()->at(y).size(); x++) {
-				cornerBeads.setScale(zoomFactor, zoomFactor);
-				cornerBeads.setPosition(x * TILESIZE, y * TILESIZE);
-
-				sf::Color TL = canvas.getTileGrid()->at(y - 1).at(x - 1).getColor();
-				sf::Color TR = canvas.getTileGrid()->at(y - 1).at(x).getColor();
-				sf::Color BL = canvas.getTileGrid()->at(y).at(x - 1).getColor();
-				sf::Color BR = canvas.getTileGrid()->at(y).at(x).getColor();
-
-				float avgR = ((float)TL.r + (float)TR.r + (float)BL.r + (float)BR.r) / 4.f;
-				float avgG = ((float)TL.g + (float)TR.g + (float)BL.g + (float)BR.g) / 4.f;
-				float avgB = ((float)TL.b + (float)TR.b + (float)BL.b + (float)BR.b) / 4.f;
-
-				double rgbcircle = abs(((0.299 * avgR + 0.587 * avgG + 0.114 * avgB) / 255) - 1) * 255;
-				cornerBeads.setFillColor(sf::Color(rgbcircle, rgbcircle, rgbcircle, 255));
-
-				window.draw(cornerBeads);
-			}
-		}
-
-
-		//Drawing the Camera, along with all of the UI nested under it.
-		//window.draw(camera);
+		canvas.update();
+		canvas.draw(window);
 
 		//Update and Draw the UI
 		ui.updateElementScales(zoomFactor);
@@ -140,8 +146,12 @@ void Manager::mainLoop(){
 		if(mouseAction == MouseAction::colorPicking)
 			window.draw(colorWheel);
 
-		//std::cout << "Factor: " << zoomFactor << std::endl;
 
+		//FPS Text Drawing
+		window.draw(fpsText);
+
+
+		//DISPLAY
 		window.display();
 	}
 }
@@ -221,12 +231,33 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 					case ToolType::fogTool:
 						mouseAction = MouseAction::fogging;
 						break;
+
+					case ToolType::tokenTool:
+						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) {
+							selectedToken = canvas.getClickedToken(window.mapPixelToCoords(mouseWindowLocation));
+							if (selectedToken == nullptr) {
+								canvas.createToken(window.mapPixelToCoords(mouseWindowLocation), selectedColor);
+							}
+							else {
+								mouseAction = MouseAction::tokenResizing;
+								mouseOrigin = window.mapPixelToCoords(mouseWindowLocation);
+								originalSize = selectedToken->getSize();
+							}
+
+						}
+						else {
+							selectedToken = canvas.getClickedToken(window.mapPixelToCoords(mouseWindowLocation));
+							if (selectedToken != nullptr)
+								mouseAction = MouseAction::tokenMoving;
+						}
+						break;
 					}
 				}
 			}
 			break;
 
 			case MouseAction::colorPicking:
+			{
 				std::cout << "Picked Color\n";
 				sf::Texture screenshotTexture;
 				screenshotTexture.create(window.getSize().x, window.getSize().y);
@@ -238,6 +269,13 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 				mouseAction = MouseAction::none;
 				break;
 			}
+
+			case MouseAction::changingName:
+				selectedToken->setIsEditing(false);
+				selectedToken = nullptr;
+				mouseAction = MouseAction::none;
+				break;
+			}
 			break;
 
 		case sf::Mouse::Button::Right:
@@ -245,12 +283,25 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 			switch (mouseAction) {
 			case MouseAction::none:
 				switch (selectedTool) {
-				case ToolType::paintingTool:
+				case ToolType::paintingTool: //Painting tool selected + right click
 					mouseAction = MouseAction::erasing;
 					break;
 
-				case ToolType::fogTool:
+				case ToolType::fogTool: //Fog tool selected + right click
 					mouseAction = MouseAction::unfogging;
+					break;
+
+				case ToolType::tokenTool: //Token tool selected + right click
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) { //Shift Right Click
+						canvas.eraseToken(window.mapPixelToCoords(mouseWindowLocation));
+					}
+					else { //Non shift Right Click
+						selectedToken = canvas.getClickedToken(window.mapPixelToCoords(mouseWindowLocation));
+						if (selectedToken != nullptr) {
+							selectedToken->setIsEditing(true);
+							mouseAction = MouseAction::changingName;
+						}
+					}
 					break;
 				}
 				break;
@@ -279,6 +330,21 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 			case MouseAction::fogging:
 				mouseAction = MouseAction::none;
 				break;
+
+			case MouseAction::tokenMoving:
+				mouseAction = MouseAction::none;
+				if (selectedToken != nullptr) {
+
+					selectedToken->snap();
+					selectedToken = nullptr;
+				}
+				break;
+
+			case MouseAction::tokenResizing:
+				selectedToken->snap();
+				selectedToken = nullptr;
+				mouseAction = MouseAction::none;
+				break;
 			}
 			break;
 
@@ -298,14 +364,44 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 
 	case sf::Event::KeyPressed:
 
-		switch (pollingEvent.key.code) {
-		case sf::Keyboard::E:
-			if (mouseAction == MouseAction::none)
-				previousAction = mouseAction;
-			mouseAction = MouseAction::colorPicking;
-			colorWheel.setPosition(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
-			break;
+		if (mouseAction == MouseAction::changingName) {
+			
+			int newKey = -1;
+			std::cout << "Size: " << (sizeof(ALLOWEDKEYS) / sizeof(*ALLOWEDKEYS)) << std::endl;
+			for (int i = 0; i < (sizeof(ALLOWEDKEYS) / sizeof(*ALLOWEDKEYS)); i++) {
+				if (ALLOWEDKEYS[i] == pollingEvent.key.code)
+					newKey = i;
+			}
+			if (newKey != -1) {
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::RShift)) { //Shift is pressed, add upper case letter.
+					selectedToken->addNameLetter(UPPERCASEALPHABET[newKey]);
+				}
+				else { //Shift isn't pressed, add lower case letter.
+					selectedToken->addNameLetter(LOWERCASEALPHABET[newKey]);
+				}
+			}
+			else if (pollingEvent.key.code == sf::Keyboard::Key::Backspace) {
+				selectedToken->removeNameLetter();
+			}
+			else if (pollingEvent.key.code == sf::Keyboard::Key::Enter) {
+				selectedToken->setIsEditing(false);
+				selectedToken = nullptr;
+				mouseAction = MouseAction::none;
+			}
+
 		}
+		else {
+			switch (pollingEvent.key.code) {
+			case sf::Keyboard::E:
+				if (mouseAction == MouseAction::none)
+					previousAction = mouseAction;
+				mouseAction = MouseAction::colorPicking;
+				colorWheel.setPosition(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
+				break;
+
+			}
+		}
+
 		break;
 
 

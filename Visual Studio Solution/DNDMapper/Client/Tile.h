@@ -1,20 +1,21 @@
 #pragma once
 #include "Token.h"
-class Tile{
+class Tile {
 public:
 	Tile(sf::Color);
 	~Tile();
 
 	void changeColor(sf::Color);
-	void setFog();
-	void removeFog();
-	bool checkFog();
+	void setFog(bool);
+	bool getFog();
 	sf::Color getColor();
 
 
+
 private:
-	sf::Color backgroundColor;
 	std::vector<Token> tokenList;
+	sf::Color color;
 	bool isFogged;
+
 };
 

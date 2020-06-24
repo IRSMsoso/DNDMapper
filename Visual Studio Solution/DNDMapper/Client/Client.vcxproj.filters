@@ -51,6 +51,9 @@
     <ClCompile Include="FogTool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TokenTool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Canvas.h">
@@ -84,6 +87,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FogTool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TokenTool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
