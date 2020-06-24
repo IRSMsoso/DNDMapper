@@ -181,7 +181,6 @@ void Canvas::draw(sf::RenderWindow& window) {
 	
 
 	window.draw(tileVertexes);
-	window.draw(fogVertexes, &fogCloudTexture);
 	window.draw(beadVertexes);
 
 	//int numDrawn = 0;
@@ -190,6 +189,8 @@ void Canvas::draw(sf::RenderWindow& window) {
 		//numDrawn += 1;
 	}
 	//std::cout << numDrawn << " tokens drawn\n";
+
+	window.draw(fogVertexes, &fogCloudTexture);
 }
 
 
