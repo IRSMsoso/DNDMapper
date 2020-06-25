@@ -10,13 +10,14 @@ Canvas::Canvas(sf::View* newView){
 	firstRow.push_back(Tile(defaultColor));
 	tileGrid.push_back(firstRow);
 
-	for (int y = 0; y < 50; y++) {
-		addRowToBottom(false);
+	for (int i = 0; i < 70; i++) {
 		addColumnToRight(false);
+	}
+	for (int i = 0; i < 40; i++) {
+		addRowToBottom(false);
 	}
 	reconstruct();
 
-	size = sf::Vector2i(20, 20);
 
 
 	fogCloudTexture.loadFromFile("FogCloud.png");

@@ -3,6 +3,7 @@
 //Construct the Manager with the specific window settings.
 Manager::Manager(sf::ContextSettings settings): window(sf::VideoMode(WINDOWX, WINDOWY), "Dungeons and Dragons!", sf::Style::Default, settings), camera(sf::FloatRect(0.f, 0.f, WINDOWX, WINDOWY)), ui(&window), canvas(&camera){
 
+	camera.move(10, 10);
 
 	window.setView(camera);
 	window.setKeyRepeatEnabled(false);
@@ -87,16 +88,20 @@ void Manager::mainLoop(){
 		//Camera moving with WASD Logic
 		if (mouseAction != MouseAction::changingName) {
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
-				camera.move(0, -CAMERAMOVESPEED * frameTime.asSeconds());
+				if(window.mapPixelToCoords(sf::Vector2i(0, 0)).y - CAMERAMOVESPEED * frameTime.asSeconds() > 1)
+					camera.move(0, -CAMERAMOVESPEED * frameTime.asSeconds());
 			}
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
-				camera.move(-CAMERAMOVESPEED * frameTime.asSeconds(), 0);
+				if (window.mapPixelToCoords(sf::Vector2i(0, 0)).x - CAMERAMOVESPEED * frameTime.asSeconds() > 1)
+					camera.move(-CAMERAMOVESPEED * frameTime.asSeconds(), 0);
 			}
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
-				camera.move(0, CAMERAMOVESPEED * frameTime.asSeconds());
+				if (window.mapPixelToCoords(sf::Vector2i(camera.getSize() / zoomFactor)).y + CAMERAMOVESPEED * frameTime.asSeconds() < canvas.getTileGrid()->size() * 25.f)
+					camera.move(0, CAMERAMOVESPEED * frameTime.asSeconds());
 			}
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
-				camera.move(CAMERAMOVESPEED * frameTime.asSeconds(), 0);
+				if (window.mapPixelToCoords(sf::Vector2i(camera.getSize() / zoomFactor)).x + CAMERAMOVESPEED * frameTime.asSeconds() < canvas.getTileGrid()->at(0).size() * 25.f)
+					camera.move(CAMERAMOVESPEED * frameTime.asSeconds(), 0);
 			}
 		}
 

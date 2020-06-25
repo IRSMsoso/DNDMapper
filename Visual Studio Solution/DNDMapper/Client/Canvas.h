@@ -45,7 +45,6 @@ private:
 	void removeColumn(unsigned int);
 
 	std::vector<std::vector<Tile>> tileGrid; // Situated in a y, x format to simulate dealing with tiles from left to right, then top to bottom.
-	sf::Vector2i size;
 
 	sf::VertexArray tileVertexes;
 	sf::VertexArray fogVertexes;
