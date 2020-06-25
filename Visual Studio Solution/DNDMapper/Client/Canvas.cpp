@@ -1,8 +1,10 @@
 #include "Canvas.h"
 
-Canvas::Canvas(){
+Canvas::Canvas(sf::View* newView){
 	sf::Clock setupClock;
 
+	//Set camera pointer.
+	camera = newView;
 
 	std::vector<Tile> firstRow;
 	firstRow.push_back(Tile(defaultColor));
@@ -170,9 +172,41 @@ void Canvas::addRowToBottom(bool shouldReconstruct){
 void Canvas::addColumnToRight(bool shouldReconstruct){
 	for (int i = 0; i < tileGrid.size(); i++) {
 		tileGrid.at(i).push_back(Tile(defaultColor));
-		int placeX = tileGrid.at(i).size() - 1;
 		//std::cout << "Pushed new column\n";
 	}
+	if (shouldReconstruct)
+		reconstruct();
+}
+
+void Canvas::addRowToTop(bool shouldReconstruct){
+	std::vector<Tile> newRow;
+	for (int i = 0; i < tileGrid.at(0).size(); i++) {
+		newRow.push_back(Tile(defaultColor));
+	}
+
+	tileGrid.insert(tileGrid.begin(), newRow);
+
+	for (int i = 0; i < tokenList.size(); i++) {
+		tokenList.at(i).setPosition(tokenList.at(i).getPosition() + sf::Vector2f(0.f, 25.f));
+	}
+
+	camera->move(sf::Vector2f(0.f, 25.f));
+
+	if (shouldReconstruct)
+		reconstruct();
+}
+
+void Canvas::addColumnToLeft(bool shouldReconstruct){
+	for (int i = 0; i < tileGrid.size(); i++) {
+		tileGrid.at(i).insert(tileGrid.at(i).begin(), Tile(defaultColor));
+	}
+
+	for (int i = 0; i < tokenList.size(); i++) {
+		tokenList.at(i).setPosition(tokenList.at(i).getPosition() + sf::Vector2f(25.f, 0.f));
+	}
+
+	camera->move(sf::Vector2f(25.f, 0.f));
+
 	if (shouldReconstruct)
 		reconstruct();
 }

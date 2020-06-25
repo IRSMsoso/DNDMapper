@@ -10,7 +10,7 @@ const sf::Color defaultColor = sf::Color(55, 55, 55, 255);
 
 class Canvas {
 public:
-	Canvas();
+	Canvas(sf::View*);
 	~Canvas();
 
 	bool paintTile(float x, float y, sf::Color);
@@ -30,6 +30,8 @@ public:
 
 	void addRowToBottom(bool);
 	void addColumnToRight(bool);
+	void addRowToTop(bool);
+	void addColumnToLeft(bool);
 
 	void draw(sf::RenderWindow&);
 
@@ -60,4 +62,7 @@ private:
 
 	//Font for tokens
 	sf::Font tokenFont;
+
+	//Pointer to Camera so that it can be moved upon expanding borders in negative coordinate directions
+	sf::View* camera;
 };
