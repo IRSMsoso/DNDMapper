@@ -24,3 +24,7 @@ void TokenTool::draw(sf::RenderTarget& target, sf::RenderStates states) const{
 
 	target.draw(tokenToolButton, states);
 }
+
+void TokenTool::update(sf::Time delta, sf::Color newColor){
+
+}

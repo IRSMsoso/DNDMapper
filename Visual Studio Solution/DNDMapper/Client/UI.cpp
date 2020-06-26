@@ -31,6 +31,12 @@ void UI::updateElementScales(float newScale){
 	}
 }
 
+void UI::updateElementsAnimations(sf::Time delta, sf::Color newColor){
+	for (int i = 0; i < elements.size(); i++) {
+		elements.at(i)->update(delta, newColor);
+	}
+}
+
 ToolType::ToolType UI::getToolClicked(sf::Vector2i mouseLoc)
 {
 	for (int i = 0; i < elements.size(); i++) {

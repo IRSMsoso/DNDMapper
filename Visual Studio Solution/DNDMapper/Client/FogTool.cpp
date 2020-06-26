@@ -21,3 +21,7 @@ void FogTool::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 
 	target.draw(fogSprite, states);
 }
+
+void FogTool::update(sf::Time delta, sf::Color newColor) {
+
+}

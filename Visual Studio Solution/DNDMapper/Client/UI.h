@@ -15,6 +15,7 @@ public:
 	void drawElements();
 	void updateElementPositions();
 	void updateElementScales(float);
+	void updateElementsAnimations(sf::Time, sf::Color);
 
 	ToolType::ToolType getToolClicked(sf::Vector2i);
 

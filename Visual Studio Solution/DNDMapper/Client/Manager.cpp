@@ -150,6 +150,7 @@ void Manager::mainLoop(){
 		//Update and Draw the UI
 		ui.updateElementScales(zoomFactor);
 		ui.updateElementPositions();
+		ui.updateElementsAnimations(frameTime, selectedColor);
 		ui.drawElements();
 
 

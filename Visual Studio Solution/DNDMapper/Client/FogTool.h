@@ -6,9 +6,10 @@
 class FogTool : public UIElement {
 public:
 	FogTool(sf::RenderWindow*);
-	~FogTool();
+	virtual ~FogTool();
 
 	virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
+	virtual void update(sf::Time, sf::Color);
 
 private: 
 
