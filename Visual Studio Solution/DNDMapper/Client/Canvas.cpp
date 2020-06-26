@@ -233,6 +233,12 @@ bool Canvas::expand()
 		removeColumn(tileGrid.at(0).size() - 1);
 	}
 	
+	while ((maxy < tileGrid.size() - EXPANDDISTANCE - 1 || maxy == -1) && tileGrid.size() > MINSIZE.y) {
+		removeRow(tileGrid.size() - 1);
+	}
+	
+	
+
 
 	if (changed)
 		reconstruct();
