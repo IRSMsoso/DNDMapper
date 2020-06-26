@@ -10,10 +10,10 @@ Canvas::Canvas(sf::View* newView){
 	firstRow.push_back(Tile(defaultColor));
 	tileGrid.push_back(firstRow);
 
-	for (int i = 0; i < 70; i++) {
+	for (int i = 0; i < MINSIZE.x; i++) {
 		addColumnToRight(false);
 	}
-	for (int i = 0; i < 40; i++) {
+	for (int i = 0; i < MINSIZE.y; i++) {
 		addRowToBottom(false);
 	}
 	reconstruct();
@@ -211,6 +211,7 @@ void Canvas::addColumnToLeft(bool shouldReconstruct){
 	if (shouldReconstruct)
 		reconstruct();
 }
+
 
 void Canvas::draw(sf::RenderWindow& window) {
 	

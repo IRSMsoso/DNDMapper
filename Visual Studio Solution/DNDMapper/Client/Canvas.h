@@ -5,6 +5,7 @@
 #include <iostream>
 
 const float TILESIZE = 25.f;
+const sf::Vector2i MINSIZE = sf::Vector2i(85, 50);
 const sf::Color defaultColor = sf::Color(55, 55, 55, 255);
 
 

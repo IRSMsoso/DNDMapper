@@ -96,11 +96,11 @@ void Manager::mainLoop(){
 					camera.move(-CAMERAMOVESPEED * frameTime.asSeconds(), 0);
 			}
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
-				if (window.mapPixelToCoords(sf::Vector2i(camera.getSize() / zoomFactor)).y + CAMERAMOVESPEED * frameTime.asSeconds() < canvas.getTileGrid()->size() * 25.f)
+				if (window.mapPixelToCoords(sf::Vector2i(camera.getSize() / zoomFactor)).y + CAMERAMOVESPEED * frameTime.asSeconds() < canvas.getTileGrid()->size() * 25.f - 1)
 					camera.move(0, CAMERAMOVESPEED * frameTime.asSeconds());
 			}
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
-				if (window.mapPixelToCoords(sf::Vector2i(camera.getSize() / zoomFactor)).x + CAMERAMOVESPEED * frameTime.asSeconds() < canvas.getTileGrid()->at(0).size() * 25.f)
+				if (window.mapPixelToCoords(sf::Vector2i(camera.getSize() / zoomFactor)).x + CAMERAMOVESPEED * frameTime.asSeconds() < canvas.getTileGrid()->at(0).size() * 25.f - 1)
 					camera.move(CAMERAMOVESPEED * frameTime.asSeconds(), 0);
 			}
 		}
@@ -198,10 +198,30 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 				zoomFactor /= ZOOMSPEED;
 				//std::cout << "Zoom out" << std::endl;
 			}
+
 			window.setView(camera);
+
 			sf::Vector2f afterMouseLoc = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 			sf::Vector2f moveVector = beforeMouseLoc - afterMouseLoc;
 			camera.move(moveVector.x, moveVector.y);
+
+			window.setView(camera);
+
+			//Logic for keeping camera within bounds.
+			if (window.mapPixelToCoords(sf::Vector2i(0, 0)).x < 1) {
+				camera.move(1 - window.mapPixelToCoords(sf::Vector2i(0, 0)).x, 0);
+			}
+			if (window.mapPixelToCoords(sf::Vector2i(0, 0)).y < 1) {
+				camera.move(0, 1 - window.mapPixelToCoords(sf::Vector2i(0, 0)).y);
+			}
+			if (window.mapPixelToCoords(sf::Vector2i(camera.getSize() / zoomFactor)).x > canvas.getTileGrid()->at(0).size() * 25.f - 1) {
+				camera.move(canvas.getTileGrid()->at(0).size() * 25.f - 1 - window.mapPixelToCoords(sf::Vector2i(camera.getSize() / zoomFactor)).x, 0);
+			}
+			if (window.mapPixelToCoords(sf::Vector2i(camera.getSize() / zoomFactor)).y > canvas.getTileGrid()->size() * 25.f - 1) {
+				camera.move(0, canvas.getTileGrid()->size() * 25.f - 1 - window.mapPixelToCoords(sf::Vector2i(camera.getSize() / zoomFactor)).y);
+			}
+
+			window.setView(camera);
 		}
 		break;
 
