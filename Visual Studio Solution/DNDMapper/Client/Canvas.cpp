@@ -217,9 +217,25 @@ bool Canvas::expand()
 			changed = true;
 		}
 
-		if(changed)
-			reconstruct();
+
 	}
+
+
+	while ((minx > EXPANDDISTANCE || minx == -1) && tileGrid.at(0).size() > MINSIZE.x) {
+		removeColumn(0);
+		changed = true;
+	}
+	while ((miny > EXPANDDISTANCE || miny == -1) && tileGrid.size() > MINSIZE.y) {
+		removeRow(0);
+		changed = true;
+	}
+	while ((maxx < tileGrid.at(0).size() - EXPANDDISTANCE - 1 || maxx == -1) && tileGrid.at(0).size() > MINSIZE.x) {
+		removeColumn(tileGrid.at(0).size() - 1);
+	}
+	
+
+	if (changed)
+		reconstruct();
 
 
 	std::cout << "min: " << minx << ", " << miny << "\nmax: " << maxx << ", " << maxy << std::endl;
@@ -230,14 +246,12 @@ bool Canvas::expand()
 
 void Canvas::removeRow(unsigned int locY){
 	tileGrid.erase(tileGrid.begin() + locY);
-	reconstruct();
 }
 
 void Canvas::removeColumn(unsigned int locX){
 	for (int y = 0; y < tileGrid.size(); y++) {
 		tileGrid.at(y).erase(tileGrid.at(y).begin() + locX);
 	}
-	reconstruct();
 }
 
 void Canvas::addRowToBottom(bool shouldReconstruct){
