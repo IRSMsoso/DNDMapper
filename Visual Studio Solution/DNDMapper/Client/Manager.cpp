@@ -75,8 +75,14 @@ void Manager::mainLoop(){
 		if (isPanning) {
 			sf::Vector2f currentMouseLoc = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 			sf::Vector2f moveVector = panLockLoc - currentMouseLoc;
-			camera.move(moveVector.x, moveVector.y);
+			if (window.mapPixelToCoords(sf::Vector2i(0, 0)).x + moveVector.x > 1 && window.mapPixelToCoords(sf::Vector2i(camera.getSize() / zoomFactor)).x + moveVector.x < canvas.getTileGrid()->at(0).size() * 25.f - 1) {
+				camera.move(moveVector.x, 0);
+			}
 
+			if (window.mapPixelToCoords(sf::Vector2i(0, 0)).y + moveVector.y > 1 && window.mapPixelToCoords(sf::Vector2i(camera.getSize() / zoomFactor)).y + moveVector.y < canvas.getTileGrid()->size() * 25.f - 1) {
+				camera.move(0, moveVector.y);
+			}
+			window.setView(camera);
 		}
 
 		//Update the selected token (Mainly for blinking cursor logic).
