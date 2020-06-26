@@ -356,10 +356,12 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 			switch (mouseAction) {
 			case MouseAction::painting:
 				mouseAction = MouseAction::none;
+				canvas.expand();
 				break;
 
 			case MouseAction::fogging:
 				mouseAction = MouseAction::none;
+				canvas.expand();
 				break;
 
 			case MouseAction::tokenMoving:
@@ -383,10 +385,12 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 			switch (mouseAction) {
 			case MouseAction::erasing:
 				mouseAction = MouseAction::none;
+				canvas.expand();
 				break;
 
 			case MouseAction::unfogging:
 				mouseAction = MouseAction::none;
+				canvas.expand();
 				break;
 			}
 		}
