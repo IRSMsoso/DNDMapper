@@ -89,4 +89,6 @@ private:
 	sf::Text fpsText;
 	sf::Font algerFont;
 
+	//Wrangling Camera.
+	void restrictCamera();
 };
