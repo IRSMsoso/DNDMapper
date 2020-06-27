@@ -260,6 +260,27 @@ void Canvas::removeColumn(unsigned int locX){
 	}
 }
 
+void Canvas::updateBead(int x, int y, int index){
+	sf::Vertex* point = &beadVertexes[index];
+
+
+	sf::Color TL = tileGrid.at(y - 1).at(x - 1).getColor();
+	sf::Color TR = tileGrid.at(y - 1).at(x).getColor();
+	sf::Color BL = tileGrid.at(y).at(x - 1).getColor();
+	sf::Color BR = tileGrid.at(y).at(x).getColor();
+
+
+	float avgR = ((float)TL.r + (float)TR.r + (float)BL.r + (float)BR.r) / 4.f;
+	float avgG = ((float)TL.g + (float)TR.g + (float)BL.g + (float)BR.g) / 4.f;
+	float avgB = ((float)TL.b + (float)TR.b + (float)BL.b + (float)BR.b) / 4.f;
+
+	double rgbcircle = abs(((0.299 * avgR + 0.587 * avgG + 0.114 * avgB) / 255) - 1) * 255;
+
+	point->color = sf::Color(rgbcircle, rgbcircle, rgbcircle, 255);
+
+
+}
+
 void Canvas::addRowToBottom(bool shouldReconstruct){
 	std::vector<Tile> newRow;
 	for (int i = 0; i < tileGrid.at(0).size(); i++) {
@@ -368,6 +389,21 @@ void Canvas::update(){
 			fogQuad[2].color = sf::Color::Transparent;
 			fogQuad[3].color = sf::Color::Transparent;
 		}
+
+
+		if (x < tileGrid.at(y).size() - 1 && y < tileGrid.size() - 1) {
+			updateBead(x + 1, y + 1, (tileGrid.at(y).size() - 1) * y + x);
+		}
+		if (x < tileGrid.at(y).size() - 1 && y > 0) {
+			updateBead(x + 1, y, (tileGrid.at(y).size() - 1) * (y - 1) + x);
+		}
+		if (x > 0 && y < tileGrid.size() - 1) {
+			updateBead(x, y + 1, (tileGrid.at(y).size() - 1) * (y) + (x - 1));
+		}
+		if (x > 0 && y > 0) {
+			updateBead(x, y, (tileGrid.at(y).size() - 1) * (y - 1) + (x - 1));
+		}
+
 
 		updateQueue.erase(updateQueue.begin());
 	}
