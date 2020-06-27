@@ -31,7 +31,7 @@ Manager::Manager(sf::ContextSettings settings): window(sf::VideoMode(WINDOWX, WI
 	fpsText.setFont(algerFont);
 
 
-	//window.setFramerateLimit(60);
+	window.setFramerateLimit(60);
 }
 
 Manager::~Manager(){
@@ -76,7 +76,7 @@ void Manager::mainLoop() {
 			sf::Vector2f currentMouseLoc = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 			sf::Vector2f moveVector = panLockLoc - currentMouseLoc;
 			camera.move(moveVector);
-			window.setView(camera);
+			std::cout << "Move1: " << moveVector.x << std::endl;
 		}
 
 		//Update the selected token (Mainly for blinking cursor logic).
@@ -89,6 +89,7 @@ void Manager::mainLoop() {
 		if (mouseAction != MouseAction::changingName) {
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
 				camera.move(0, -CAMERAMOVESPEED * frameTime.asSeconds());
+				std::cout << "WMOVED: " << -CAMERAMOVESPEED * frameTime.asSeconds() << std::endl;
 			}
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
 				camera.move(-CAMERAMOVESPEED * frameTime.asSeconds(), 0);
@@ -431,8 +432,10 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 }
 
 void Manager::restrictCamera(){
+	window.setView(camera);
 	if (window.mapPixelToCoords(sf::Vector2i(0, 0)).x < 1) {
 		camera.move(1 - window.mapPixelToCoords(sf::Vector2i(0, 0)).x, 0);
+		std::cout << "Moved: " << 1 - window.mapPixelToCoords(sf::Vector2i(0, 0)).x << std::endl;
 	}
 	if (window.mapPixelToCoords(sf::Vector2i(0, 0)).y < 1) {
 		camera.move(0, 1 - window.mapPixelToCoords(sf::Vector2i(0, 0)).y);
