@@ -3,11 +3,14 @@
 
 #include <iostream>
 #include "Manager.h"
+#include <Windows.h>
 
 
 
 int main()
 {
+	//ShowWindow(GetConsoleWindow(), SW_HIDE);
+
 	//Setup
 	//Window
 	sf::ContextSettings settings;

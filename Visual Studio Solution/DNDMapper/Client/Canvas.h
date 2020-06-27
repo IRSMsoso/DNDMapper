@@ -47,6 +47,8 @@ private:
 	void removeRow(unsigned int);
 	void removeColumn(unsigned int);
 
+	void updateBead(int, int, int);
+
 	std::vector<std::vector<Tile>> tileGrid; // Situated in a y, x format to simulate dealing with tiles from left to right, then top to bottom.
 
 	sf::VertexArray tileVertexes;
