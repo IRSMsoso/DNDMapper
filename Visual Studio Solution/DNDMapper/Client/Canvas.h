@@ -5,12 +5,14 @@
 #include <iostream>
 
 const float TILESIZE = 25.f;
+const int EXPANDDISTANCE = 8;
+const sf::Vector2i MINSIZE = sf::Vector2i(85, 50);
 const sf::Color defaultColor = sf::Color(55, 55, 55, 255);
 
 
 class Canvas {
 public:
-	Canvas();
+	Canvas(sf::View*);
 	~Canvas();
 
 	bool paintTile(float x, float y, sf::Color);
@@ -30,6 +32,8 @@ public:
 
 	void addRowToBottom(bool);
 	void addColumnToRight(bool);
+	void addRowToTop(bool);
+	void addColumnToLeft(bool);
 
 	void draw(sf::RenderWindow&);
 
@@ -37,13 +41,13 @@ public:
 	void reconstruct();
 
 
-private:
 	bool expand();
+
+private:
 	void removeRow(unsigned int);
 	void removeColumn(unsigned int);
 
 	std::vector<std::vector<Tile>> tileGrid; // Situated in a y, x format to simulate dealing with tiles from left to right, then top to bottom.
-	sf::Vector2i size;
 
 	sf::VertexArray tileVertexes;
 	sf::VertexArray fogVertexes;
@@ -60,4 +64,7 @@ private:
 
 	//Font for tokens
 	sf::Font tokenFont;
+
+	//Pointer to Camera so that it can be moved upon expanding borders in negative coordinate directions
+	sf::View* camera;
 };

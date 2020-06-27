@@ -1,8 +1,9 @@
 #include "Manager.h"
 
 //Construct the Manager with the specific window settings.
-Manager::Manager(sf::ContextSettings settings): window(sf::VideoMode(WINDOWX, WINDOWY), "Dungeons and Dragons!", sf::Style::Default, settings), camera(sf::FloatRect(0.f, 0.f, WINDOWX, WINDOWY)), ui(&window){
+Manager::Manager(sf::ContextSettings settings): window(sf::VideoMode(WINDOWX, WINDOWY), "Dungeons and Dragons!", sf::Style::Default, settings), camera(sf::FloatRect(0.f, 0.f, WINDOWX, WINDOWY)), ui(&window), canvas(&camera){
 
+	camera.move(10, 10);
 
 	window.setView(camera);
 	window.setKeyRepeatEnabled(false);
@@ -30,7 +31,7 @@ Manager::Manager(sf::ContextSettings settings): window(sf::VideoMode(WINDOWX, WI
 	fpsText.setFont(algerFont);
 
 
-	//window.setFramerateLimit(60);
+	window.setFramerateLimit(60);
 }
 
 Manager::~Manager(){
@@ -38,7 +39,7 @@ Manager::~Manager(){
 }
 
 //The main event loop of the Manager object.
-void Manager::mainLoop(){
+void Manager::mainLoop() {
 
 	//FPS
 	sf::Clock fpsClock;
@@ -74,8 +75,8 @@ void Manager::mainLoop(){
 		if (isPanning) {
 			sf::Vector2f currentMouseLoc = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 			sf::Vector2f moveVector = panLockLoc - currentMouseLoc;
-			camera.move(moveVector.x, moveVector.y);
-
+			camera.move(moveVector);
+			std::cout << "Move1: " << moveVector.x << std::endl;
 		}
 
 		//Update the selected token (Mainly for blinking cursor logic).
@@ -88,6 +89,7 @@ void Manager::mainLoop(){
 		if (mouseAction != MouseAction::changingName) {
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
 				camera.move(0, -CAMERAMOVESPEED * frameTime.asSeconds());
+				std::cout << "WMOVED: " << -CAMERAMOVESPEED * frameTime.asSeconds() << std::endl;
 			}
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
 				camera.move(-CAMERAMOVESPEED * frameTime.asSeconds(), 0);
@@ -98,61 +100,61 @@ void Manager::mainLoop(){
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
 				camera.move(CAMERAMOVESPEED * frameTime.asSeconds(), 0);
 			}
+
+
+			//Mouse Action Logic
+			if (mouseAction == MouseAction::painting) {
+				canvas.paintTile(window.mapPixelToCoords(sf::Mouse::getPosition(window)), selectedColor);
+			}
+			else if (mouseAction == MouseAction::erasing) {
+				canvas.eraseTile(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
+			}
+			else if (mouseAction == MouseAction::fogging) {
+				canvas.fogTile(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
+			}
+			else if (mouseAction == MouseAction::unfogging) {
+				canvas.unfogTile(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
+			}
+			else if (mouseAction == MouseAction::tokenMoving) {
+				selectedToken->setPosition(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
+			}
+			else if (mouseAction == MouseAction::tokenResizing) {
+				sf::Vector2f currentMouse = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+
+				sf::Vector2i newSize = originalSize + sf::Vector2i((currentMouse - mouseOrigin) / TILESIZE);
+				if (newSize.x > 0 && newSize.y > 0)
+					selectedToken->setSize(newSize);
+
+
+			}
+
+			restrictCamera();
+			window.clear(sf::Color::White);
+
+
+			//Drawing Tiles
+			canvas.update();
+			canvas.draw(window);
+
+			//Update and Draw the UI
+			ui.updateElementScales(zoomFactor);
+			ui.updateElementPositions();
+			ui.updateElementsAnimations(frameTime, selectedColor);
+			ui.drawElements();
+
+
+			//Colorwheel Drawing
+			if (mouseAction == MouseAction::colorPicking)
+				window.draw(colorWheel);
+
+
+			//FPS Text Drawing
+			window.draw(fpsText);
+
+
+			//DISPLAY
+			window.display();
 		}
-
-
-		//Mouse Action Logic
-		if (mouseAction == MouseAction::painting) {
-			canvas.paintTile(window.mapPixelToCoords(sf::Mouse::getPosition(window)), selectedColor);
-		}
-		else if (mouseAction == MouseAction::erasing) {
-			canvas.eraseTile(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
-		}
-		else if (mouseAction == MouseAction::fogging) {
-			canvas.fogTile(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
-		}
-		else if (mouseAction == MouseAction::unfogging) {
-			canvas.unfogTile(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
-		}
-		else if (mouseAction == MouseAction::tokenMoving) {
-			selectedToken->setPosition(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
-		}
-		else if (mouseAction == MouseAction::tokenResizing) {
-			sf::Vector2f currentMouse = window.mapPixelToCoords(sf::Mouse::getPosition(window));
-
-			sf::Vector2i newSize = originalSize + sf::Vector2i((currentMouse - mouseOrigin) / TILESIZE);
-			if (newSize.x > 0 && newSize.y > 0)
-				selectedToken->setSize(newSize);
-
-
-		}
-
-
-		window.setView(camera);
-		window.clear(sf::Color::White);
-
-
-		//Drawing Tiles
-		canvas.update();
-		canvas.draw(window);
-
-		//Update and Draw the UI
-		ui.updateElementScales(zoomFactor);
-		ui.updateElementPositions();
-		ui.drawElements();
-
-
-		//Colorwheel Drawing
-		if(mouseAction == MouseAction::colorPicking)
-			window.draw(colorWheel);
-
-
-		//FPS Text Drawing
-		window.draw(fpsText);
-
-
-		//DISPLAY
-		window.display();
 	}
 }
 
@@ -193,10 +195,14 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 				zoomFactor /= ZOOMSPEED;
 				//std::cout << "Zoom out" << std::endl;
 			}
+
 			window.setView(camera);
+
 			sf::Vector2f afterMouseLoc = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 			sf::Vector2f moveVector = beforeMouseLoc - afterMouseLoc;
 			camera.move(moveVector.x, moveVector.y);
+
+			window.setView(camera);
 		}
 		break;
 
@@ -325,10 +331,12 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 			switch (mouseAction) {
 			case MouseAction::painting:
 				mouseAction = MouseAction::none;
+				canvas.expand();
 				break;
 
 			case MouseAction::fogging:
 				mouseAction = MouseAction::none;
+				canvas.expand();
 				break;
 
 			case MouseAction::tokenMoving:
@@ -352,10 +360,12 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 			switch (mouseAction) {
 			case MouseAction::erasing:
 				mouseAction = MouseAction::none;
+				canvas.expand();
 				break;
 
 			case MouseAction::unfogging:
 				mouseAction = MouseAction::none;
+				canvas.expand();
 				break;
 			}
 		}
@@ -419,4 +429,22 @@ void Manager::interpretEvent(sf::Event pollingEvent){
 		break;
 
 	}
+}
+
+void Manager::restrictCamera(){
+	window.setView(camera);
+	if (window.mapPixelToCoords(sf::Vector2i(0, 0)).x < 1) {
+		camera.move(1 - window.mapPixelToCoords(sf::Vector2i(0, 0)).x, 0);
+		std::cout << "Moved: " << 1 - window.mapPixelToCoords(sf::Vector2i(0, 0)).x << std::endl;
+	}
+	if (window.mapPixelToCoords(sf::Vector2i(0, 0)).y < 1) {
+		camera.move(0, 1 - window.mapPixelToCoords(sf::Vector2i(0, 0)).y);
+	}
+	if (window.mapPixelToCoords(sf::Vector2i(camera.getSize() / zoomFactor)).x > canvas.getTileGrid()->at(0).size() * 25.f - 1) {
+		camera.move(canvas.getTileGrid()->at(0).size() * 25.f - 1 - window.mapPixelToCoords(sf::Vector2i(camera.getSize() / zoomFactor)).x, 0);
+	}
+	if (window.mapPixelToCoords(sf::Vector2i(camera.getSize() / zoomFactor)).y > canvas.getTileGrid()->size() * 25.f - 1) {
+		camera.move(0, canvas.getTileGrid()->size() * 25.f - 1 - window.mapPixelToCoords(sf::Vector2i(camera.getSize() / zoomFactor)).y);
+	}
+	window.setView(camera);
 }

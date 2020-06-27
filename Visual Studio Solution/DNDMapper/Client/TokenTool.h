@@ -5,9 +5,10 @@
 class TokenTool: public UIElement{
 public:
 	TokenTool(sf::RenderWindow*);
-	~TokenTool();
+	virtual ~TokenTool();
 
 	virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
+	virtual void update(sf::Time, sf::Color);
 
 
 

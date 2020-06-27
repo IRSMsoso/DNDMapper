@@ -157,6 +157,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AnimatedSprite.cpp" />
+    <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Canvas.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="ColorWheel.cpp" />
@@ -172,6 +174,8 @@
     <ClCompile Include="UIElement.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AnimatedSprite.h" />
+    <ClInclude Include="Animation.h" />
     <ClInclude Include="Canvas.h" />
     <ClInclude Include="ColorWheel.h" />
     <ClInclude Include="ExpandButton.h" />

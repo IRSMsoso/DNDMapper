@@ -6,9 +6,10 @@
 class Tab: public UIElement{
 public:
 	Tab(sf::RenderWindow*);
-	~Tab();
+	virtual ~Tab();
 
 	virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
+	virtual void update(sf::Time, sf::Color);
 
 private:
 	sf::RectangleShape shape; //Don't Transform, drawing does that for us.

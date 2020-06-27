@@ -1,20 +1,23 @@
 #include "Canvas.h"
 
-Canvas::Canvas(){
+Canvas::Canvas(sf::View* newView){
 	sf::Clock setupClock;
 
+	//Set camera pointer.
+	camera = newView;
 
 	std::vector<Tile> firstRow;
 	firstRow.push_back(Tile(defaultColor));
 	tileGrid.push_back(firstRow);
 
-	for (int y = 0; y < 50; y++) {
-		addRowToBottom(false);
+	for (int i = 1; i < MINSIZE.x; i++) {
 		addColumnToRight(false);
+	}
+	for (int i = 1; i < MINSIZE.y; i++) {
+		addRowToBottom(false);
 	}
 	reconstruct();
 
-	size = sf::Vector2i(20, 20);
 
 
 	fogCloudTexture.loadFromFile("FogCloud.png");
@@ -141,19 +144,120 @@ std::vector<std::vector<Tile>>* Canvas::getTileGrid(){
 //Helper Function. Expands the canvas to accommodate out of bounds clicks.
 bool Canvas::expand()
 {
+	int minx = -1;
+	int miny = -1;
+	int maxx = -1;
+	int maxy = -1;
+	int gridsizex = tileGrid.at(0).size();
+	int gridsizey = tileGrid.size();
+
+	for (int y = 0; y < gridsizey; y++) {
+		for (int x = 0; x < gridsizex; x++) {
+
+			if (tileGrid.at(y).at(x).getColor() != defaultColor) {
+
+				if (minx == -1) {
+					minx = x;
+					maxx = x;
+					miny = y;
+					maxy = y;
+				}
+				else {
+					if (x > maxx)
+						maxx = x;
+					if (x < minx)
+						minx = x;
+					if (y > maxy)
+						maxy = y;
+					if (y < miny)
+						miny = y;
+				}
+
+			}
+		}
+	}
+
+	bool changed = false;
+
+	if (minx != -1) {
+
+		if (minx < EXPANDDISTANCE) {
+			for (int i = 0; i < (EXPANDDISTANCE - minx); i++) {
+				addColumnToLeft(false);
+			}
+			changed = true;
+		}
+
+		if (miny < EXPANDDISTANCE) {
+			for (int i = 0; i < (EXPANDDISTANCE - miny); i++) {
+				addRowToTop(false);
+			}
+			changed = true;
+		}
+
+		if (maxx > (gridsizex - EXPANDDISTANCE - 1)) {
+			std::cout << "True\n";
+			std::cout << (maxx - (gridsizex - EXPANDDISTANCE - 1));
+
+			for (int i = 0; i < (maxx - (gridsizex - EXPANDDISTANCE - 1)); i++) {
+				std::cout << "Ran add\n";
+				addColumnToRight(false);
+			}
+			changed = true;
+		}
+
+		if (maxx > (gridsizey - EXPANDDISTANCE - 1)) {
+			std::cout << "True\n";
+			std::cout << (maxy - (gridsizey - EXPANDDISTANCE - 1));
+
+			for (int i = 0; i < (maxy - (gridsizey - EXPANDDISTANCE - 1)); i++) {
+				std::cout << "Ran add\n";
+				addRowToBottom(false);
+			}
+			changed = true;
+		}
+
+
+	}
+
+
+	while ((minx > EXPANDDISTANCE || minx == -1) && tileGrid.at(0).size() > MINSIZE.x) {
+		removeColumn(0);
+		changed = true;
+	}
+	while ((miny > EXPANDDISTANCE || miny == -1) && tileGrid.size() > MINSIZE.y) {
+		removeRow(0);
+		changed = true;
+	}
+	while ((maxx < tileGrid.at(0).size() - EXPANDDISTANCE - 1 || maxx == -1) && tileGrid.at(0).size() > MINSIZE.x) {
+		removeColumn(tileGrid.at(0).size() - 1);
+	}
+	
+	while ((maxy < tileGrid.size() - EXPANDDISTANCE - 1 || maxy == -1) && tileGrid.size() > MINSIZE.y) {
+		removeRow(tileGrid.size() - 1);
+	}
+	
+	
+
+
+	if (changed)
+		reconstruct();
+
+
+	std::cout << "min: " << minx << ", " << miny << "\nmax: " << maxx << ", " << maxy << std::endl;
+
+
 	return false;
 }
 
 void Canvas::removeRow(unsigned int locY){
 	tileGrid.erase(tileGrid.begin() + locY);
-	reconstruct();
 }
 
 void Canvas::removeColumn(unsigned int locX){
 	for (int y = 0; y < tileGrid.size(); y++) {
 		tileGrid.at(y).erase(tileGrid.at(y).begin() + locX);
 	}
-	reconstruct();
 }
 
 void Canvas::addRowToBottom(bool shouldReconstruct){
@@ -170,12 +274,45 @@ void Canvas::addRowToBottom(bool shouldReconstruct){
 void Canvas::addColumnToRight(bool shouldReconstruct){
 	for (int i = 0; i < tileGrid.size(); i++) {
 		tileGrid.at(i).push_back(Tile(defaultColor));
-		int placeX = tileGrid.at(i).size() - 1;
 		//std::cout << "Pushed new column\n";
 	}
 	if (shouldReconstruct)
 		reconstruct();
 }
+
+void Canvas::addRowToTop(bool shouldReconstruct){
+	std::vector<Tile> newRow;
+	for (int i = 0; i < tileGrid.at(0).size(); i++) {
+		newRow.push_back(Tile(defaultColor));
+	}
+
+	tileGrid.insert(tileGrid.begin(), newRow);
+
+	for (int i = 0; i < tokenList.size(); i++) {
+		tokenList.at(i).setPosition(tokenList.at(i).getPosition() + sf::Vector2f(0.f, 25.f));
+	}
+
+	camera->move(sf::Vector2f(0.f, 25.f));
+
+	if (shouldReconstruct)
+		reconstruct();
+}
+
+void Canvas::addColumnToLeft(bool shouldReconstruct){
+	for (int i = 0; i < tileGrid.size(); i++) {
+		tileGrid.at(i).insert(tileGrid.at(i).begin(), Tile(defaultColor));
+	}
+
+	for (int i = 0; i < tokenList.size(); i++) {
+		tokenList.at(i).setPosition(tokenList.at(i).getPosition() + sf::Vector2f(25.f, 0.f));
+	}
+
+	camera->move(sf::Vector2f(25.f, 0.f));
+
+	if (shouldReconstruct)
+		reconstruct();
+}
+
 
 void Canvas::draw(sf::RenderWindow& window) {
 	

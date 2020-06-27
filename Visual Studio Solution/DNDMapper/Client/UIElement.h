@@ -21,6 +21,8 @@ public:
 
 	virtual void draw(sf::RenderTarget&, sf::RenderStates) const = 0;
 
+	virtual void update(sf::Time, sf::Color) = 0;
+
 	void changeUIPosition(sf::Vector2i);
 	void changeUISize(sf::Vector2i);
 	void changeUIRectangle(sf::IntRect);
