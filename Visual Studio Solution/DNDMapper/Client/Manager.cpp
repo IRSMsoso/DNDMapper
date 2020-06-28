@@ -88,7 +88,6 @@ void Manager::mainLoop() {
 		if (mouseAction != MouseAction::changingName) {
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
 				camera.move(0, -CAMERAMOVESPEED * frameTime.asSeconds());
-				std::cout << "WMOVED: " << -CAMERAMOVESPEED * frameTime.asSeconds() << std::endl;
 			}
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
 				camera.move(-CAMERAMOVESPEED * frameTime.asSeconds(), 0);
@@ -127,8 +126,11 @@ void Manager::mainLoop() {
 
 			}
 
-			restrictCamera();
+			//restrictCamera();
 			window.clear(sf::Color::White);
+			window.setView(camera);
+
+			
 
 
 			//Drawing Tiles

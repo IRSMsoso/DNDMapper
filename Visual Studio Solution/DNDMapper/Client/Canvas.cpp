@@ -181,39 +181,46 @@ bool Canvas::expand()
 
 	if (minx != -1) {
 
+		int rounds = 0;
+
 		if (minx < EXPANDDISTANCE) {
 			for (int i = 0; i < (EXPANDDISTANCE - minx); i++) {
 				addColumnToLeft(false);
+				rounds++;
 			}
+			maxx += rounds;
+			rounds = 0;
+			gridsizex = tileGrid.at(0).size();
 			changed = true;
 		}
 
 		if (miny < EXPANDDISTANCE) {
 			for (int i = 0; i < (EXPANDDISTANCE - miny); i++) {
 				addRowToTop(false);
+				rounds++;
 			}
+			maxy += rounds;
+			rounds = 0;
+			gridsizey = tileGrid.size();
 			changed = true;
 		}
 
 		if (maxx > (gridsizex - EXPANDDISTANCE - 1)) {
-			std::cout << "True\n";
 			std::cout << (maxx - (gridsizex - EXPANDDISTANCE - 1));
 
 			for (int i = 0; i < (maxx - (gridsizex - EXPANDDISTANCE - 1)); i++) {
-				std::cout << "Ran add\n";
 				addColumnToRight(false);
 			}
+			gridsizex = tileGrid.at(0).size();
 			changed = true;
 		}
 
-		if (maxx > (gridsizey - EXPANDDISTANCE - 1)) {
-			std::cout << "True\n";
-			std::cout << (maxy - (gridsizey - EXPANDDISTANCE - 1));
+		if (maxy > (gridsizey - EXPANDDISTANCE - 1)) {
 
 			for (int i = 0; i < (maxy - (gridsizey - EXPANDDISTANCE - 1)); i++) {
-				std::cout << "Ran add\n";
 				addRowToBottom(false);
 			}
+			gridsizey = tileGrid.size();
 			changed = true;
 		}
 
@@ -240,11 +247,11 @@ bool Canvas::expand()
 	
 
 
-	if (changed)
+	if (changed) {
 		reconstruct();
+		std::cout << "Size: " << tileGrid.at(0).size() << ", " << tileGrid.size() << std::endl;
+	}
 
-
-	std::cout << "min: " << minx << ", " << miny << "\nmax: " << maxx << ", " << maxy << std::endl;
 
 
 	return false;
