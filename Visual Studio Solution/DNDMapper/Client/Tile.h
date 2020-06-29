@@ -13,7 +13,6 @@ public:
 
 
 private:
-	std::vector<Token> tokenList;
 	sf::Color color;
 	bool isFogged;
 
