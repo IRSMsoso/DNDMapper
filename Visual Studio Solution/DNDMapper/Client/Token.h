@@ -23,6 +23,10 @@ public:
 
 	void update();
 
+	sf::Uint16 getID() { return id; }
+	void setID(sf::Uint16 newID) { id = newID; }
+
+
 	void snap();
 
 private:
@@ -30,6 +34,7 @@ private:
 	sf::Vector2i size;
 	std::string name;
 	sf::Text nameText;
+	sf::Uint16 id;
 
 	bool beingEdited;
 	bool cursorVisible;

@@ -3,7 +3,7 @@
 #include "Game.h"
 
 
-sf::Uint8 VERSION = 0;
+const sf::Uint8 VERSION = 0;
 
 class Manager{
 public:

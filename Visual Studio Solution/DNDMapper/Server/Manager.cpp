@@ -1,7 +1,7 @@
 #include "Manager.h"
 
-Manager::Manager()
-{
+Manager::Manager(){
+
 }
 
 Manager::~Manager() {

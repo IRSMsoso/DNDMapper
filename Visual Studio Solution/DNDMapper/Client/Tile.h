@@ -1,5 +1,6 @@
 #pragma once
-#include "Token.h"
+#include <SFML/Graphics.hpp>
+
 class Tile {
 public:
 	Tile(sf::Color);

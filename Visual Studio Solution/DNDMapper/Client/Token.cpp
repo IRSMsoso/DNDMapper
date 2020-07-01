@@ -148,7 +148,6 @@ void Token::snap(){
 
 void Token::updateName(){
 	if ((!cursorVisible) && beingEdited) {
-		std::cout << "Yes\n";
 		std::string newName = name;
 		if (newName.back() == '|') {
 			newName.pop_back();
