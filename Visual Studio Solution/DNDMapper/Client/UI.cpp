@@ -13,9 +13,9 @@ UI::~UI(){
 
 }
 
-void UI::drawElements(){
+void UI::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 	for (int i = 0; i < elements.size(); i++) {
-		window->draw(*elements.at(i));
+		target.draw(*elements.at(i));
 	}
 }
 

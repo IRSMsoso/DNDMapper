@@ -342,20 +342,20 @@ void Canvas::addColumnToLeft(bool shouldReconstruct){
 }
 
 
-void Canvas::draw(sf::RenderWindow& window) {
+void Canvas::draw(sf::RenderTarget& target, sf::RenderStates states) const{
 	
 
-	window.draw(tileVertexes);
-	window.draw(beadVertexes);
+	target.draw(tileVertexes);
+	target.draw(beadVertexes);
 
 	//int numDrawn = 0;
 	for (int i = 0; i < tokenList.size(); i++) {
-		window.draw(tokenList.at(i));
+		target.draw(tokenList.at(i));
 		//numDrawn += 1;
 	}
 	//std::cout << numDrawn << " tokens drawn\n";
 
-	window.draw(fogVertexes, &fogCloudTexture);
+	target.draw(fogVertexes, &fogCloudTexture);
 }
 
 

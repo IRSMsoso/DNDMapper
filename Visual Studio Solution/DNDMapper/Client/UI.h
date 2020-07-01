@@ -7,12 +7,12 @@
 #include "TokenTool.h"
 
 
-class UI: public sf::Transformable{
+class UI: public sf::Transformable, public sf::Drawable{
 public:
 	UI(sf::RenderWindow*);
 	~UI();
 
-	void drawElements();
+	void draw(sf::RenderTarget&, sf::RenderStates) const;
 	void updateElementPositions();
 	void updateElementScales(float);
 	void updateElementsAnimations(sf::Time, sf::Color);

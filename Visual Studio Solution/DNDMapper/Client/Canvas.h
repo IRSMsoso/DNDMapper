@@ -10,7 +10,7 @@ const sf::Vector2i MINSIZE = sf::Vector2i(85, 50);
 const sf::Color defaultColor = sf::Color(55, 55, 55, 255);
 
 
-class Canvas {
+class Canvas: public sf::Drawable {
 public:
 	Canvas(sf::View*);
 	~Canvas();
@@ -35,7 +35,7 @@ public:
 	void addRowToTop(bool);
 	void addColumnToLeft(bool);
 
-	void draw(sf::RenderWindow&);
+	void draw(sf::RenderTarget&, sf::RenderStates) const;
 
 	void update();
 	void reconstruct();

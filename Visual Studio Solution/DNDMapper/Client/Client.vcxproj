@@ -164,7 +164,9 @@
     <ClCompile Include="ColorWheel.cpp" />
     <ClCompile Include="ExpandButton.cpp" />
     <ClCompile Include="FogTool.cpp" />
+    <ClCompile Include="Game.cpp" />
     <ClCompile Include="Manager.cpp" />
+    <ClCompile Include="Menu.cpp" />
     <ClCompile Include="PaintTool.cpp" />
     <ClCompile Include="Tab.cpp" />
     <ClCompile Include="Tile.cpp" />
@@ -180,7 +182,9 @@
     <ClInclude Include="ColorWheel.h" />
     <ClInclude Include="ExpandButton.h" />
     <ClInclude Include="FogTool.h" />
+    <ClInclude Include="Game.h" />
     <ClInclude Include="Manager.h" />
+    <ClInclude Include="Menu.h" />
     <ClInclude Include="PaintTool.h" />
     <ClInclude Include="Tab.h" />
     <ClInclude Include="Tile.h" />
