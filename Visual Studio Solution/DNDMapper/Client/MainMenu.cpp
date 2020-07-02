@@ -3,7 +3,7 @@
 MainMenu::MainMenu(sf::RenderWindow* newWindow): Menu(newWindow){
 
 	cam::loadAnimation(flameAnimation, flameTexture, "Firesmile.png", 100, 100, 125);
-	cam::loadAnimation(fireEyeAnimation, fireEyeTexture, "Fireeye.png", 100, 100, 120);
+	cam::loadAnimation(fireEyeAnimation, fireEyeTexture, "Fireeye.png", 41, 45, 120);
 	
 	
 
@@ -20,7 +20,7 @@ MainMenu::MainMenu(sf::RenderWindow* newWindow): Menu(newWindow){
 	flamesSprite2.setPosition(700, 200);
 	flamesSprite2.setScale(-8, 6);
 
-	newGameSprite.setPosition(250, 0);
+	newGameSprite.setPosition(350, 100);
 	newGameSprite.setScale(4, 4);
 
 	flamesSprite1.play(flameAnimation);
@@ -29,8 +29,12 @@ MainMenu::MainMenu(sf::RenderWindow* newWindow): Menu(newWindow){
 }
 
 void MainMenu::interpretEvent(sf::Event pollingEvent) {
-	if (pollingEvent.type == sf::Event::Closed) {
+	switch (pollingEvent.type) {
+	case::sf::Event::Closed:
 		window->close();
+		break;
+
+		
 	}
 }
 
@@ -40,6 +44,7 @@ void MainMenu::update() {
 	flamesSprite1.update(updateTime);
 	flamesSprite2.update(updateTime);
 	newGameSprite.update(updateTime);
+
 
 
 	frameTime.restart();
