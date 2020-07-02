@@ -20,9 +20,18 @@ private:
 	sf::Text openGameText;
 	sf::Text joinGameText;
 
-	AnimatedSprite newGameSprite;
-	AnimatedSprite openGameSprite;
-	AnimatedSprite joinGameText;
+	sf::Sprite newGameSprite;
+	sf::Sprite openGameSprite;
+	sf::Sprite joinGameSprite;
+
+	AnimatedSprite flamesSprite1;
+	AnimatedSprite flamesSprite2;
+
+	Animation flameAnimation;
+	sf::Texture flameTexture;
+
+
+	sf::Clock frameTime;
 
 };
 

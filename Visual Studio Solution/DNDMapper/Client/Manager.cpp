@@ -3,7 +3,7 @@
 //Construct the Manager with the specific window settings.
 Manager::Manager(sf::ContextSettings settings): window(sf::VideoMode(WINDOWX, WINDOWY), "Dungeons and Dragons!", sf::Style::Default, settings){
 
-	menuStack.push_back(std::unique_ptr<Game>(new Game(&window)));
+	menuStack.push_back(std::unique_ptr<MainMenu>(new MainMenu(&window)));
 
 
 }

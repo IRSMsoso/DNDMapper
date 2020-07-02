@@ -1,6 +1,10 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
+
+const int WINDOWX = 1400;
+const int WINDOWY = 800;
+
 enum CloseInfo {
 	stayOpen,
 	close,

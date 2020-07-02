@@ -32,8 +32,7 @@ const float ZOOMSPEED = 0.9f;
 const float BEADRADIUS = 1.0f;
 const float CAMERAMOVESPEED = 200.f;
 
-const int WINDOWX = 1400;
-const int WINDOWY = 800;
+
 
 class Game: public Menu {
 

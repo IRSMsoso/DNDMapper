@@ -1,6 +1,6 @@
 #include "Game.h"
 
-Game::Game(sf::RenderWindow* newWindow): Menu(newWindow), camera(sf::FloatRect(0.f, 0.f, WINDOWX, WINDOWY)), ui(window), canvas(&camera) {
+Game::Game(sf::RenderWindow* newWindow): Menu(newWindow), ui(window), canvas(&camera) {
 	camera.move(10, 10);
 
 	window->setView(camera);
