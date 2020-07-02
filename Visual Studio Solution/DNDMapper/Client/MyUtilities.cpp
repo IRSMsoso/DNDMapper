@@ -45,3 +45,11 @@ bool cam::loadAnimation(Animation& animation, sf::Texture& texture, std::string 
 
 	return true;
 }
+
+bool cam::isSpriteClicked(AnimatedSprite& sprite, sf::Vector2f mouseLoc) {
+
+	sf::IntRect newGameFrameRect = sprite.getAnimation()->getFrame(0);
+	sf::FloatRect newGameRect(sprite.getPosition(), sf::Vector2f(newGameFrameRect.width * sprite.getScale().x, newGameFrameRect.height * sprite.getScale().y));
+
+	return newGameRect.contains(mouseLoc);
+}

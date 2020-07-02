@@ -21,6 +21,12 @@ namespace MouseAction {
 	};
 }
 
+enum GameAction {
+	newGame,
+	joinGame,
+	loadGame,
+};
+
 
 const std::string LOWERCASEALPHABET = "abcdefghijklmnopqrstuvwxyz0123456789[];,.'/\\`=- ";
 const std::string UPPERCASEALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ)!@#$%^&*({}:<>\"?|~+_ ";
@@ -37,7 +43,7 @@ const float CAMERAMOVESPEED = 200.f;
 class Game: public Menu {
 
 public:
-	Game(sf::RenderWindow*);
+	Game(sf::RenderWindow*, std::vector<std::unique_ptr<Menu>>*);
 	~Game();
 
 

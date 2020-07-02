@@ -1,6 +1,6 @@
 #include "Game.h"
 
-Game::Game(sf::RenderWindow* newWindow): Menu(newWindow), ui(window), canvas(&camera) {
+Game::Game(sf::RenderWindow* newWindow, std::vector<std::unique_ptr<Menu>>* newStack): Menu(newWindow, newStack), ui(window), canvas(&camera) {
 	camera.move(10, 10);
 
 	window->setView(camera);

@@ -1,6 +1,6 @@
 #include "MainMenu.h"
 
-MainMenu::MainMenu(sf::RenderWindow* newWindow): Menu(newWindow){
+MainMenu::MainMenu(sf::RenderWindow* newWindow, std::vector<std::unique_ptr<Menu>>* newStack): Menu(newWindow, newStack){
 
 	cam::loadAnimation(flameAnimation, flameTexture, "Firesmile.png", 100, 100, 125);
 	cam::loadAnimation(fireEyeAnimation, fireEyeTexture, "Fireeye.png", 41, 45, 120);
@@ -40,16 +40,26 @@ void MainMenu::interpretEvent(sf::Event pollingEvent) {
 		break;
 
 	case sf::Event::MouseMoved:
-		sf::IntRect newGameFrameRect = fireEyeAnimation.getFrame(0);
-		sf::FloatRect newGameRect(newGameSprite.getPosition(), sf::Vector2f(newGameFrameRect.width * newGameSprite.getScale().x, newGameFrameRect.height * newGameSprite.getScale().y));
-		if (newGameRect.contains(window->mapPixelToCoords(sf::Mouse::getPosition(*window)))) {
+
+		if (cam::isSpriteClicked(newGameSprite, window->mapPixelToCoords(sf::Mouse::getPosition(*window)))) {
 			window->setMouseCursor(hoveringCursor);
 		}
 		else {
 			window->setMouseCursor(normalCursor);
 		}
 		break;
+
+
+	case sf::Event::MouseButtonPressed:
+
+		if (cam::isSpriteClicked(newGameSprite, window->mapPixelToCoords(sf::Mouse::getPosition(*window)))) {
+			menuStack->push_back(std::unique_ptr<Game>(new Game(window, menuStack)));
+		}
+
+		break;
+
 	}
+
 }
 
 void MainMenu::update() {

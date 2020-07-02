@@ -5,21 +5,17 @@
 const int WINDOWX = 1400;
 const int WINDOWY = 800;
 
-enum CloseInfo {
-	stayOpen,
-	close,
-	newGame,
-	joinGame,
-};
 
 class Menu: public sf::Drawable{
 
 public:
-	Menu(sf::RenderWindow*);
+	Menu(sf::RenderWindow*, std::vector<std::unique_ptr<Menu>>*);
 	virtual ~Menu();
 
 
-	void close(CloseInfo info) { shouldClose = info; }
+	void close() { shouldClose = true; }
+
+	bool getShouldClose() { return shouldClose; }
 	
 	
 	virtual void interpretEvent(sf::Event) = 0;
@@ -29,11 +25,13 @@ public:
 	sf::View getCamera() { return camera; }
 
 private:
-	CloseInfo shouldClose;
+	bool shouldClose;
 
 protected:
 	sf::RenderWindow* window;
 
 	sf::View camera;
+
+	std::vector<std::unique_ptr<Menu>>* menuStack;
 
 };

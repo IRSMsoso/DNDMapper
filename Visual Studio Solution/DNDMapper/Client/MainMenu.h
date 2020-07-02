@@ -2,13 +2,14 @@
 #include "Menu.h"
 #include "AnimatedSprite.h"
 #include "MyUtilities.h"
+#include "Game.h"
 
 
 class MainMenu: public Menu {
 
 public:
 
-	MainMenu(sf::RenderWindow*);
+	MainMenu(sf::RenderWindow*, std::vector<std::unique_ptr<Menu>>*);
 
 	virtual void interpretEvent(sf::Event);
 	virtual void update();
