@@ -1,0 +1,44 @@
+#include "MyUtilities.h"
+
+bool cam::loadAnimation(Animation& animation, sf::Texture& texture, std::string fileName, int sizex, int sizey) {
+
+	if (!texture.loadFromFile(fileName)) {
+		std::cout << "Error with loading file \"" + fileName + "\". Animation will not load.\n";
+		return false;
+	}
+
+	animation.setSpriteSheet(texture);
+
+	for (int i = 0; i < texture.getSize().y / sizey; i++) {
+		for (int w = 0; w < texture.getSize().y / sizex; w++) {
+			animation.addFrame(sf::IntRect(w * sizex, i * sizey, sizex, sizey));
+		}
+	}
+
+	return true;
+}
+
+bool cam::loadAnimation(Animation& animation, sf::Texture& texture, std::string fileName, int sizex, int sizey, int numFrames) {
+	if (!texture.loadFromFile(fileName)) {
+		std::cout << "Error with loading file \"" + fileName + "\". Animation will not load.\n";
+		return false;
+	}
+
+	animation.setSpriteSheet(texture);
+
+	int count = 0;
+
+	for (int i = 0; i < texture.getSize().y / sizey; i++) {
+		for (int w = 0; w < texture.getSize().y / sizex; w++) {
+			if (count < numFrames) {
+				animation.addFrame(sf::IntRect(w * sizex, i * sizey, sizex, sizey));
+				count++;
+			}
+			else {
+				return true;
+			}
+		}
+	}
+
+	return true;
+}

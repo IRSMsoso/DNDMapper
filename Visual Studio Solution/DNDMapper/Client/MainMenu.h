@@ -1,6 +1,7 @@
 #pragma once
 #include "Menu.h"
 #include "AnimatedSprite.h"
+#include "MyUtilities.h"
 
 
 class MainMenu: public Menu {
@@ -20,15 +21,17 @@ private:
 	sf::Text openGameText;
 	sf::Text joinGameText;
 
-	sf::Sprite newGameSprite;
+	AnimatedSprite newGameSprite;
 	sf::Sprite openGameSprite;
 	sf::Sprite joinGameSprite;
 
 	AnimatedSprite flamesSprite1;
 	AnimatedSprite flamesSprite2;
 
+	Animation fireEyeAnimation;
 	Animation flameAnimation;
 	sf::Texture flameTexture;
+	sf::Texture fireEyeTexture;
 
 
 	sf::Clock frameTime;

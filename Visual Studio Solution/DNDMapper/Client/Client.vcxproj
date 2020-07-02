@@ -168,6 +168,7 @@
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="Manager.cpp" />
     <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="MyUtilities.cpp" />
     <ClCompile Include="PaintTool.cpp" />
     <ClCompile Include="Tab.cpp" />
     <ClCompile Include="Tile.cpp" />
@@ -187,6 +188,7 @@
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Manager.h" />
     <ClInclude Include="Menu.h" />
+    <ClInclude Include="MyUtilities.h" />
     <ClInclude Include="PaintTool.h" />
     <ClInclude Include="Tab.h" />
     <ClInclude Include="Tile.h" />
