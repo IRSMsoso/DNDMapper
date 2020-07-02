@@ -52,10 +52,6 @@ public:
 
 private:
 
-	//Camera Object
-	sf::View camera;
-
-
 	//UI Object
 	UI ui;
 

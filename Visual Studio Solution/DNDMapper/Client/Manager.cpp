@@ -24,6 +24,7 @@ void Manager::mainLoop() {
 		menuStack.back()->update();
 
 		window.clear();
+		window.setView(menuStack.back()->getCamera());
 		window.draw(*menuStack.back());
 		window.display();
 	}
