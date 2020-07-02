@@ -26,15 +26,29 @@ MainMenu::MainMenu(sf::RenderWindow* newWindow): Menu(newWindow){
 	flamesSprite1.play(flameAnimation);
 	flamesSprite2.play(flameAnimation);
 	newGameSprite.play(fireEyeAnimation);
+
+	normalCursor.loadFromSystem(sf::Cursor::Type::Arrow);
+	hoveringCursor.loadFromSystem(sf::Cursor::Type::Hand);
+
+
 }
 
 void MainMenu::interpretEvent(sf::Event pollingEvent) {
 	switch (pollingEvent.type) {
-	case::sf::Event::Closed:
+	case sf::Event::Closed:
 		window->close();
 		break;
 
-		
+	case sf::Event::MouseMoved:
+		sf::IntRect newGameFrameRect = fireEyeAnimation.getFrame(0);
+		sf::FloatRect newGameRect(newGameSprite.getPosition(), sf::Vector2f(newGameFrameRect.width * newGameSprite.getScale().x, newGameFrameRect.height * newGameSprite.getScale().y));
+		if (newGameRect.contains(window->mapPixelToCoords(sf::Mouse::getPosition(*window)))) {
+			window->setMouseCursor(hoveringCursor);
+		}
+		else {
+			window->setMouseCursor(normalCursor);
+		}
+		break;
 	}
 }
 

@@ -36,5 +36,8 @@ private:
 
 	sf::Clock frameTime;
 
+	sf::Cursor hoveringCursor;
+	sf::Cursor normalCursor;
+
 };
 
