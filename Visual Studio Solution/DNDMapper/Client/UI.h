@@ -13,11 +13,10 @@ public:
 	~UI();
 
 	void draw(sf::RenderTarget&, sf::RenderStates) const;
-	void updateElementPositions();
-	void updateElementScales(float);
-	void updateElementsAnimations(sf::Time, sf::Color);
+
 
 	ToolType::ToolType getToolClicked(sf::Vector2i);
+
 
 private:
 	sf::RenderWindow* window;

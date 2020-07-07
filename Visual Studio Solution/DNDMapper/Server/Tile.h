@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <cereal/cereal.hpp>
 
 
 class Tile{

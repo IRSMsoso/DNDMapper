@@ -43,7 +43,7 @@ const float CAMERAMOVESPEED = 200.f;
 class Game: public Menu {
 
 public:
-	Game(sf::RenderWindow*, std::vector<std::unique_ptr<Menu>>*);
+	Game(sf::RenderWindow*, std::vector<std::unique_ptr<Menu>>*, GameAction);
 	~Game();
 
 

@@ -23,6 +23,8 @@ void Manager::mainLoop() {
 
 		menuStack.back()->update();
 
+		//std::cout << "WINDOW: " << window.getSize().x << ", " << window.getSize().y << std::endl;
+
 		window.clear();
 		window.setView(menuStack.back()->getCamera());
 		window.draw(*menuStack.back());

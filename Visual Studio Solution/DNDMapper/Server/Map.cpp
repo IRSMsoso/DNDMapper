@@ -26,7 +26,7 @@ bool Map::eraseTile(sf::Uint16 eraseID)
 {
 
 	for (int i = 0; i < tokenList.size(); i++) {
-		if (tokenList.at(i).getID == eraseID) {
+		if (tokenList.at(i).getID() == eraseID) {
 			tokenList.erase(tokenList.begin() + i);
 			return true;
 		}

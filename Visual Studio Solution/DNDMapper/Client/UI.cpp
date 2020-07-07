@@ -14,28 +14,15 @@ UI::~UI(){
 }
 
 void UI::draw(sf::RenderTarget& target, sf::RenderStates states) const {
+
+	states.transform *= getTransform();
+
 	for (int i = 0; i < elements.size(); i++) {
-		target.draw(*elements.at(i));
+		target.draw(*elements.at(i), states);
 	}
 }
 
-void UI::updateElementPositions(){
-	for (int i = 0; i < elements.size(); i++) {
-		elements.at(i)->updatePosition();
-	}
-}
 
-void UI::updateElementScales(float newScale){
-	for (int i = 0; i < elements.size(); i++) {
-		elements.at(i)->updateScale(newScale);
-	}
-}
-
-void UI::updateElementsAnimations(sf::Time delta, sf::Color newColor){
-	for (int i = 0; i < elements.size(); i++) {
-		elements.at(i)->update(delta, newColor);
-	}
-}
 
 ToolType::ToolType UI::getToolClicked(sf::Vector2i mouseLoc) {
 	for (int i = 0; i < elements.size(); i++) {

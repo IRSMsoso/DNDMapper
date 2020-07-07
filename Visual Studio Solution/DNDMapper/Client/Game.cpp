@@ -1,6 +1,6 @@
 #include "Game.h"
 
-Game::Game(sf::RenderWindow* newWindow, std::vector<std::unique_ptr<Menu>>* newStack): Menu(newWindow, newStack), ui(window), canvas(&camera) {
+Game::Game(sf::RenderWindow* newWindow, std::vector<std::unique_ptr<Menu>>* newStack, GameAction action): Menu(newWindow, newStack), ui(window), canvas(&camera) {
 	camera.move(10, 10);
 
 	window->setView(camera);
@@ -117,9 +117,8 @@ void Game::update(){
 		canvas.update();
 
 		//Update UI
-		ui.updateElementScales(zoomFactor);
-		ui.updateElementPositions();
-		ui.updateElementsAnimations(frameTime, selectedColor);
+		
+
 
 		//Restrict the Camera
 		restrictCamera();
@@ -244,6 +243,7 @@ void Game::interpretEvent(sf::Event pollingEvent){
 
 			case MouseAction::changingName:
 				selectedToken->setIsEditing(false);
+				window->setKeyRepeatEnabled(false);
 				selectedToken = nullptr;
 				mouseAction = MouseAction::none;
 				break;
@@ -271,6 +271,7 @@ void Game::interpretEvent(sf::Event pollingEvent){
 						selectedToken = canvas.getClickedToken(window->mapPixelToCoords(mouseWindowLocation));
 						if (selectedToken != nullptr) {
 							selectedToken->setIsEditing(true);
+							window->setKeyRepeatEnabled(true);
 							mouseAction = MouseAction::changingName;
 						}
 					}
@@ -361,6 +362,7 @@ void Game::interpretEvent(sf::Event pollingEvent){
 			}
 			else if (pollingEvent.key.code == sf::Keyboard::Key::Enter) {
 				selectedToken->setIsEditing(false);
+				window->setKeyRepeatEnabled(false);
 				selectedToken = nullptr;
 				mouseAction = MouseAction::none;
 			}

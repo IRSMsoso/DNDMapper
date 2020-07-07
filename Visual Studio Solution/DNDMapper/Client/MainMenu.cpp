@@ -53,7 +53,7 @@ void MainMenu::interpretEvent(sf::Event pollingEvent) {
 	case sf::Event::MouseButtonPressed:
 
 		if (cam::isSpriteClicked(newGameSprite, window->mapPixelToCoords(sf::Mouse::getPosition(*window)))) {
-			menuStack->push_back(std::unique_ptr<Game>(new Game(window, menuStack)));
+			menuStack->push_back(std::unique_ptr<Game>(new Game(window, menuStack, newGame)));
 		}
 
 		break;
