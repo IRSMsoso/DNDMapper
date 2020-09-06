@@ -116,12 +116,16 @@ void Game::update(){
 		//Update Canvas
 		canvas.update();
 
-		//Update UI
-		
-
 
 		//Restrict the Camera
 		restrictCamera();
+
+
+		//Update UI
+		ui.updateElementsPositions();
+		ui.updateElementsScales(zoomFactor);
+		ui.updateElementsAnimations(frameTime, selectedColor);
+
 	}
 }
 

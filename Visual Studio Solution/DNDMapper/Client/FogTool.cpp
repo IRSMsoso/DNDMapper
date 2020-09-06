@@ -1,10 +1,10 @@
 #include "FogTool.h"
 
-FogTool::FogTool(sf::RenderWindow* newWindow) : UIElement(newWindow) {
+FogTool::FogTool(sf::RenderWindow* newWindow) {
 	fogTexture.loadFromFile("FogTool.png");
 	fogSprite.setTexture(fogTexture);
 
-	changeUIRectangle(sf::IntRect(0, 680, fogSprite.getTextureRect().width, fogSprite.getTextureRect().height));
+	uiRectangle = sf::IntRect(0, 680, fogSprite.getTextureRect().width, fogSprite.getTextureRect().height);
 	std::cout << "FogTool Texture Rect: " << uiRectangle.left << ", " << uiRectangle.top << ", " << uiRectangle.width << ", " << uiRectangle.height << std::endl;
 
 

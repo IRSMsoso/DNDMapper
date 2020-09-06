@@ -1,7 +1,7 @@
 #include "Manager.h"
 
 //Construct the Manager with the specific window settings.
-Manager::Manager(sf::ContextSettings settings): window(sf::VideoMode(WINDOWX, WINDOWY), "Dungeons and Dragons!", sf::Style::Default, settings){
+Manager::Manager(sf::ContextSettings settings): window(sf::VideoMode(WINDOWX, WINDOWY), "Dungeons and Dragons!", sf::Style::Close | sf::Style::Titlebar, settings){
 
 	menuStack.push_back(std::unique_ptr<MainMenu>(new MainMenu(&window, &menuStack)));
 

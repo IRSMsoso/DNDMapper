@@ -20,10 +20,14 @@ public:
 
 	virtual void update(sf::Time, sf::Color) = 0;
 
+	void updateScale(float);
+
 
 	ToolType::ToolType getToolType();
 
 	bool isClicked(sf::Vector2i);
+
+	sf::IntRect getUIRectangle() { return uiRectangle; }
 
 protected:
 	sf::IntRect uiRectangle;

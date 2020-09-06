@@ -16,6 +16,12 @@ ToolType::ToolType UIElement::getToolType()
 	return toolType;
 }
 
+
+void UIElement::updateScale(float newScale) {
+	setScale(sf::Vector2f(newScale, newScale));
+}
+
+
 //Test whether clicking at this mouse location would be clicking on this UI element. Takes in mouse location relative to window.
 bool UIElement::isClicked(sf::Vector2i mouseLoc)
 {
