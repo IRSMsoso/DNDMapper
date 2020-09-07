@@ -102,6 +102,7 @@ void Game::update(){
 		}
 		else if (mouseAction == MouseAction::tokenMoving) {
 			selectedToken->setPosition(window->mapPixelToCoords(sf::Mouse::getPosition(*window)));
+			std::cout << "Selected Token ID: " << selectedToken->getID() << std::endl;
 		}
 		else if (mouseAction == MouseAction::tokenResizing) {
 			sf::Vector2f currentMouse = window->mapPixelToCoords(sf::Mouse::getPosition(*window));

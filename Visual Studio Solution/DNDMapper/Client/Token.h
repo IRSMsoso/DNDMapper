@@ -4,7 +4,7 @@
 
 class Token: public sf::Drawable, public sf::Transformable {
 public:
-	Token(sf::Color, sf::Vector2f, sf::Font&);
+	Token(sf::Color, sf::Vector2f, sf::Font&, sf::Uint16);
 	~Token();
 
 	void setSize(sf::Vector2i);

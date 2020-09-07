@@ -32,5 +32,5 @@ void PaintTool::draw(sf::RenderTarget& target, sf::RenderStates states) const{
 void PaintTool::update(sf::Time delta, sf::Color newColor){
 	paintSprite.update(delta);
 	paintSprite.setColor(newColor);
-	std::cout << "Painttool updated\n";
+	//std::cout << "Painttool updated\n";
 }
