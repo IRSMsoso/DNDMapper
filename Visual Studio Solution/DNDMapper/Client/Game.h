@@ -84,6 +84,8 @@ private:
 	//Cursors
 	sf::Cursor handCursor, defaultCursor;
 
+	//Type of player
+	bool isDM;
 
 	//Selected up token
 	Token* selectedToken;
