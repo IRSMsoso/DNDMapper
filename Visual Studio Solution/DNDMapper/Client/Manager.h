@@ -3,7 +3,7 @@
 #include "MainMenu.h"
 
 
-
+const sf::Uint16 VERSION = 1;
 
 
 class Manager{
