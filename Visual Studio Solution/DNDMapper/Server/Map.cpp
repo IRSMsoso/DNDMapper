@@ -16,10 +16,8 @@ void Map::setTile(sf::Vector2i xy, bool fog){
 	tileGrid.at(xy.y).at(xy.x).setFog(fog);
 }
 
-void Map::createToken(sf::Vector2f worldxy, sf::Color newColor){
-
-	
-
+void Map::createToken(sf::Vector2f worldxy, sf::Color newColor, sf::Uint16 id){
+	tokenList.push_back(Token(newColor, worldxy, id));
 }
 
 bool Map::eraseTile(sf::Uint16 eraseID)

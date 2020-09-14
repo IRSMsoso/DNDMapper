@@ -19,7 +19,7 @@ public:
 	void setTile(sf::Vector2i, sf::Color);
 	void setTile(sf::Vector2i, bool);
 
-	void createToken(sf::Vector2f, sf::Color);
+	void createToken(sf::Vector2f, sf::Color, sf::Uint16);
 	bool eraseTile(sf::Uint16);
 
 	Token* getToken(sf::Uint16);

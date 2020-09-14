@@ -10,7 +10,7 @@ class Token : public sf::Transformable {
 
 public:
 
-	Token(sf::Color, sf::Vector2f);
+	Token(sf::Color, sf::Vector2f, sf::Uint16);
 	~Token();
 
 
@@ -20,14 +20,11 @@ public:
 	void setName(std::string newName) { name = newName; }
 	std::string getName() { return name; }
 
-	bool grab(std::shared_ptr<Player>);
-	void ungrab() { grabbingPlayer.reset(); }
-
 	sf::Uint16 getID() { return id; }
 	void setID(sf::Uint16 newID) { id = newID; }
 
-
-	void snap();
+	sf::Color getColor() { return color; }
+	void setColor(sf::Color newColor) { color = newColor; }
 
 
 private:
@@ -35,10 +32,6 @@ private:
 	std::string name;
 	sf::Color color;
 	sf::Uint16 id;
-
-	std::weak_ptr<Player> grabbingPlayer;
-
-
 
 	//Serialization: differentiated due to lack of access to sf::Transformable's position.
 	
