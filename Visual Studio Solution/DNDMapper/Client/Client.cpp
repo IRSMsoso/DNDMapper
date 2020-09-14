@@ -22,5 +22,7 @@ int main()
 
 	manager.mainLoop();
 
+	std::system("pause");
+
 	return 0;
 }

@@ -2,6 +2,7 @@
 #include <vector>
 #include "Tile.h"
 #include "Token.h"
+#include "NetworkManager.h"
 #include <iostream>
 
 const float TILESIZE = 25.f;
@@ -12,19 +13,19 @@ const sf::Color defaultColor = sf::Color(55, 55, 55, 255);
 
 class Canvas: public sf::Drawable {
 public:
-	Canvas(sf::View*);
+	Canvas(sf::View*, NetworkManager*);
 	~Canvas();
 
-	bool paintTile(float x, float y, sf::Color);
-	bool paintTile(sf::Vector2f, sf::Color);
+	bool paintTile(float x, float y, sf::Color, bool);
+	bool paintTile(sf::Vector2f, sf::Color, bool);
 	bool eraseTile(sf::Vector2f);
 
-	bool fogTile(sf::Vector2f);
-	bool unfogTile(sf::Vector2f);
+	bool fogTile(sf::Vector2f, bool);
+	bool unfogTile(sf::Vector2f, bool);
 	bool isFogged(sf::Vector2i);
 
-	bool createToken(sf::Vector2f, sf::Color);
-	bool eraseToken(sf::Vector2f);
+	bool createToken(sf::Vector2f, sf::Color, bool);
+	bool eraseToken(sf::Vector2f, bool);
 	Token* getClickedToken(sf::Vector2f);
 
 
@@ -60,6 +61,8 @@ private:
 	//Fog Cloud
 	sf::Texture fogCloudTexture;
 
+	//Network Manager Pointer.
+	NetworkManager* networkManager;
 	
 	//List of tokens
 	std::vector<Token> tokenList;

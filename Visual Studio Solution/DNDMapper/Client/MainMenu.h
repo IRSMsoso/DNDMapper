@@ -9,7 +9,7 @@ class MainMenu: public Menu {
 
 public:
 
-	MainMenu(sf::RenderWindow*, std::vector<std::unique_ptr<Menu>>*);
+	MainMenu(sf::RenderWindow*, std::vector<std::unique_ptr<Menu>>*, NetworkManager*);
 
 	virtual void interpretEvent(sf::Event);
 	virtual void update();

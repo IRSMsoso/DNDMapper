@@ -1,7 +1,9 @@
 #include "Canvas.h"
 
-Canvas::Canvas(sf::View* newView){
+Canvas::Canvas(sf::View* newView, NetworkManager* newNetworkManager){
 	sf::Clock setupClock;
+
+	networkManager = newNetworkManager;
 
 	//Set camera pointer.
 	camera = newView;
@@ -32,47 +34,79 @@ Canvas::~Canvas(){
 }
 
 //Same call as other paintTile function
-bool Canvas::paintTile(float worldx, float worldy, sf::Color newColor) {
-	return paintTile(sf::Vector2f(worldx, worldy), newColor);
+bool Canvas::paintTile(float worldx, float worldy, sf::Color newColor, bool shouldSend) {
+	return paintTile(sf::Vector2f(worldx, worldy), newColor, shouldSend);
 }
 
-bool Canvas::paintTile(sf::Vector2f worldxy, sf::Color newColor) {
+bool Canvas::paintTile(sf::Vector2f worldxy, sf::Color newColor, bool shouldSend) {
 	if (worldxy.x > 0 && worldxy.y > 0) {
 		int tileX = static_cast<int>(worldxy.x / TILESIZE);
 		int tileY = static_cast<int>(worldxy.y / TILESIZE);
 
 		if (tileY < tileGrid.size() && tileX < tileGrid.at(tileY).size()) {
-			tileGrid.at(tileY).at(tileX).changeColor(newColor);
-			updateQueue.push_back(sf::Vector2i(tileX, tileY));
-			return true;
+			if (tileGrid.at(tileY).at(tileX).getColor() != newColor) {
+				//Client Stuff.
+				tileGrid.at(tileY).at(tileX).changeColor(newColor);
+				updateQueue.push_back(sf::Vector2i(tileX, tileY));
+				std::cout << "Painted Tile";
+				//Network Stuff.
+				if (shouldSend) {
+					Command outCommand;
+					outCommand.type = CommandType::TilePainted;
+					outCommand.gridLocation = sf::Vector2i(tileX, tileY);
+					outCommand.color = newColor;
+					networkManager->sendCommand(outCommand);
+				}
+				return true;
+			}
 		}
 	}
 	return false;
 }
 
-bool Canvas::fogTile(sf::Vector2f worldxy) {
+bool Canvas::fogTile(sf::Vector2f worldxy, bool shouldSend) {
 	if (worldxy.x > 0 && worldxy.y > 0) {
 		int tileX = static_cast<int>(worldxy.x / TILESIZE);
 		int tileY = static_cast<int>(worldxy.y / TILESIZE);
 
 		if (tileY < tileGrid.size() && tileX < tileGrid.at(tileY).size()) {
-			tileGrid.at(tileY).at(tileX).setFog(true);
-			updateQueue.push_back(sf::Vector2i(tileX, tileY));
-			return true;
+			if (!isFogged(sf::Vector2i(tileX, tileY))) {
+				//Client Stuff.
+				tileGrid.at(tileY).at(tileX).setFog(true);
+				updateQueue.push_back(sf::Vector2i(tileX, tileY));
+				//Network Stuff.
+				if (shouldSend) {
+					Command outCommand;
+					outCommand.type = CommandType::FogPainted;
+					outCommand.gridLocation = sf::Vector2i(tileX, tileY);
+					networkManager->sendCommand(outCommand);
+				}
+				return true;
+			}
 		}
 	}
 	return false;
 }
 
-bool Canvas::unfogTile(sf::Vector2f worldxy) {
+bool Canvas::unfogTile(sf::Vector2f worldxy, bool shouldSend) {
 	if (worldxy.x > 0 && worldxy.y > 0) {
 		int tileX = static_cast<int>(worldxy.x / TILESIZE);
 		int tileY = static_cast<int>(worldxy.y / TILESIZE);
 
 		if (tileY < tileGrid.size() && tileX < tileGrid.at(tileY).size()) {
-			tileGrid.at(tileY).at(tileX).setFog(false);
-			updateQueue.push_back(sf::Vector2i(tileX, tileY));
-			return true;
+			if (isFogged(sf::Vector2i(tileX, tileY))) {
+				//Client Stuff.
+				tileGrid.at(tileY).at(tileX).setFog(false);
+				updateQueue.push_back(sf::Vector2i(tileX, tileY));
+				//Network Stuff.
+				if (shouldSend) {
+					Command outCommand;
+					outCommand.type = CommandType::FogRemoved;
+					outCommand.gridLocation = sf::Vector2i(tileX, tileY);
+					networkManager->sendCommand(outCommand);
+				}
+				return true;
+			}
 		}
 	}
 	return false;
@@ -90,7 +124,7 @@ bool Canvas::isFogged(sf::Vector2i vectorPos) {
 	return false;
 }
 
-bool Canvas::createToken(sf::Vector2f worldxy, sf::Color newColor){
+bool Canvas::createToken(sf::Vector2f worldxy, sf::Color newColor, bool shouldSend){
 
 	if (worldxy.x >= 0 && worldxy.y >= 0) {
 		int tileX = static_cast<int>(worldxy.x / TILESIZE);
@@ -106,10 +140,20 @@ bool Canvas::createToken(sf::Vector2f worldxy, sf::Color newColor){
 				}
 			}
 
+			//Client Stuff
 			Token newToken(newColor, sf::Vector2f(tileX * TILESIZE, tileY * TILESIZE) + sf::Vector2f(TILESIZE / 2.f, TILESIZE / 2.f), tokenFont, newID);
 			tokenList.push_back(newToken);
-
 			std::cout << "Created Token\n";
+
+			//Network Stuff.
+			if (shouldSend) {
+				Command outCommand;
+				outCommand.type = CommandType::TokenCreated;
+				outCommand.gridLocation = sf::Vector2i(tileX, tileY);
+				outCommand.color = newColor;
+				outCommand.id = newID;
+				networkManager->sendCommand(outCommand);
+			}
 			return true;
 		}
 	}
@@ -117,11 +161,19 @@ bool Canvas::createToken(sf::Vector2f worldxy, sf::Color newColor){
 	return false;
 }
 
-bool Canvas::eraseToken(sf::Vector2f worldxy)
+bool Canvas::eraseToken(sf::Vector2f worldxy, bool shouldSend)
 {
 
 	for (int i = tokenList.size() - 1; i >= 0; i--) {
 		if (tokenList.at(i).isClicked(worldxy)) {
+			//Network Stuff.
+			if (shouldSend) {
+				Command outCommand;
+				outCommand.type = CommandType::TokenDeleted;
+				outCommand.id = tokenList.at(i).getID();
+				networkManager->sendCommand(outCommand);
+			}
+			//Client Stuff last because it deletes it.
 			tokenList.erase(tokenList.begin() + i);
 			return true;
 		}
@@ -142,7 +194,7 @@ Token * Canvas::getClickedToken(sf::Vector2f worldxy)
 }
 
 bool Canvas::eraseTile(sf::Vector2f worldxy) {
-	return paintTile(worldxy, defaultColor);
+	return paintTile(worldxy, defaultColor, true);
 }
 
 std::vector<std::vector<Tile>>* Canvas::getTileGrid(){

@@ -26,6 +26,7 @@ public:
 	sf::Uint16 getID() { return id; }
 	void setID(sf::Uint16 newID) { id = newID; }
 
+	std::string getName() { return name; }
 
 	void snap();
 

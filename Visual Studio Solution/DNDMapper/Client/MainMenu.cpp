@@ -1,6 +1,6 @@
 #include "MainMenu.h"
 
-MainMenu::MainMenu(sf::RenderWindow* newWindow, std::vector<std::unique_ptr<Menu>>* newStack): Menu(newWindow, newStack){
+MainMenu::MainMenu(sf::RenderWindow* newWindow, std::vector<std::unique_ptr<Menu>>* newStack, NetworkManager* newNetworkManager): Menu(newWindow, newStack, newNetworkManager){
 
 	cam::loadAnimation(flameAnimation, flameTexture, "Firesmile.png", 100, 100, 125);
 	cam::loadAnimation(fireEyeAnimation, fireEyeTexture, "Fireeye.png", 41, 45, 120);
@@ -53,7 +53,7 @@ void MainMenu::interpretEvent(sf::Event pollingEvent) {
 	case sf::Event::MouseButtonPressed:
 
 		if (cam::isSpriteClicked(newGameSprite, window->mapPixelToCoords(sf::Mouse::getPosition(*window)))) {
-			menuStack->push_back(std::unique_ptr<Game>(new Game(window, menuStack, newGame)));
+			menuStack->push_back(std::unique_ptr<Game>(new Game(window, menuStack, networkManager, newGame)));
 		}
 
 		break;

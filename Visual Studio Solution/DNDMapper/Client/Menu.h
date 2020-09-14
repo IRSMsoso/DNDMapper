@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include "NetworkManager.h"
 
 
 const int WINDOWX = 1400;
@@ -9,7 +10,7 @@ const int WINDOWY = 800;
 class Menu: public sf::Drawable{
 
 public:
-	Menu(sf::RenderWindow*, std::vector<std::unique_ptr<Menu>>*);
+	Menu(sf::RenderWindow*, std::vector<std::unique_ptr<Menu>>*, NetworkManager*);
 	virtual ~Menu();
 
 
@@ -29,6 +30,8 @@ private:
 
 protected:
 	sf::RenderWindow* window;
+
+	NetworkManager* networkManager;
 
 	sf::View camera;
 

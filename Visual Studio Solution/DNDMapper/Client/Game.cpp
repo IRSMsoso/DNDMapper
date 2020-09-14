@@ -1,6 +1,6 @@
 #include "Game.h"
 
-Game::Game(sf::RenderWindow* newWindow, std::vector<std::unique_ptr<Menu>>* newStack, GameAction action): Menu(newWindow, newStack), ui(window), canvas(&camera) {
+Game::Game(sf::RenderWindow* newWindow, std::vector<std::unique_ptr<Menu>>* newStack, NetworkManager* newNetworkManager, GameAction action): Menu(newWindow, newStack, newNetworkManager), ui(window), canvas(&camera, networkManager) {
 	camera.move(10, 10);
 
 	window->setView(camera);
@@ -89,20 +89,25 @@ void Game::update(){
 
 		//Mouse Action Logic
 		if (mouseAction == MouseAction::painting) {
-			canvas.paintTile(window->mapPixelToCoords(sf::Mouse::getPosition(*window)), selectedColor);
+			canvas.paintTile(window->mapPixelToCoords(sf::Mouse::getPosition(*window)), selectedColor, true);
 		}
 		else if (mouseAction == MouseAction::erasing) {
 			canvas.eraseTile(window->mapPixelToCoords(sf::Mouse::getPosition(*window)));
 		}
 		else if (mouseAction == MouseAction::fogging) {
-			canvas.fogTile(window->mapPixelToCoords(sf::Mouse::getPosition(*window)));
+			canvas.fogTile(window->mapPixelToCoords(sf::Mouse::getPosition(*window)), true);
 		}
 		else if (mouseAction == MouseAction::unfogging) {
-			canvas.unfogTile(window->mapPixelToCoords(sf::Mouse::getPosition(*window)));
+			canvas.unfogTile(window->mapPixelToCoords(sf::Mouse::getPosition(*window)), true);
 		}
 		else if (mouseAction == MouseAction::tokenMoving) {
 			selectedToken->setPosition(window->mapPixelToCoords(sf::Mouse::getPosition(*window)));
 			std::cout << "Selected Token ID: " << selectedToken->getID() << std::endl;
+			//Networking.
+			Command outCommand;
+			outCommand.id = selectedToken->getID();
+			outCommand.worldLocation = selectedToken->getPosition();
+			networkManager->sendCommand(outCommand);
 		}
 		else if (mouseAction == MouseAction::tokenResizing) {
 			sf::Vector2f currentMouse = window->mapPixelToCoords(sf::Mouse::getPosition(*window));
@@ -212,7 +217,7 @@ void Game::interpretEvent(sf::Event pollingEvent){
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) {
 							selectedToken = canvas.getClickedToken(window->mapPixelToCoords(mouseWindowLocation));
 							if (selectedToken == nullptr) {
-								canvas.createToken(window->mapPixelToCoords(mouseWindowLocation), selectedColor);
+								canvas.createToken(window->mapPixelToCoords(mouseWindowLocation), selectedColor, true);
 							}
 							else {
 								mouseAction = MouseAction::tokenResizing;
@@ -270,7 +275,7 @@ void Game::interpretEvent(sf::Event pollingEvent){
 
 				case ToolType::tokenTool: //Token tool selected + right click
 					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) { //Shift Right Click
-						canvas.eraseToken(window->mapPixelToCoords(mouseWindowLocation));
+						canvas.eraseToken(window->mapPixelToCoords(mouseWindowLocation), true);
 					}
 					else { //Non shift Right Click
 						selectedToken = canvas.getClickedToken(window->mapPixelToCoords(mouseWindowLocation));
@@ -361,9 +366,21 @@ void Game::interpretEvent(sf::Event pollingEvent){
 				else { //Shift isn't pressed, add lower case letter.
 					selectedToken->addNameLetter(LOWERCASEALPHABET[newKey]);
 				}
+				//Networking
+				Command outCommand;
+				outCommand.type = CommandType::TokenRenamed;
+				outCommand.id = selectedToken->getID();
+				outCommand.name = selectedToken->getName();
+				networkManager->sendCommand(outCommand);
 			}
 			else if (pollingEvent.key.code == sf::Keyboard::Key::Backspace) {
 				selectedToken->removeNameLetter();
+				//Networking
+				Command outCommand;
+				outCommand.type = CommandType::TokenRenamed;
+				outCommand.id = selectedToken->getID();
+				outCommand.name = selectedToken->getName();
+				networkManager->sendCommand(outCommand);
 			}
 			else if (pollingEvent.key.code == sf::Keyboard::Key::Enter) {
 				selectedToken->setIsEditing(false);
