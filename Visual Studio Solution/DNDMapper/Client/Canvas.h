@@ -25,8 +25,11 @@ public:
 	bool isFogged(sf::Vector2i);
 
 	bool createToken(sf::Vector2f, sf::Color, bool);
+	bool createToken(sf::Vector2f, sf::Color, sf::Uint16, bool);
 	bool eraseToken(sf::Vector2f, bool);
+	bool eraseToken(sf::Uint16);
 	Token* getClickedToken(sf::Vector2f);
+	Token* getTokenFromID(sf::Uint16);
 
 
 	std::vector<std::vector<Tile>>* getTileGrid();

@@ -46,6 +46,7 @@ public:
 	bool connect(sf::IpAddress);
 
 	std::vector<Command> getCommandsFromType(CommandType); //Returns a vector of all the commands with that matching id, and removes them from the queue.
+	std::vector<Command> getCanvasUpdateCommands();
 
 	bool sendCommand(Command); //Send a command to the server.
 

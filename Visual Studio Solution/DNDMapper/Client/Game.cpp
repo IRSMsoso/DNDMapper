@@ -58,6 +58,61 @@ void Game::update(){
 	float fps = 1.f / frameTime.asSeconds();
 	fpsText.setString(std::to_string(fps));
 
+	//Update from all networking commands.
+	std::vector<Command> inCommands;
+	inCommands = networkManager->getCanvasUpdateCommands();
+	for (int i = 0; i < inCommands.size(); i++) {
+		switch (inCommands.at(i).type) {
+		case CommandType::FogPainted:
+			canvas.fogTile(sf::Vector2f(inCommands.at(i).gridLocation) * TILESIZE, false); //Those vector functions should be cleaned up. Make the normal function use tilegrid and an overload use that after converting down from worldxy.
+			break;
+
+		case CommandType::FogRemoved:
+			canvas.unfogTile(sf::Vector2f(inCommands.at(i).gridLocation) * TILESIZE, false);
+			break;
+
+		case CommandType::TilePainted:
+			canvas.paintTile(sf::Vector2f(inCommands.at(i).gridLocation) * TILESIZE, inCommands.at(i).color, false);
+			break;
+
+		case CommandType::TokenCreated:
+			canvas.createToken(inCommands.at(i).worldLocation, inCommands.at(i).color, inCommands.at(i).id, false);
+			break;
+
+		case CommandType::TokenDeleted:
+			canvas.eraseToken(inCommands.at(i).id);
+			break;
+
+		case CommandType::TokenRenamed:
+		{
+			Token* tokenPointer = canvas.getTokenFromID(inCommands.at(i).id);
+			if (tokenPointer != nullptr) {
+				tokenPointer->setName(inCommands.at(i).name);
+			}
+			else {
+				std::cout << "ERROR: Token is being renamed, but it doesn't exist client side!\n";
+			}
+			break;
+		}
+
+		case CommandType::TokenMoved:
+		{
+			Token* tokenPointer = canvas.getTokenFromID(inCommands.at(i).id);
+			if (tokenPointer != nullptr) {
+				if (mouseAction == MouseAction::tokenMoving) { //Take away control from client of server is moving it.
+					mouseAction = MouseAction::none;
+					selectedToken = nullptr;
+				}
+				tokenPointer->setPosition(inCommands.at(i).worldLocation);
+			}
+			else {
+				std::cout << "ERROR: Token is being moved, but it doesn't exist client side!\n";
+			}
+			break;
+		}
+		}
+	}
+
 
 	//Panning Logic
 	if (isPanning) {
@@ -321,6 +376,14 @@ void Game::interpretEvent(sf::Event pollingEvent){
 				if (selectedToken != nullptr) {
 
 					selectedToken->snap();
+
+					//Networking the Snap Movement.
+					Command outCommand;
+					outCommand.type = CommandType::TokenMoved;
+					outCommand.id = selectedToken->getID();
+					outCommand.worldLocation = selectedToken->getPosition();
+					networkManager->sendCommand(outCommand);
+
 					selectedToken = nullptr;
 				}
 				break;

@@ -36,6 +36,23 @@ std::vector<Command> NetworkManager::getCommandsFromType(CommandType type) {
 	return returnCommands;
 }
 
+std::vector<Command> NetworkManager::getCanvasUpdateCommands() {
+	std::vector<Command> returnCommands;
+
+	commandQueueMutex.lock();
+	for (int i = 0; i < commandQueue.size(); i++) {
+		if (1 <= commandQueue.at(i).type <= 7) {
+			returnCommands.push_back(commandQueue.at(i));
+			commandQueue.erase(commandQueue.begin() + i);
+			i--;
+		}
+	}
+
+
+
+	return std::vector<Command>();
+}
+
 bool NetworkManager::sendCommand(Command command) {
 	
 	sf::Packet outPacket;

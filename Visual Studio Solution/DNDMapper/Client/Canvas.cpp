@@ -126,19 +126,24 @@ bool Canvas::isFogged(sf::Vector2i vectorPos) {
 
 bool Canvas::createToken(sf::Vector2f worldxy, sf::Color newColor, bool shouldSend){
 
+	sf::Uint16 newID = 0;
+	for (int i = 0; i < tokenList.size(); i++) {
+		if (tokenList.at(i).getID() == newID) {
+			newID += 1;
+			i = -1;
+		}
+	}
+
+	return createToken(worldxy, newColor, newID, shouldSend);
+}
+
+bool Canvas::createToken(sf::Vector2f worldxy, sf::Color newColor, sf::Uint16 newID, bool shouldSend)
+{
 	if (worldxy.x >= 0 && worldxy.y >= 0) {
 		int tileX = static_cast<int>(worldxy.x / TILESIZE);
 		int tileY = static_cast<int>(worldxy.y / TILESIZE);
 
 		if (tileY < tileGrid.size() && tileX < tileGrid.at(tileY).size()) {
-			
-			sf::Uint16 newID = 0;
-			for (int i = 0; i < tokenList.size(); i++) {
-				if (tokenList.at(i).getID() == newID) {
-					newID += 1;
-					i = -1;
-				}
-			}
 
 			//Client Stuff
 			Token newToken(newColor, sf::Vector2f(tileX * TILESIZE, tileY * TILESIZE) + sf::Vector2f(TILESIZE / 2.f, TILESIZE / 2.f), tokenFont, newID);
@@ -182,6 +187,18 @@ bool Canvas::eraseToken(sf::Vector2f worldxy, bool shouldSend)
 	return false;
 }
 
+bool Canvas::eraseToken(sf::Uint16 id) {
+
+	for (int i = 0; i < tokenList.size(); i++) {
+		if (tokenList.at(i).getID() == id) {
+			tokenList.erase(tokenList.begin() + i);
+			return true;
+		}
+	}
+
+	return false;
+}
+
 Token * Canvas::getClickedToken(sf::Vector2f worldxy)
 {
 	for (int i = tokenList.size() - 1; i >= 0; i--) {
@@ -190,6 +207,16 @@ Token * Canvas::getClickedToken(sf::Vector2f worldxy)
 		}
 	}
 	std::cout << "Couldn't find token\n";
+	return nullptr;
+}
+
+Token * Canvas::getTokenFromID(sf::Uint16 id) {
+
+	for (int i = 0; i < tokenList.size(); i++) {
+		if (tokenList.at(i).getID() == id)
+			return &tokenList.at(i);
+	}
+
 	return nullptr;
 }
 
