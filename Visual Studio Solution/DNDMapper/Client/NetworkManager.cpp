@@ -53,14 +53,14 @@ std::vector<Command> NetworkManager::getCanvasUpdateCommands() {
 	return std::vector<Command>();
 }
 
-bool NetworkManager::sendCommand(Command command) {
+sf::Socket::Status NetworkManager::sendCommand(Command command) {
 	
 	sf::Packet outPacket;
-	bool successPacket = outPacket << command;
-	bool successSending = socket.send(outPacket);
+	outPacket << command;
+	sf::Socket::Status status = socket.send(outPacket);
 
 	std::cout << "Successfully Sent Command.\n";
-	return successPacket && successSending; //Returns true(succesful) only if both the packet and socket worked correctly.
+	return status;
 }
 
 void NetworkManager::listenForMessages() {
@@ -69,60 +69,29 @@ void NetworkManager::listenForMessages() {
 
 		sf::Packet incomingPacket;
 
-		socket.receive(incomingPacket);
-		Command newCommand;
-		incomingPacket >> newCommand;
+		sf::Socket::Status status = socket.receive(incomingPacket);
+		if (status == sf::Socket::Status::Done) {
+			std::cout << "Received Message\n";
+			Command newCommand;
+			incomingPacket >> newCommand;
 
 
-		commandQueueMutex.lock();
+			commandQueueMutex.lock();
 
-		commandQueue.push_back(newCommand);
+			commandQueue.push_back(newCommand);
 
-		commandQueueMutex.unlock();
+			commandQueueMutex.unlock();
 
-
+		}
+		else if (status == sf::Socket::Disconnected) {
+			std::cout << "Disconnected from the server... Shutting down network manager.\n";
+			shutdown();
+		}
+		else {
+			std::cout << "Unknown networking error occured.\n";
+		}
 	}
 
 	std::cout << "Shutting down Network Manager.\n";
 }
 
-
-sf::Packet& operator <<(sf::Packet& packet, const sf::Vector2i& vector) {
-	sf::Int16 x = vector.x;
-	sf::Int16 y = vector.y;
-	return packet << x << y;
-}
-
-sf::Packet& operator >>(sf::Packet& packet, sf::Vector2i& vector) {
-	return packet >> vector.x >> vector.y;
-}
-
-sf::Packet& operator <<(sf::Packet& packet, const sf::Color& color) {
-	return packet << color.toInteger();
-}
-
-sf::Packet& operator >>(sf::Packet& packet, sf::Color& color) {
-	sf::Uint32 colorInt;
-	packet >> colorInt;
-	color = sf::Color(colorInt);
-	return packet;
-}
-
-sf::Packet& operator <<(sf::Packet& packet, const Command& command) {
-	return packet << command.type << command.version << command.id << command.gridLocation << command.color << command.name;
-}
-
-sf::Packet& operator >>(sf::Packet& packet, Command& command) {
-	int typeint;
-	packet >> typeint >> command.version >> command.id >> command.gridLocation >> command.color >> command.name;
-	command.type = (CommandType)typeint;
-	return packet;
-}
-
-sf::Packet& operator <<(sf::Packet& packet, const sf::Vector2f& worldxy) {
-	return packet << worldxy.x << worldxy.y;
-}
-
-sf::Packet& operator >>(sf::Packet& packet, sf::Vector2f& worldxy) {
-	return packet >> worldxy.x >> worldxy.y;
-}

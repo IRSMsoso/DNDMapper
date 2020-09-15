@@ -1,5 +1,15 @@
 #include "Player.h"
 
 Player::Player(){
-	socket = new sf::TcpSocket();
+	socket = nullptr;
+	currentGame = nullptr;
+}
+
+Player::~Player() {
+	delete socket;
+}
+
+bool Player::sendOnMessage(Command command)
+{
+	return false;
 }

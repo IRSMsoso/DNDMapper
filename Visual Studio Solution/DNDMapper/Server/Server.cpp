@@ -6,14 +6,16 @@
 
 #include <fstream>
 #include <cereal/archives/binary.hpp>
-#include <cereal/archives/json.hpp>
+#include <cereal/archives/json.hpp>  
 
 
 
 int main()
 {
 	
+	Manager manager;
 
+	manager.run();
 
 	std::system("pause");
 	return 0;

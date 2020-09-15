@@ -7,7 +7,10 @@ public:
 	~Game();
 
 
+	void setDM(Player* newDM) { DM = newDM; }
 	Player* getDM() { return DM; }
+	bool isDM(Player*);
+	bool removePlayer(Player*);
 
 
 private:
@@ -15,5 +18,6 @@ private:
 
 	std::vector<Player*> players;
 
-};
 
+
+};

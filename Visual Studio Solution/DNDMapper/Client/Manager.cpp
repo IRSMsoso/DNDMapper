@@ -4,17 +4,20 @@
 Manager::Manager(sf::ContextSettings settings): window(sf::VideoMode(WINDOWX, WINDOWY), "Dungeons and Dragons!", sf::Style::Close | sf::Style::Titlebar, settings), networkThread(&NetworkManager::listenForMessages, &networkManager){
 
 	menuStack.push_back(std::unique_ptr<MainMenu>(new MainMenu(&window, &menuStack, &networkManager)));
-	/*
+	
 	if (!networkManager.connect(sf::IpAddress("173.26.223.180"))) {
 		window.close();
 		return;
 	}
 
+	networkThread.launch();
+	std::cout << "Networking Thread Launched...\n";
+
 	//Send version number.
 	Command sendCommand;
 	sendCommand.type = CommandType::VersionConfirmation;
 	sendCommand.version = VERSION;
-	networkManager.sendCommand(sendCommand);
+	sf::Socket::Status status = networkManager.sendCommand(sendCommand);
 
 	bool canProceed = false;
 
@@ -26,13 +29,19 @@ Manager::Manager(sf::ContextSettings settings): window(sf::VideoMode(WINDOWX, WI
 				std::cout << "Version Match Confirmed. Running...\n";
 				canProceed = true;
 			}
+			else {
+				std::cout << "Version Mismatch.. Closing.\n";
+				networkManager.shutdown();
+				window.close();
+				return;
+			}
+			
 		}
-		std::cout << "Waiting for Version Match Confirmation...\n";
+		status = networkManager.sendCommand(sendCommand); //Send Again
+		std::cout << "Waiting for Version Match Confirmation... " << status << "\n";
 		sf::sleep(sf::seconds(1));
 	}
-	networkThread.launch();
-	std::cout << "Networking Thread Launched...\n";
-	*/
+	
 }
 
 Manager::~Manager(){
@@ -42,7 +51,7 @@ Manager::~Manager(){
 //The main event loop of the Manager object.
 void Manager::mainLoop() {
 
-	while (window.isOpen()) {
+	while (window.isOpen() && networkManager.isOperational()) {
 		sf::Event pollingEvent;
 		while (window.pollEvent(pollingEvent)) {
 			menuStack.back()->interpretEvent(pollingEvent);
@@ -57,4 +66,5 @@ void Manager::mainLoop() {
 		window.draw(*menuStack.back());
 		window.display();
 	}
+	window.close();
 }

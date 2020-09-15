@@ -170,6 +170,7 @@
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="MyUtilities.cpp" />
     <ClCompile Include="NetworkManager.cpp" />
+    <ClCompile Include="NetworkStructs.cpp" />
     <ClCompile Include="PaintTool.cpp" />
     <ClCompile Include="Tab.cpp" />
     <ClCompile Include="Tile.cpp" />
@@ -191,6 +192,7 @@
     <ClInclude Include="Menu.h" />
     <ClInclude Include="MyUtilities.h" />
     <ClInclude Include="NetworkManager.h" />
+    <ClInclude Include="NetworkStructs.h" />
     <ClInclude Include="PaintTool.h" />
     <ClInclude Include="Tab.h" />
     <ClInclude Include="Tile.h" />
