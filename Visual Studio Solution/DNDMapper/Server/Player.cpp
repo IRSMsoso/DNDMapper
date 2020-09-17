@@ -8,8 +8,3 @@ Player::Player(){
 Player::~Player() {
 	delete socket;
 }
-
-bool Player::sendOnMessage(Command command)
-{
-	return false;
-}

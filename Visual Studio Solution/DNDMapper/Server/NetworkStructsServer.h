@@ -21,6 +21,8 @@ struct MapData {
 
 enum CommandType {
 	VersionConfirmation,
+	CreateGame,
+	JoinGame,
 	TokenCreated,
 	TokenDeleted,
 	TokenMoved,

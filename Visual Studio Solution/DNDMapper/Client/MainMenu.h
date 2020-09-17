@@ -24,15 +24,16 @@ private:
 
 	AnimatedSprite newGameSprite;
 	sf::Sprite openGameSprite;
-	sf::Sprite joinGameSprite;
-
+	AnimatedSprite joinGameSprite;
 	AnimatedSprite flamesSprite1;
 	AnimatedSprite flamesSprite2;
 
 	Animation fireEyeAnimation;
+	Animation fireJoinAnimation;
 	Animation flameAnimation;
 	sf::Texture flameTexture;
 	sf::Texture fireEyeTexture;
+	sf::Texture fireJoinTexture;
 
 
 	sf::Clock frameTime;

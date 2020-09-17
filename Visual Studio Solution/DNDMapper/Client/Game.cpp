@@ -160,6 +160,7 @@ void Game::update(){
 			std::cout << "Selected Token ID: " << selectedToken->getID() << std::endl;
 			//Networking.
 			Command outCommand;
+			outCommand.type = CommandType::TokenMoved;
 			outCommand.id = selectedToken->getID();
 			outCommand.worldLocation = selectedToken->getPosition();
 			networkManager->sendCommand(outCommand);

@@ -16,6 +16,8 @@ public:
 
 	bool removePlayer(Player*);
 
+	void createGame(sf::Uint16, Player*);
+
 private:
 
 	sf::TcpListener listener;

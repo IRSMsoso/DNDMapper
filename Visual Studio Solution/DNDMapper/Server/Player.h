@@ -18,8 +18,7 @@ public:
 
 	bool isInGame() { return !(currentGame == nullptr); }
 	Game* getGame() { return currentGame; }
-
-	bool sendOnMessage(Command);
+	void setGame(Game* newGame) { currentGame = newGame; }
 
 private:
 

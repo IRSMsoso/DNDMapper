@@ -3,7 +3,7 @@
 
 class Game{
 public:
-	Game();
+	Game(sf::Uint16, Player*);
 	~Game();
 
 
@@ -11,10 +11,15 @@ public:
 	Player* getDM() { return DM; }
 	bool isDM(Player*);
 	bool removePlayer(Player*);
+	bool addPlayer(Player*);
+	void passMessage(sf::Packet, Player*);
+	sf::Uint16 getID() { return id; }
 
 
 private:
 	Player* DM;
+
+	sf::Uint16 id;
 
 	std::vector<Player*> players;
 

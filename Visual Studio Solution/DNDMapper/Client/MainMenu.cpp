@@ -4,15 +4,17 @@ MainMenu::MainMenu(sf::RenderWindow* newWindow, std::vector<std::unique_ptr<Menu
 
 	cam::loadAnimation(flameAnimation, flameTexture, "Firesmile.png", 100, 100, 125);
 	cam::loadAnimation(fireEyeAnimation, fireEyeTexture, "Fireeye.png", 41, 45, 120);
-	
+	cam::loadAnimation(fireJoinAnimation, fireJoinTexture, "fireplay.png", 39, 45, 120);
 	
 
 	flamesSprite1.setLooped(true);
 	flamesSprite2.setLooped(true);
 	newGameSprite.setLooped(true);
+	joinGameSprite.setLooped(true);
 	flamesSprite1.setFrameTime(sf::milliseconds(20));
 	flamesSprite2.setFrameTime(sf::milliseconds(20));
 	newGameSprite.setFrameTime(sf::milliseconds(20));
+	joinGameSprite.setFrameTime(sf::milliseconds(20));
 
 	flamesSprite1.setPosition(700, 200);
 	flamesSprite1.setScale(8, 6);
@@ -23,9 +25,13 @@ MainMenu::MainMenu(sf::RenderWindow* newWindow, std::vector<std::unique_ptr<Menu
 	newGameSprite.setPosition(350, 100);
 	newGameSprite.setScale(4, 4);
 
+	joinGameSprite.setPosition(900, 100);
+	joinGameSprite.setScale(4, 4);
+
 	flamesSprite1.play(flameAnimation);
 	flamesSprite2.play(flameAnimation);
 	newGameSprite.play(fireEyeAnimation);
+	joinGameSprite.play(fireJoinAnimation);
 
 	normalCursor.loadFromSystem(sf::Cursor::Type::Arrow);
 	hoveringCursor.loadFromSystem(sf::Cursor::Type::Hand);
@@ -41,7 +47,7 @@ void MainMenu::interpretEvent(sf::Event pollingEvent) {
 
 	case sf::Event::MouseMoved:
 
-		if (cam::isSpriteClicked(newGameSprite, window->mapPixelToCoords(sf::Mouse::getPosition(*window)))) {
+		if (cam::isSpriteClicked(newGameSprite, window->mapPixelToCoords(sf::Mouse::getPosition(*window))) || cam::isSpriteClicked(joinGameSprite, window->mapPixelToCoords(sf::Mouse::getPosition(*window)))) {
 			window->setMouseCursor(hoveringCursor);
 		}
 		else {
@@ -53,7 +59,11 @@ void MainMenu::interpretEvent(sf::Event pollingEvent) {
 	case sf::Event::MouseButtonPressed:
 
 		if (cam::isSpriteClicked(newGameSprite, window->mapPixelToCoords(sf::Mouse::getPosition(*window)))) {
-			menuStack->push_back(std::unique_ptr<Game>(new Game(window, menuStack, networkManager, newGame)));
+			menuStack->push_back(std::unique_ptr<Game>(new Game(window, menuStack, networkManager, GameAction::newGame)));
+		}
+
+		if (cam::isSpriteClicked(joinGameSprite, window->mapPixelToCoords(sf::Mouse::getPosition(*window)))) {
+
 		}
 
 		break;
@@ -68,6 +78,7 @@ void MainMenu::update() {
 	flamesSprite1.update(updateTime);
 	flamesSprite2.update(updateTime);
 	newGameSprite.update(updateTime);
+	joinGameSprite.update(updateTime);
 
 
 
@@ -78,4 +89,5 @@ void MainMenu::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 	target.draw(flamesSprite1);
 	target.draw(flamesSprite2);
 	target.draw(newGameSprite);
+	target.draw(joinGameSprite);
 }
