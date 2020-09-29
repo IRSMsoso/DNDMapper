@@ -52,6 +52,8 @@ void Game::draw(sf::RenderTarget& target, sf::RenderStates states) const{
 
 
 void Game::update(){
+	//Debug
+	std::cout << "Should Game Close? " << getShouldClose();
 
 	//FPS
 	sf::Time frameTime = fpsClock.restart();
@@ -198,7 +200,8 @@ void Game::interpretEvent(sf::Event pollingEvent){
 
 
 	case sf::Event::Closed:
-		window->close();
+		close();
+		//Also send message that we are leaving the game.
 		break;
 
 

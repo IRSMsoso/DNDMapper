@@ -165,6 +165,7 @@
     <ClCompile Include="ExpandButton.cpp" />
     <ClCompile Include="FogTool.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="InputMenu.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="Manager.cpp" />
     <ClCompile Include="Menu.cpp" />
@@ -187,6 +188,7 @@
     <ClInclude Include="ExpandButton.h" />
     <ClInclude Include="FogTool.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="InputMenu.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Manager.h" />
     <ClInclude Include="Menu.h" />

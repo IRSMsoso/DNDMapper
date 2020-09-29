@@ -4,7 +4,7 @@
 Manager::Manager(sf::ContextSettings settings): window(sf::VideoMode(WINDOWX, WINDOWY), "Dungeons and Dragons!", sf::Style::Close | sf::Style::Titlebar, settings), networkThread(&NetworkManager::listenForMessages, &networkManager){
 
 	menuStack.push_back(std::unique_ptr<MainMenu>(new MainMenu(&window, &menuStack, &networkManager)));
-	
+	/*
 	if (!networkManager.connect(sf::IpAddress("173.26.223.180"))) {
 		window.close();
 		return;
@@ -41,6 +41,7 @@ Manager::Manager(sf::ContextSettings settings): window(sf::VideoMode(WINDOWX, WI
 		std::cout << "Waiting for Version Match Confirmation... " << status << "\n";
 		sf::sleep(sf::seconds(1));
 	}
+	*/
 	
 }
 
@@ -51,8 +52,11 @@ Manager::~Manager(){
 //The main event loop of the Manager object.
 void Manager::mainLoop() {
 
-	while (window.isOpen() && networkManager.isOperational()) {
+	while (window.isOpen() && networkManager.isOperational() && menuStack.size() > 0) {
+
 		sf::Event pollingEvent;
+
+		//Send Event to the last stack.
 		while (window.pollEvent(pollingEvent)) {
 			menuStack.back()->interpretEvent(pollingEvent);
 		}
@@ -65,6 +69,10 @@ void Manager::mainLoop() {
 		window.setView(menuStack.back()->getCamera());
 		window.draw(*menuStack.back());
 		window.display();
+
+		if (menuStack.back()->getShouldClose()) {
+			menuStack.pop_back();
+		}
 	}
 	window.close();
 }
