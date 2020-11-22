@@ -53,7 +53,7 @@ void Game::draw(sf::RenderTarget& target, sf::RenderStates states) const{
 
 void Game::update(){
 	//Debug
-	std::cout << "Should Game Close? " << getShouldClose();
+	//std::cout << "Should Game Close? " << getShouldClose();
 
 	//FPS
 	sf::Time frameTime = fpsClock.restart();

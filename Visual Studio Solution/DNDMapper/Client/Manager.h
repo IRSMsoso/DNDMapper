@@ -2,11 +2,13 @@
 #include "Game.h"
 #include "MainMenu.h"
 #include "NetworkManager.h"
+#include <assert.h>
 
 
-const sf::Uint16 VERSION = 1;
 
 
+
+//Manager class, used to manage everything game related.
 class Manager{
 public:
 	Manager(sf::ContextSettings);
@@ -21,7 +23,6 @@ private:
 
 	//Network Manager
 	NetworkManager networkManager;
-	sf::Thread networkThread;
 
 	std::vector<std::unique_ptr<Menu>> menuStack;
 };

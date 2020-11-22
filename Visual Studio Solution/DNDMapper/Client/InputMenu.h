@@ -3,7 +3,7 @@
 
 
 class InputMenu: public Menu {
-	InputMenu(sf::RenderWindow* newWindow, std::vector<std::unique_ptr<Menu>>* newStack, NetworkManager* newNetworkManager);
+	InputMenu(sf::RenderWindow* newWindow, std::vector<std::unique_ptr<Menu>>* newStack, NetworkManager* newNetworkManager, Menu* nextMenu);
 
 	void setNextMenu(Menu* next) { nextMenu = next; }
 	void setMenuText(std::string newText) { text = newText; }
