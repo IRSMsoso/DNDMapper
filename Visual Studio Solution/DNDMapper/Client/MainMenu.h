@@ -41,5 +41,11 @@ private:
 	sf::Cursor hoveringCursor;
 	sf::Cursor normalCursor;
 
+
+	//Networking
+	bool isConnected;
+	bool isVersionCorrect;
+	sf::Clock connectionUpdateClock;
+
 };
 

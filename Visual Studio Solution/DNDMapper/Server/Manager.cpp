@@ -9,6 +9,7 @@ Manager::~Manager() {
 }
 
 void Manager::run(){
+	std::cout << "Started Running Manager.\n";
 	isRunning = true;
 	listener.listen(51248);
 	socketSelector.add(listener);
@@ -38,7 +39,7 @@ void Manager::run(){
 					Command inCommand;
 					inPacket >> inCommand;
 
-					std::cout << "Message:\nType: " << inCommand.type << "\nName: " << inCommand.name << "\nID: " << inCommand.id << "\nVersion: " << inCommand.version;
+					std::cout << "Message:\nType: " << inCommand.type << "\nName: " << inCommand.name << "\nID: " << inCommand.id << "\nVersion: " << inCommand.version << std::endl;
 
 					//If the command is a version confirmation.
 					if (inCommand.type == CommandType::VersionConfirmation) {

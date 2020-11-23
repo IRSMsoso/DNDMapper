@@ -24,9 +24,8 @@ public:
 	void listenForMessages(); //Threaded function that just sits and listens for messages, putting them in the queue when it receives them.
 
 	void shutdown(); //Force disconnects the network manager.
-	bool isConnected() { return connected; }
-	bool isVersionReady() { return versionReady; }
-	bool isVersionCorrect() { return (VERSION == SERVER_VERSION); }
+	bool getIsConnected() { return isConnected; }
+	bool getIsVersionCorrect() { return (VERSION == SERVER_VERSION); }
 
 private:
 	sf::TcpSocket socket;
@@ -36,6 +35,7 @@ private:
 	std::vector<Command> commandQueue;
 
 	//Thread for connecting to the server.
+	bool isConnecting;
 	void connect();
 	sf::Thread connectThread;
 	sf::IpAddress ipAddress;
@@ -46,14 +46,13 @@ private:
 
 	//Version Handling.
 	sf::Uint16 SERVER_VERSION;
-	bool versionReady;
 
 
 	//Cleanup
 	void resetManager();
 
 	
-	bool connected;
+	bool isConnected;
 
 };
 

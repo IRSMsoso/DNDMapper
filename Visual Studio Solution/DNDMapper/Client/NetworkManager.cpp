@@ -2,14 +2,12 @@
 
 NetworkManager::NetworkManager(): connectThread(&NetworkManager::connect, this), listenThread(&NetworkManager::listenForMessages, this){
 	ipAddress = sf::IpAddress::None;
-	connected = false;
-	versionReady = false;
+	isConnected = false;
 	SERVER_VERSION = 0;
 }
 
 bool NetworkManager::startConnect(sf::IpAddress address) {
-
-	if (!connected) {
+	if (!isConnected && !isConnecting) {
 		std::cout << "Starting the thread to connect to the server...\n";
 
 		ipAddress = address;
@@ -23,12 +21,13 @@ bool NetworkManager::startConnect(sf::IpAddress address) {
 }
 
 void NetworkManager::connect() {
+	isConnecting = true;
 
 	if (ipAddress != sf::IpAddress::None && socket.connect(ipAddress, 51248) == sf::TcpSocket::Status::Done) {
 		std::cout << "Successfully connected to the network. Launching Listening Thread.\n";
 		listenThread.terminate(); //Incase the thread hasn't stopped from a previous connection period.
 		listenThread.launch();
-		connected = true;
+		isConnected = true;
 
 		//Make sure version is correct.
 		Command versionCommand;
@@ -40,8 +39,9 @@ void NetworkManager::connect() {
 	else {
 		std::cout << "Connection to network failed. Clearing Stored IP Address\n";
 		ipAddress = sf::IpAddress::None;
-		connected = false;
+		isConnected = false;
 	}
+	isConnecting = false;
 }
 
 //Get all commands that are of a certain message type and delete them from the backlog.
@@ -93,8 +93,7 @@ sf::Socket::Status NetworkManager::sendCommand(Command command) {
 }
 
 void NetworkManager::listenForMessages() {
-
-	while (connected) {
+	while (isConnected) {
 
 		sf::Packet incomingPacket;
 
@@ -103,10 +102,13 @@ void NetworkManager::listenForMessages() {
 			std::cout << "Received Message\n";
 			Command newCommand;
 			incomingPacket >> newCommand;
+			std::cout << "Message:\nType: " << newCommand.type << "\nName: " << newCommand.name << "\nID: " << newCommand.id << "\nVersion: " << newCommand.version << std::endl;
 
 			//Handles version checks itself.
-			if (newCommand.type = CommandType::VersionConfirmation) {
+			//std::cout << "Check: " << newCommand.type << " == " << CommandType::VersionConfirmation << std::endl;
+			if (newCommand.type == CommandType::VersionConfirmation) {
 				SERVER_VERSION = newCommand.version;
+				std::cout << "Server_Version set to " << SERVER_VERSION << std::endl;
 			}
 			else { //Rest of the messages.
 				commandQueueMutex.lock();
@@ -127,6 +129,7 @@ void NetworkManager::listenForMessages() {
 	}
 
 	std::cout << "Shutting down Network Manager.\n";
+
 }
 
 //Shutdown the Network Manager and reset it to default settings.
@@ -140,8 +143,8 @@ void NetworkManager::shutdown() {
 //Reset the network manager to default settings and terminates all threads. startConnect() will need to be called again.
 void NetworkManager::resetManager() {
 	std::cout << "Resetting Network Manager.\n;";
-	connected = false;
-	versionReady = false;
+	isConnected = false;
+	isConnecting = false;
 	SERVER_VERSION = 0;
 	ipAddress = sf::IpAddress::None;
 	listenThread.terminate();

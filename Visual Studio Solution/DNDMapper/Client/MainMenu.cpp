@@ -2,6 +2,7 @@
 
 MainMenu::MainMenu(sf::RenderWindow* newWindow, std::vector<std::unique_ptr<Menu>>* newStack, NetworkManager* newNetworkManager): Menu(newWindow, newStack, newNetworkManager){
 
+	//Animated Sprites
 	cam::loadAnimation(flameAnimation, flameTexture, "Firesmile.png", 100, 100, 125);
 	cam::loadAnimation(fireEyeAnimation, fireEyeTexture, "Fireeye.png", 41, 45, 120);
 	cam::loadAnimation(fireJoinAnimation, fireJoinTexture, "fireplay.png", 39, 45, 120);
@@ -33,9 +34,15 @@ MainMenu::MainMenu(sf::RenderWindow* newWindow, std::vector<std::unique_ptr<Menu
 	newGameSprite.play(fireEyeAnimation);
 	joinGameSprite.play(fireJoinAnimation);
 
+
+	//Cursors
 	normalCursor.loadFromSystem(sf::Cursor::Type::Arrow);
 	hoveringCursor.loadFromSystem(sf::Cursor::Type::Hand);
 
+
+	//Networking
+	isConnected = false;
+	isVersionCorrect = false;
 
 }
 
@@ -48,7 +55,10 @@ void MainMenu::interpretEvent(sf::Event pollingEvent) {
 	case sf::Event::MouseMoved:
 
 		if (cam::isSpriteClicked(newGameSprite, window->mapPixelToCoords(sf::Mouse::getPosition(*window))) || cam::isSpriteClicked(joinGameSprite, window->mapPixelToCoords(sf::Mouse::getPosition(*window)))) {
-			window->setMouseCursor(hoveringCursor);
+			if (isConnected && isVersionCorrect) {
+				window->setMouseCursor(hoveringCursor);
+			}
+			//std::cout << "isConnected: " << isConnected << ", isVersionCorrect: " << isVersionCorrect << std::endl;
 		}
 		else {
 			window->setMouseCursor(normalCursor);
@@ -59,7 +69,9 @@ void MainMenu::interpretEvent(sf::Event pollingEvent) {
 	case sf::Event::MouseButtonPressed:
 
 		if (cam::isSpriteClicked(newGameSprite, window->mapPixelToCoords(sf::Mouse::getPosition(*window)))) {
-			menuStack->push_back(std::unique_ptr<Game>(new Game(window, menuStack, networkManager, GameAction::newGame)));
+			if (isConnected && isVersionCorrect) {
+				menuStack->push_back(std::unique_ptr<Game>(new Game(window, menuStack, networkManager, GameAction::newGame)));
+			}
 		}
 
 		if (cam::isSpriteClicked(joinGameSprite, window->mapPixelToCoords(sf::Mouse::getPosition(*window)))) {
@@ -73,6 +85,7 @@ void MainMenu::interpretEvent(sf::Event pollingEvent) {
 }
 
 void MainMenu::update() {
+	//Animated Sprites Update
 	sf::Time updateTime = frameTime.getElapsedTime();
 
 	flamesSprite1.update(updateTime);
@@ -80,9 +93,20 @@ void MainMenu::update() {
 	newGameSprite.update(updateTime);
 	joinGameSprite.update(updateTime);
 
-
-
 	frameTime.restart();
+
+
+	//Networking Update
+	if (connectionUpdateClock.getElapsedTime().asSeconds() >= 1) {
+		std::cout << "Updated Networking Info.\n";
+		isConnected = networkManager->getIsConnected();
+		if (isConnected) {
+			std::cout << "Got Version Info\n";
+			isVersionCorrect = networkManager->getIsVersionCorrect();
+		}
+		connectionUpdateClock.restart();
+	}
+
 }
 
 void MainMenu::draw(sf::RenderTarget& target, sf::RenderStates states) const {

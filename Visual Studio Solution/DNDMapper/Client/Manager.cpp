@@ -5,15 +5,11 @@ Manager::Manager(sf::ContextSettings settings): window(sf::VideoMode(WINDOWX, WI
 
 	menuStack.push_back(std::unique_ptr<MainMenu>(new MainMenu(&window, &menuStack, &networkManager)));
 
-	//Start the connection to the server.
+	//Start the connection to the server. Network Manager handles versioning.
 	networkManager.startConnect(sf::IpAddress("173.26.223.180"));
 
-	//Send version number.
-	Command sendCommand;
-	sendCommand.type = CommandType::VersionConfirmation;
-	sendCommand.version = VERSION;
-	sf::Socket::Status status = networkManager.sendCommand(sendCommand);
-
+	
+	window.setFramerateLimit(144);
 }
 
 Manager::~Manager(){
@@ -50,4 +46,7 @@ void Manager::mainLoop() {
 		}
 	}
 	window.close();
+
+	//Force Network Manager to shut down if the window closes.
+	networkManager.shutdown();
 }
