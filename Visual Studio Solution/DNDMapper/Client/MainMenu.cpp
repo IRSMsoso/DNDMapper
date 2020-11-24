@@ -143,6 +143,7 @@ void MainMenu::update() {
 			isVersionCorrect = networkManager->getIsVersionCorrect();
 
 		}
+		connectionUpdateClock.restart();
 	}
 
 }

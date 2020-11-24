@@ -427,7 +427,7 @@ void Game::interpretEvent(sf::Event pollingEvent){
 					newKey = i;
 			}
 			if (newKey != -1) {
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::RShift)) { //Shift is pressed, add upper case letter.
+				if (pollingEvent.key.shift) { //Shift is pressed, add upper case letter.
 					selectedToken->addNameLetter(UPPERCASEALPHABET[newKey]);
 				}
 				else { //Shift isn't pressed, add lower case letter.
