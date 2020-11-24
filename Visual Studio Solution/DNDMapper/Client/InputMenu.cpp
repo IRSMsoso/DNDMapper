@@ -1,7 +1,7 @@
 #include "InputMenu.h"
 
-InputMenu::InputMenu(sf::RenderWindow * newWindow, std::vector<std::unique_ptr<Menu>>* newStack, NetworkManager * newNetworkManager, Menu* newNextMenu) : Menu(newWindow, newStack, newNetworkManager) {
-	nextMenu = newNextMenu;
+InputMenu::InputMenu(sf::RenderWindow * newWindow, std::vector<std::unique_ptr<Menu>>* newStack, NetworkManager * newNetworkManager, std::unique_ptr<Menu> newNextMenu) : Menu(newWindow, newStack, newNetworkManager) {
+	nextMenu = std::move(newNextMenu);
 }
 
 void InputMenu::interpretEvent(sf::Event pollingEvent){

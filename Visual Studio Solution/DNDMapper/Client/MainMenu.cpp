@@ -6,16 +6,22 @@ MainMenu::MainMenu(sf::RenderWindow* newWindow, std::vector<std::unique_ptr<Menu
 	cam::loadAnimation(flameAnimation, flameTexture, "Firesmile.png", 100, 100, 125);
 	cam::loadAnimation(fireEyeAnimation, fireEyeTexture, "Fireeye.png", 41, 45, 120);
 	cam::loadAnimation(fireJoinAnimation, fireJoinTexture, "fireplay.png", 39, 45, 120);
+	cam::loadAnimation(connectedAnimation, connectedTexture, "Heartrate Monitor.png", 20, 11, 29);
+	cam::loadAnimation(disconnectedAnimation, disconnectedTexture, "Heartrate Flatline.png", 20, 11, 30);
 	
 
 	flamesSprite1.setLooped(true);
 	flamesSprite2.setLooped(true);
 	newGameSprite.setLooped(true);
 	joinGameSprite.setLooped(true);
+	connectedSprite.setLooped(true);
+	disconnectedSprite.setLooped(true);
 	flamesSprite1.setFrameTime(sf::milliseconds(20));
 	flamesSprite2.setFrameTime(sf::milliseconds(20));
 	newGameSprite.setFrameTime(sf::milliseconds(20));
 	joinGameSprite.setFrameTime(sf::milliseconds(20));
+	connectedSprite.setFrameTime(sf::milliseconds(50));
+	disconnectedSprite.setFrameTime(sf::milliseconds(50));
 
 	flamesSprite1.setPosition(700, 200);
 	flamesSprite1.setScale(8, 6);
@@ -29,10 +35,18 @@ MainMenu::MainMenu(sf::RenderWindow* newWindow, std::vector<std::unique_ptr<Menu
 	joinGameSprite.setPosition(900, 100);
 	joinGameSprite.setScale(4, 4);
 
+	connectedSprite.setPosition(0, 0);
+	connectedSprite.setScale(4, 4);
+	
+	disconnectedSprite.setPosition(0, 0);
+	disconnectedSprite.setScale(4, 4);
+
 	flamesSprite1.play(flameAnimation);
 	flamesSprite2.play(flameAnimation);
 	newGameSprite.play(fireEyeAnimation);
 	joinGameSprite.play(fireJoinAnimation);
+	connectedSprite.play(connectedAnimation);
+	disconnectedSprite.play(disconnectedAnimation);
 
 
 	//Cursors
@@ -60,6 +74,13 @@ void MainMenu::interpretEvent(sf::Event pollingEvent) {
 			}
 			//std::cout << "isConnected: " << isConnected << ", isVersionCorrect: " << isVersionCorrect << std::endl;
 		}
+
+		else if (cam::isSpriteClicked(connectedSprite, window->mapPixelToCoords(sf::Mouse::getPosition(*window)))) {
+			if (!isConnected) {
+				window->setMouseCursor(hoveringCursor);
+			}
+		}
+
 		else {
 			window->setMouseCursor(normalCursor);
 		}
@@ -75,8 +96,18 @@ void MainMenu::interpretEvent(sf::Event pollingEvent) {
 		}
 
 		if (cam::isSpriteClicked(joinGameSprite, window->mapPixelToCoords(sf::Mouse::getPosition(*window)))) {
-
+			if (isConnected && isVersionCorrect) {
+				menuStack->push_back(std::unique_ptr<InputMenu>(new InputMenu(window, menuStack, networkManager, move(std::unique_ptr<Menu>(new Game(window, menuStack, networkManager, GameAction::joinGame))))));
+			}
 		}
+
+		if (cam::isSpriteClicked(connectedSprite, window->mapPixelToCoords(sf::Mouse::getPosition(*window)))) {
+			if (!isConnected) {
+				networkManager->startConnect("173.26.223.180");
+			}
+		}
+
+
 
 		break;
 
@@ -92,6 +123,12 @@ void MainMenu::update() {
 	flamesSprite2.update(updateTime);
 	newGameSprite.update(updateTime);
 	joinGameSprite.update(updateTime);
+	if (isConnected) {
+		connectedSprite.update(updateTime);
+	}
+	else {
+		disconnectedSprite.update(updateTime);
+	}
 
 	frameTime.restart();
 
@@ -101,10 +138,11 @@ void MainMenu::update() {
 		std::cout << "Updated Networking Info.\n";
 		isConnected = networkManager->getIsConnected();
 		if (isConnected) {
+			//Get Version Info.
 			std::cout << "Got Version Info\n";
 			isVersionCorrect = networkManager->getIsVersionCorrect();
+
 		}
-		connectionUpdateClock.restart();
 	}
 
 }
@@ -114,4 +152,10 @@ void MainMenu::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 	target.draw(flamesSprite2);
 	target.draw(newGameSprite);
 	target.draw(joinGameSprite);
+	if (isConnected) {
+		target.draw(connectedSprite);
+	}
+	else {
+		target.draw(disconnectedSprite);
+	}
 }

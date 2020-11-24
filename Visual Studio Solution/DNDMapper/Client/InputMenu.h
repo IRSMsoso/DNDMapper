@@ -3,9 +3,11 @@
 
 
 class InputMenu: public Menu {
-	InputMenu(sf::RenderWindow* newWindow, std::vector<std::unique_ptr<Menu>>* newStack, NetworkManager* newNetworkManager, Menu* nextMenu);
 
-	void setNextMenu(Menu* next) { nextMenu = next; }
+public:
+	InputMenu(sf::RenderWindow* newWindow, std::vector<std::unique_ptr<Menu>>* newStack, NetworkManager* newNetworkManager, std::unique_ptr<Menu>);
+
+	
 	void setMenuText(std::string newText) { text = newText; }
 
 
@@ -16,7 +18,7 @@ class InputMenu: public Menu {
 
 private:
 	std::string text;
-	Menu* nextMenu;
+	std::unique_ptr<Menu> nextMenu;
 	std::string input;
 
 };

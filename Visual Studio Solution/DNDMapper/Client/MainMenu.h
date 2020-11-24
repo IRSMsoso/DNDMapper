@@ -3,6 +3,7 @@
 #include "AnimatedSprite.h"
 #include "MyUtilities.h"
 #include "Game.h"
+#include "InputMenu.h"
 
 
 class MainMenu: public Menu {
@@ -18,22 +19,25 @@ public:
 
 
 private:
-	sf::Text newGameText;
-	sf::Text openGameText;
-	sf::Text joinGameText;
-
+	
 	AnimatedSprite newGameSprite;
-	sf::Sprite openGameSprite;
 	AnimatedSprite joinGameSprite;
 	AnimatedSprite flamesSprite1;
 	AnimatedSprite flamesSprite2;
+	AnimatedSprite connectedSprite;
+	AnimatedSprite disconnectedSprite;
+
 
 	Animation fireEyeAnimation;
 	Animation fireJoinAnimation;
 	Animation flameAnimation;
+	Animation connectedAnimation;
+	Animation disconnectedAnimation;
 	sf::Texture flameTexture;
 	sf::Texture fireEyeTexture;
 	sf::Texture fireJoinTexture;
+	sf::Texture connectedTexture;
+	sf::Texture disconnectedTexture;
 
 
 	sf::Clock frameTime;
