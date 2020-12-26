@@ -30,6 +30,7 @@ enum CommandType {
 	TilePainted,
 	FogPainted,
 	FogRemoved,
+	connectGame,
 };
 
 struct Command {
@@ -41,7 +42,7 @@ struct Command {
 	sf::Vector2f worldLocation;
 	sf::Color color;
 	std::string name;
-
+	bool OK;
 };
 
 

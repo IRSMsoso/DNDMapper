@@ -41,8 +41,12 @@ void Manager::mainLoop() {
 		window.draw(*menuStack.back());
 		window.display();
 
-		if (menuStack.back()->getShouldClose()) {
-			menuStack.pop_back();
+		
+		//Free Memory for all Menus that need to be destroyed.
+		for (int i = 0; i < menuStack.size(); i++) {
+			if (menuStack.at(i)->getShouldClose()) {
+				menuStack.erase(menuStack.begin() + i);
+			}
 		}
 	}
 	window.close();

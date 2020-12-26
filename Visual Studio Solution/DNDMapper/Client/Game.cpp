@@ -33,7 +33,7 @@ Game::Game(sf::RenderWindow* newWindow, std::vector<std::unique_ptr<Menu>>* newS
 }
 
 Game::~Game() {
-
+	std::cout << "Deconstructed Game Object.\n";
 }
 
 void Game::draw(sf::RenderTarget& target, sf::RenderStates states) const{
@@ -191,6 +191,11 @@ void Game::update(){
 	ui.updateElementsPositions();
 	ui.updateElementsScales(zoomFactor);
 	ui.updateElementsAnimations(frameTime, selectedColor);
+
+	//If disconnected, get outta there.
+	if (!networkManager->getIsConnected()) {
+		close();
+	}
 }
 
 void Game::interpretEvent(sf::Event pollingEvent){
