@@ -20,6 +20,9 @@ public:
 
 private:
 	
+	// Cam is my master 
+	// Animation for objects for main menu 
+
 	AnimatedSprite newGameSprite;
 	AnimatedSprite joinGameSprite;
 	AnimatedSprite flamesSprite1;
