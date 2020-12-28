@@ -20,6 +20,9 @@ public:
 
 private:
 	
+	
+	// Animation for objects for main menu 
+
 	AnimatedSprite newGameSprite;
 	AnimatedSprite joinGameSprite;
 	AnimatedSprite flamesSprite1;
