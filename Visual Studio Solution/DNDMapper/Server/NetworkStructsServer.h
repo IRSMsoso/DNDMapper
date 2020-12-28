@@ -21,8 +21,6 @@ struct MapData {
 
 enum CommandType {
 	VersionConfirmation,
-	CreateGame,
-	JoinGame,
 	TokenCreated,
 	TokenDeleted,
 	TokenMoved,
@@ -30,7 +28,9 @@ enum CommandType {
 	TilePainted,
 	FogPainted,
 	FogRemoved,
-	connectGame,
+	ConnectGame,
+	CreateGame,
+	GameID,
 };
 
 struct Command {

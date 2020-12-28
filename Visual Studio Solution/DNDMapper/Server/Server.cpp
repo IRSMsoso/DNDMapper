@@ -13,6 +13,8 @@
 int main()
 {
 	
+	srand(time(NULL));
+
 	Manager manager;
 
 	manager.run();

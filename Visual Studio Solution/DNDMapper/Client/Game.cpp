@@ -29,6 +29,8 @@ Game::Game(sf::RenderWindow* newWindow, std::vector<std::unique_ptr<Menu>>* newS
 	fpsText.setFont(algerFont);
 
 
+	gameIDAquired = false;
+
 	//window->setFramerateLimit(60);
 }
 
@@ -191,6 +193,17 @@ void Game::update(){
 	ui.updateElementsPositions();
 	ui.updateElementsScales(zoomFactor);
 	ui.updateElementsAnimations(frameTime, selectedColor);
+
+
+	if (!gameIDAquired) {
+		std::vector<Command> gameIDCommands = networkManager->getCommandsFromType(CommandType::GameID);
+		if (gameIDCommands.size() > 0) {
+			std::cout << "SUCCESS\n";
+			sf::Uint16 gameID = gameIDCommands.at(0).id;
+			window->setTitle("Dungeons and Dragons! Game ID: " + std::to_string(gameID));
+			gameIDAquired = true;
+		}
+	}
 
 	//If disconnected, get outta there.
 	if (!networkManager->getIsConnected()) {

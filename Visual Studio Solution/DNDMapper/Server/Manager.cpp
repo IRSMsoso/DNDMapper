@@ -54,10 +54,18 @@ void Manager::run(){
 							i--;
 						}
 					}
-					else if (inCommand.type = CommandType::CreateGame) {
-						createGame(inCommand.id, player);
+					else if (inCommand.type == CommandType::CreateGame) {
+						Command outCommand;
+						outCommand.type = CommandType::GameID;
+						outCommand.id = createGame(player);
+						sf::Packet outPacket;
+						outPacket << outCommand;
+						player->getSocket()->send(outPacket);
+						std::cout << "Created Game and Sent Game ID\n";
+						
 					}
-					else if (inCommand.type = CommandType::JoinGame) { //If command is join game command.
+					else if (inCommand.type == CommandType::ConnectGame) { //If command is join game command.
+						bool shouldSendFail = true;
 						for (int i = 0; i < runningGames.size(); i++) { //For each game.
 							if (runningGames.at(i)->getID() == inCommand.id) { //If ID of game is the one desired.
 								if (runningGames.at(i)->addPlayer(player)) { //If successfully added.
@@ -66,7 +74,25 @@ void Manager::run(){
 								else {
 									std::cout << "Error adding player to game. Game already contains player\n";
 								}
+								//Regardless if they're already apart, we want to send back that it's okay to go to the game screen on client.
+								Command outCommand;
+								outCommand.type = CommandType::ConnectGame;
+								outCommand.OK = true;
+								std::cout << "outCommand True\n";
+								outCommand.id = inCommand.id;
+								sf::Packet outPacket;
+								outPacket << outCommand;
+								player->getSocket()->send(outPacket);
+								shouldSendFail = false;
 							}
+						}
+						if (shouldSendFail) {
+							Command outCommand;
+							outCommand.type = CommandType::ConnectGame;
+							outCommand.OK = false;
+							sf::Packet outPacket;
+							outPacket << outCommand;
+							player->getSocket()->send(outPacket);
 						}
 					}
 					//If not version, pass on to other players in game.
@@ -111,7 +137,17 @@ bool Manager::removePlayer(Player* player) {
 	return false;
 }
 
-void Manager::createGame(sf::Uint16 id, Player* newDM) {
+sf::Uint16 Manager::createGame(Player* newDM) {
+	sf::Uint16 id = 1;
+	for (int i = 0; i < runningGames.size(); i++) {
+		if (runningGames.at(i)->getID() >= id)
+			id = runningGames.at(i)->getID() + 1;
+	}
+	
 	Game* game = new Game(id, newDM);
 	runningGames.push_back(game);
+
+	std::cout << "Created Game.\n";
+
+	return id;
 }

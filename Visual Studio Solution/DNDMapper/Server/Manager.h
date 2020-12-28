@@ -16,7 +16,7 @@ public:
 
 	bool removePlayer(Player*);
 
-	void createGame(sf::Uint16, Player*);
+	sf::Uint16 createGame(Player*);
 
 private:
 

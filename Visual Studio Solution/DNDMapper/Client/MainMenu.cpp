@@ -91,6 +91,9 @@ void MainMenu::interpretEvent(sf::Event pollingEvent) {
 
 		if (cam::isSpriteClicked(newGameSprite, window->mapPixelToCoords(sf::Mouse::getPosition(*window)))) {
 			if (isConnected && isVersionCorrect) {
+				Command outCommand;
+				outCommand.type = CommandType::CreateGame;
+				networkManager->sendCommand(outCommand);
 				menuStack->push_back(std::unique_ptr<Game>(new Game(window, menuStack, networkManager, GameAction::newGame)));
 			}
 		}

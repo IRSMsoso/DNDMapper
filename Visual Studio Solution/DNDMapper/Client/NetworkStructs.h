@@ -28,7 +28,9 @@ enum CommandType {
 	TilePainted,
 	FogPainted,
 	FogRemoved,
-	connectGame,
+	ConnectGame,
+	CreateGame,
+	GameID,
 };
 
 struct Command {

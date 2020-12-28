@@ -52,6 +52,7 @@ std::vector<Command> NetworkManager::getCommandsFromType(CommandType type) {
 	for (int i = 0; i < commandQueue.size(); i++) {
 		if (commandQueue.at(i).type == type) {
 			returnCommands.push_back(commandQueue.at(i));
+			std::cout << "Successfully returned commands of type: " << type << std::endl;
 			commandQueue.erase(commandQueue.begin() + i);
 			i--;
 		}
@@ -66,10 +67,25 @@ std::vector<Command> NetworkManager::getCommandsFromType(CommandType type) {
 //Get and delete all messages that are related to updating the canvas.
 std::vector<Command> NetworkManager::getCanvasUpdateCommands() {
 	std::vector<Command> returnCommands;
+	CommandType commandTypes[] = {
+		CommandType::FogPainted,
+		CommandType::FogRemoved,
+		CommandType::TilePainted,
+		CommandType::TokenCreated,
+		CommandType::TokenDeleted,
+		CommandType::TokenMoved,
+		CommandType::TokenRenamed,
+	};
 
 	commandQueueMutex.lock();
 	for (int i = 0; i < commandQueue.size(); i++) {
-		if (1 <= commandQueue.at(i).type <= 7) {
+		bool isNeeded = false;
+		for (int w = 0; w < (sizeof(commandTypes) / sizeof(CommandType)); w++) {
+			if (commandQueue.at(i).type == commandTypes[w])
+				isNeeded = true;
+				break;
+		}
+		if (isNeeded) {
 			returnCommands.push_back(commandQueue.at(i));
 			commandQueue.erase(commandQueue.begin() + i);
 			i--;
@@ -95,6 +111,12 @@ sf::Socket::Status NetworkManager::sendCommand(Command command) {
 void NetworkManager::listenForMessages() {
 	while (isConnected) {
 
+		commandQueueMutex.lock();
+		if (commandQueue.size() > 0) {
+			std::cout << "Command Queue Size: " << commandQueue.size();
+		}
+		commandQueueMutex.unlock();
+
 		sf::Packet incomingPacket;
 
 		sf::Socket::Status status = socket.receive(incomingPacket);
@@ -114,6 +136,7 @@ void NetworkManager::listenForMessages() {
 				commandQueueMutex.lock();
 
 				commandQueue.push_back(newCommand);
+				std::cout << "Pushed Back Command\n";
 
 				commandQueueMutex.unlock();
 			}

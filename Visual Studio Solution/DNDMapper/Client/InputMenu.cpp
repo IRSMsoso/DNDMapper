@@ -42,11 +42,11 @@ void InputMenu::interpretEvent(sf::Event pollingEvent){
 		}
 		else if (pollingEvent.key.code == 58) {
 			//Enter pressed. Time to move on from this Menu.
-			if (text.getString().getSize() == 5 && connectingTo == 0) {
+			if (text.getString().getSize() <= 5 && connectingTo == 0) {
 				connectingTo = std::stoi(text.getString().toAnsiString());
 				std::cout << "Connecting to: " << connectingTo << std::endl;
 				Command connectCommand;
-				connectCommand.type = CommandType::connectGame;
+				connectCommand.type = CommandType::ConnectGame;
 				connectCommand.id = connectingTo;
 				networkManager->sendCommand(connectCommand);
 
@@ -65,13 +65,15 @@ void InputMenu::update() {
 		return; //Don't need the rest of this function.
 	}
 
-	std::vector<Command> connectCommands = networkManager->getCommandsFromType(CommandType::connectGame);
+	std::vector<Command> connectCommands = networkManager->getCommandsFromType(CommandType::ConnectGame);
 	if (connectCommands.size() > 1)
 		std::cout << "Error, got multiple connect commands when not expected.\n";
 
 	if (connectCommands.size() == 1) {
+		std::cout << "ConnectCommands BOOL: " << connectCommands.at(0).OK << std::endl;
 		if (connectCommands.at(0).OK) {
 			menuStack->push_back(std::unique_ptr<Game>(new Game(window, menuStack, networkManager, GameAction::newGame))); //NewGame for gameaction is placeholder.
+			window->setTitle("Dungeons and Dragons! Game ID: " + std::to_string(connectCommands.at(0).id));
 			close();
 		}
 		else {

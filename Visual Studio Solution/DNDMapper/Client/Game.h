@@ -104,4 +104,7 @@ private:
 
 	//Wrangling Camera.
 	void restrictCamera();
+
+	//Have we changed the title to the correct game ID?
+	bool gameIDAquired;
 };
