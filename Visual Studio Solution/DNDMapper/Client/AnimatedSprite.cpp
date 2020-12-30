@@ -29,6 +29,8 @@ AnimatedSprite::AnimatedSprite(sf::Time frameTime, bool paused, bool looped) :
 
 }
 
+// Some animations and shit
+
 void AnimatedSprite::setAnimation(const Animation& animation)
 {
 	m_animation = &animation;
@@ -73,7 +75,7 @@ void AnimatedSprite::setLooped(bool looped)
 
 void AnimatedSprite::setColor(const sf::Color& color)
 {
-	// Update the vertices' color
+	// Update the vertices color
 	m_vertices[0].color = color;
 	m_vertices[1].color = color;
 	m_vertices[2].color = color;
@@ -119,7 +121,7 @@ void AnimatedSprite::setFrame(std::size_t newFrame, bool resetTime)
 {
 	if (m_animation)
 	{
-		//calculate new vertex positions and texture coordiantes
+		//calculate new vertex positions and texture coordinates
 		sf::IntRect rect = m_animation->getFrame(newFrame);
 
 		m_vertices[0].position = sf::Vector2f(0.f, 0.f);
