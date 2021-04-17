@@ -28,6 +28,8 @@ public:
 
 	std::string getName() { return name; }
 
+	sf::Color getColor() { return circle.getFillColor(); }
+
 	void snap();
 
 private:

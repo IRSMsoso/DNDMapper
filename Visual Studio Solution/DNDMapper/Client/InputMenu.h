@@ -5,7 +5,7 @@
 class InputMenu: public Menu {
 
 public:
-	InputMenu(sf::RenderWindow* newWindow, std::vector<std::unique_ptr<Menu>>* newStack, NetworkManager* newNetworkManager, std::unique_ptr<Menu>);
+	InputMenu(sf::RenderWindow* newWindow, std::vector<std::unique_ptr<Menu>>* newStack, NetworkManager* newNetworkManager, GameAction purpose);
 
 	virtual ~InputMenu();
 
@@ -21,8 +21,8 @@ public:
 private:
 	//std::string text;
 	sf::Text text;
-	std::unique_ptr<Menu> nextMenu;
-	sf::Uint16 connectingTo;
+
+	GameAction m_purpose;
 
 	sf::Font algerFont; //Surprisingly OK
 

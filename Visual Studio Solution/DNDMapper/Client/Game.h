@@ -5,6 +5,7 @@
 #include "UI.h"
 #include "ColorWheel.h"
 #include "Canvas.h"
+#include <fstream>
 
 
 namespace MouseAction {
@@ -46,7 +47,7 @@ const float CAMERAMOVESPEED = 200.f;
 class Game: public Menu {
 
 public:
-	Game(sf::RenderWindow*, std::vector<std::unique_ptr<Menu>>*, NetworkManager*, GameAction);
+	Game(sf::RenderWindow*, std::vector<std::unique_ptr<Menu>>*, NetworkManager*, GameAction, std::string filename);
 	virtual ~Game();
 
 
@@ -56,6 +57,7 @@ public:
 
 	void update();
 	void interpretEvent(sf::Event);
+	void save();
 
 
 private:
@@ -107,4 +109,9 @@ private:
 
 	//Have we changed the title to the correct game ID?
 	bool gameIDAquired;
+
+
+	//Saving
+	std::string m_filename;
+	sf::Clock saveClock;
 };

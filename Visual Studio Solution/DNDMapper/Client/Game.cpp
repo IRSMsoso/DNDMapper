@@ -1,6 +1,6 @@
 #include "Game.h"
 
-Game::Game(sf::RenderWindow* newWindow, std::vector<std::unique_ptr<Menu>>* newStack, NetworkManager* newNetworkManager, GameAction action): Menu(newWindow, newStack, newNetworkManager), ui(window), canvas(&camera, networkManager) {
+Game::Game(sf::RenderWindow* newWindow, std::vector<std::unique_ptr<Menu>>* newStack, NetworkManager* newNetworkManager, GameAction action, std::string filename) : Menu(newWindow, newStack, newNetworkManager), ui(window), canvas(&camera, networkManager) {
 	camera.move(10, 10);
 
 	window->setView(camera);
@@ -31,7 +31,30 @@ Game::Game(sf::RenderWindow* newWindow, std::vector<std::unique_ptr<Menu>>* newS
 
 	gameIDAquired = false;
 
-	//window->setFramerateLimit(60);
+	if (action == GameAction::newGame || action == GameAction::loadGame) {
+		isDM = true;
+	}
+	else {
+		isDM = false;
+	}
+
+
+	//Loading
+	if (action == GameAction::loadGame) {
+		DNDProto::Map map;
+		std::fstream input(filename + ".cam", std::ios::in | std::ios::binary);
+		if (!map.ParseFromIstream(&input)) {
+			printf("Error, could not parse map from file %s", (filename + ".cam").c_str());
+			close();
+		}
+		else {
+			canvas.loadMap(map);
+		}
+		input.close();
+	}
+	if (isDM) {
+		m_filename = filename;
+	}
 }
 
 Game::~Game() {
@@ -209,6 +232,11 @@ void Game::update(){
 	if (!networkManager->getIsConnected()) {
 		close();
 	}
+
+	//Saving
+	if (saveClock.getElapsedTime() > sf::seconds(20) && isDM) {
+		save();
+	}
 }
 
 void Game::interpretEvent(sf::Event pollingEvent){
@@ -218,7 +246,10 @@ void Game::interpretEvent(sf::Event pollingEvent){
 
 
 	case sf::Event::Closed:
+		if (isDM)
+			save();
 		close();
+		
 		//Also send message that we are leaving the game.
 		break;
 
@@ -505,6 +536,17 @@ void Game::interpretEvent(sf::Event pollingEvent){
 
 	}
 
+}
+
+void Game::save() {
+	DNDProto::Map map;
+	canvas.saveMap(map);
+
+	std::fstream output(m_filename + ".cam", std::ios::out | std::ios::trunc | std::ios::binary);
+	if (!map.SerializeToOstream(&output)) {
+		printf("Failed to write map to file &s", (m_filename + ".cam").c_str());
+	}
+	saveClock.restart();
 }
 
 void Game::restrictCamera(){

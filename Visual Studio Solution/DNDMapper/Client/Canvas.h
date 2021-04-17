@@ -4,6 +4,7 @@
 #include "Token.h"
 #include "NetworkManager.h"
 #include <iostream>
+#include "DNDMapper.pb.h"
 
 const float TILESIZE = 25.f;
 const int EXPANDDISTANCE = 8;
@@ -46,6 +47,10 @@ public:
 
 
 	bool expand();
+
+
+	void saveMap(DNDProto::Map& map);
+	bool loadMap(DNDProto::Map& map);
 
 private:
 	void removeRow(unsigned int);

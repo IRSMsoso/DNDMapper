@@ -325,10 +325,12 @@ bool Canvas::expand()
 	}
 	while ((maxx < tileGrid.at(0).size() - EXPANDDISTANCE - 1 || maxx == -1) && tileGrid.at(0).size() > MINSIZE.x) {
 		removeColumn(tileGrid.at(0).size() - 1);
+		changed = true;
 	}
 	
 	while ((maxy < tileGrid.size() - EXPANDDISTANCE - 1 || maxy == -1) && tileGrid.size() > MINSIZE.y) {
 		removeRow(tileGrid.size() - 1);
+		changed = true;
 	}
 	
 	
@@ -342,6 +344,91 @@ bool Canvas::expand()
 
 
 	return false;
+}
+
+void Canvas::saveMap(DNDProto::Map& map) {
+	//sizeX
+	map.set_sizex(tileGrid.at(0).size());
+
+	//sizeY
+	map.set_sizey(tileGrid.size());
+
+	//tiles
+	for (int y = 0; y < tileGrid.size(); y++) {
+		for (int x = 0; x < tileGrid.at(y).size(); x++) {
+			map.add_tiles(tileGrid.at(y).at(x).getColor().toInteger());
+		}
+	}
+
+	//fogged
+	for (int y = 0; y < tileGrid.size(); y++) {
+		for (int x = 0; x < tileGrid.at(y).size(); x++) {
+			map.add_fogged(tileGrid.at(y).at(x).getFog());
+		}
+	}
+
+	//tokens
+	for (int i = 0; i < tokenList.size(); i++) {
+		DNDProto::Token* token = map.add_tokens();
+
+		//name
+		token->set_name(tokenList.at(i).getName());
+
+		//color
+		token->set_color(tokenList.at(i).getColor().toInteger());
+
+		//posX
+		token->set_posx(tokenList.at(i).getPosition().x);
+
+		//posY
+		token->set_posy(tokenList.at(i).getPosition().y);
+
+	}
+}
+
+bool Canvas::loadMap(DNDProto::Map& map) {
+
+	//Checks.
+	if (map.fogged_size() != map.tiles_size()) {
+		return false;
+	}
+
+	//tiles
+	tileGrid.clear();
+
+	printf("SizeX: %u\n", map.sizex());
+	printf("SizeX: %u\n", map.sizex());
+	printf("SizeTiles: %u\n", map.tiles_size());
+	printf("SizeFogs: %u\n", map.fogged_size());
+	
+	int i = 0;
+	for (int y = 0; y < map.sizey(); y++) {
+		std::vector<Tile> newRow;
+		for (int x = 0; x < map.sizex(); x++) {
+			if (i < map.tiles_size() && i < map.fogged_size()) {
+				Tile tile(sf::Color(map.tiles(i)));
+				tile.setFog(map.fogged(i));
+				newRow.push_back(tile);
+			}
+			else {
+				newRow.push_back(Tile(defaultColor));
+			}
+			i++;
+		}
+		tileGrid.push_back(newRow);
+	}
+
+	//tokens
+	for (int i = 0; i < map.tokens_size(); i++) {
+		DNDProto::Token tokenMessage = map.tokens(i);
+		Token token(sf::Color(tokenMessage.color()), sf::Vector2f(tokenMessage.posx(), tokenMessage.posy()), tokenFont, i);
+		tokenList.push_back(token);
+	}
+
+	reconstruct(); //Gotta make all those changes real. Fo sho.
+
+
+	return true;
 }
 
 void Canvas::removeRow(unsigned int locY){

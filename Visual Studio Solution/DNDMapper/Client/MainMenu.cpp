@@ -94,19 +94,19 @@ void MainMenu::interpretEvent(sf::Event pollingEvent) {
 				Command outCommand;
 				outCommand.type = CommandType::CreateGame;
 				networkManager->sendCommand(outCommand);
-				menuStack->push_back(std::unique_ptr<Game>(new Game(window, menuStack, networkManager, GameAction::newGame)));
+				menuStack->push_back(std::unique_ptr<InputMenu>(new InputMenu(window, menuStack, networkManager, GameAction::newGame)));
 			}
 		}
 
 		if (cam::isSpriteClicked(joinGameSprite, window->mapPixelToCoords(sf::Mouse::getPosition(*window)))) {
 			if (isConnected && isVersionCorrect) {
-				menuStack->push_back(std::unique_ptr<InputMenu>(new InputMenu(window, menuStack, networkManager, move(std::unique_ptr<Menu>(new Game(window, menuStack, networkManager, GameAction::joinGame))))));
+				menuStack->push_back(std::unique_ptr<InputMenu>(new InputMenu(window, menuStack, networkManager, GameAction::loadGame))); //Load game just for now
 			}
 		}
 
 		if (cam::isSpriteClicked(connectedSprite, window->mapPixelToCoords(sf::Mouse::getPosition(*window)))) {
 			if (!isConnected) {
-				networkManager->startConnect("173.26.223.180");
+				networkManager->startConnect("173.24.79.165");
 			}
 		}
 

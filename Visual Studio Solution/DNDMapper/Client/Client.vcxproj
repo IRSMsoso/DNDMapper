@@ -162,6 +162,8 @@
     <ClCompile Include="Canvas.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="ColorWheel.cpp" />
+    <ClCompile Include="ConnectingMenu.cpp" />
+    <ClCompile Include="DNDMapper.pb.cc" />
     <ClCompile Include="ExpandButton.cpp" />
     <ClCompile Include="FogTool.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -185,6 +187,8 @@
     <ClInclude Include="Animation.h" />
     <ClInclude Include="Canvas.h" />
     <ClInclude Include="ColorWheel.h" />
+    <ClInclude Include="ConnectingMenu.h" />
+    <ClInclude Include="DNDMapper.pb.h" />
     <ClInclude Include="ExpandButton.h" />
     <ClInclude Include="FogTool.h" />
     <ClInclude Include="Game.h" />
