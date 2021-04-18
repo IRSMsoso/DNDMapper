@@ -22,7 +22,9 @@ constexpr Token::Token(
   : name_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
   , color_(0)
   , posx_(0)
-  , posy_(0){}
+  , posy_(0)
+  , id_(0)
+  , isdestroy_(false){}
 struct TokenDefaultTypeInternal {
   constexpr TokenDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -48,9 +50,43 @@ struct MapDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT MapDefaultTypeInternal _Map_default_instance_;
+constexpr TileUpdate::TileUpdate(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : posx_(0)
+  , posy_(0)
+  , newcolor_(0)
+  , newfogged_(false){}
+struct TileUpdateDefaultTypeInternal {
+  constexpr TileUpdateDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~TileUpdateDefaultTypeInternal() {}
+  union {
+    TileUpdate _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT TileUpdateDefaultTypeInternal _TileUpdate_default_instance_;
+constexpr NetworkMessage::NetworkMessage(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : map_(nullptr)
+  , tileupdate_(nullptr)
+  , tokenupdate_(nullptr)
+  , gameid_(0)
+  , messagetype_(1)
+
+  , error_(1)
+{}
+struct NetworkMessageDefaultTypeInternal {
+  constexpr NetworkMessageDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~NetworkMessageDefaultTypeInternal() {}
+  union {
+    NetworkMessage _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT NetworkMessageDefaultTypeInternal _NetworkMessage_default_instance_;
 }  // namespace DNDProto
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_DNDMapper_2eproto[2];
-static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_DNDMapper_2eproto = nullptr;
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_DNDMapper_2eproto[4];
+static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_DNDMapper_2eproto[2];
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_DNDMapper_2eproto = nullptr;
 
 const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_DNDMapper_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
@@ -63,10 +99,14 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_DNDMapper_2eproto::offsets[] P
   PROTOBUF_FIELD_OFFSET(::DNDProto::Token, color_),
   PROTOBUF_FIELD_OFFSET(::DNDProto::Token, posx_),
   PROTOBUF_FIELD_OFFSET(::DNDProto::Token, posy_),
+  PROTOBUF_FIELD_OFFSET(::DNDProto::Token, id_),
+  PROTOBUF_FIELD_OFFSET(::DNDProto::Token, isdestroy_),
   0,
   1,
   2,
   3,
+  4,
+  5,
   PROTOBUF_FIELD_OFFSET(::DNDProto::Map, _has_bits_),
   PROTOBUF_FIELD_OFFSET(::DNDProto::Map, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -82,28 +122,74 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_DNDMapper_2eproto::offsets[] P
   ~0u,
   ~0u,
   ~0u,
+  PROTOBUF_FIELD_OFFSET(::DNDProto::TileUpdate, _has_bits_),
+  PROTOBUF_FIELD_OFFSET(::DNDProto::TileUpdate, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::DNDProto::TileUpdate, posx_),
+  PROTOBUF_FIELD_OFFSET(::DNDProto::TileUpdate, posy_),
+  PROTOBUF_FIELD_OFFSET(::DNDProto::TileUpdate, newcolor_),
+  PROTOBUF_FIELD_OFFSET(::DNDProto::TileUpdate, newfogged_),
+  0,
+  1,
+  2,
+  3,
+  PROTOBUF_FIELD_OFFSET(::DNDProto::NetworkMessage, _has_bits_),
+  PROTOBUF_FIELD_OFFSET(::DNDProto::NetworkMessage, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::DNDProto::NetworkMessage, messagetype_),
+  PROTOBUF_FIELD_OFFSET(::DNDProto::NetworkMessage, map_),
+  PROTOBUF_FIELD_OFFSET(::DNDProto::NetworkMessage, tileupdate_),
+  PROTOBUF_FIELD_OFFSET(::DNDProto::NetworkMessage, gameid_),
+  PROTOBUF_FIELD_OFFSET(::DNDProto::NetworkMessage, tokenupdate_),
+  PROTOBUF_FIELD_OFFSET(::DNDProto::NetworkMessage, error_),
+  4,
+  0,
+  1,
+  3,
+  2,
+  5,
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, 9, sizeof(::DNDProto::Token)},
-  { 13, 23, sizeof(::DNDProto::Map)},
+  { 0, 11, sizeof(::DNDProto::Token)},
+  { 17, 27, sizeof(::DNDProto::Map)},
+  { 32, 41, sizeof(::DNDProto::TileUpdate)},
+  { 45, 56, sizeof(::DNDProto::NetworkMessage)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::DNDProto::_Token_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::DNDProto::_Map_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::DNDProto::_TileUpdate_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::DNDProto::_NetworkMessage_default_instance_),
 };
 
 const char descriptor_table_protodef_DNDMapper_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n\017DNDMapper.proto\022\010DNDProto\"@\n\005Token\022\014\n\004"
-  "name\030\001 \002(\t\022\r\n\005color\030\002 \002(\005\022\014\n\004posX\030\003 \002(\002\022"
-  "\014\n\004posY\030\004 \002(\002\"c\n\003Map\022\r\n\005sizeX\030\001 \002(\005\022\r\n\005s"
-  "izeY\030\002 \002(\005\022\r\n\005tiles\030\003 \003(\005\022\016\n\006fogged\030\004 \003("
-  "\010\022\037\n\006tokens\030\005 \003(\0132\017.DNDProto.Token"
+  "\n\017DNDMapper.proto\022\010DNDProto\"_\n\005Token\022\014\n\004"
+  "name\030\001 \001(\t\022\r\n\005color\030\002 \001(\005\022\014\n\004posX\030\003 \001(\002\022"
+  "\014\n\004posY\030\004 \001(\002\022\n\n\002id\030\005 \002(\005\022\021\n\tisDestroy\030\006"
+  " \001(\010\"c\n\003Map\022\r\n\005sizeX\030\001 \002(\005\022\r\n\005sizeY\030\002 \002("
+  "\005\022\r\n\005tiles\030\003 \003(\005\022\016\n\006fogged\030\004 \003(\010\022\037\n\006toke"
+  "ns\030\005 \003(\0132\017.DNDProto.Token\"M\n\nTileUpdate\022"
+  "\014\n\004posX\030\001 \002(\005\022\014\n\004posY\030\002 \002(\005\022\020\n\010newColor\030"
+  "\003 \001(\005\022\021\n\tnewFogged\030\004 \001(\010\"\356\002\n\016NetworkMess"
+  "age\0229\n\013messageType\030\001 \002(\0162$.DNDProto.Netw"
+  "orkMessage.MessageType\022\032\n\003map\030\002 \001(\0132\r.DN"
+  "DProto.Map\022(\n\ntileUpdate\030\003 \001(\0132\024.DNDProt"
+  "o.TileUpdate\022\016\n\006gameID\030\004 \001(\005\022$\n\013tokenUpd"
+  "ate\030\005 \001(\0132\017.DNDProto.Token\0221\n\005error\030\006 \001("
+  "\0162\".DNDProto.NetworkMessage.ErrorType\"&\n"
+  "\tErrorType\022\031\n\025GameDoesNotExistError\020\001\"J\n"
+  "\013MessageType\022\016\n\nCreateGame\020\001\022\014\n\010JoinGame"
+  "\020\002\022\n\n\006Update\020\003\022\006\n\002ID\020\004\022\t\n\005Error\020\005"
   ;
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_DNDMapper_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_DNDMapper_2eproto = {
-  false, false, 194, descriptor_table_protodef_DNDMapper_2eproto, "DNDMapper.proto", 
-  &descriptor_table_DNDMapper_2eproto_once, nullptr, 0, 2,
+  false, false, 673, descriptor_table_protodef_DNDMapper_2eproto, "DNDMapper.proto", 
+  &descriptor_table_DNDMapper_2eproto_once, nullptr, 0, 4,
   schemas, file_default_instances, TableStruct_DNDMapper_2eproto::offsets,
   file_level_metadata_DNDMapper_2eproto, file_level_enum_descriptors_DNDMapper_2eproto, file_level_service_descriptors_DNDMapper_2eproto,
 };
@@ -116,6 +202,52 @@ descriptor_table_DNDMapper_2eproto_metadata_getter(int index) {
 // Force running AddDescriptors() at dynamic initialization time.
 PROTOBUF_ATTRIBUTE_INIT_PRIORITY static ::PROTOBUF_NAMESPACE_ID::internal::AddDescriptorsRunner dynamic_init_dummy_DNDMapper_2eproto(&descriptor_table_DNDMapper_2eproto);
 namespace DNDProto {
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* NetworkMessage_ErrorType_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_DNDMapper_2eproto);
+  return file_level_enum_descriptors_DNDMapper_2eproto[0];
+}
+bool NetworkMessage_ErrorType_IsValid(int value) {
+  switch (value) {
+    case 1:
+      return true;
+    default:
+      return false;
+  }
+}
+
+#if (__cplusplus < 201703) && (!defined(_MSC_VER) || _MSC_VER >= 1900)
+constexpr NetworkMessage_ErrorType NetworkMessage::GameDoesNotExistError;
+constexpr NetworkMessage_ErrorType NetworkMessage::ErrorType_MIN;
+constexpr NetworkMessage_ErrorType NetworkMessage::ErrorType_MAX;
+constexpr int NetworkMessage::ErrorType_ARRAYSIZE;
+#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || _MSC_VER >= 1900)
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* NetworkMessage_MessageType_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_DNDMapper_2eproto);
+  return file_level_enum_descriptors_DNDMapper_2eproto[1];
+}
+bool NetworkMessage_MessageType_IsValid(int value) {
+  switch (value) {
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+      return true;
+    default:
+      return false;
+  }
+}
+
+#if (__cplusplus < 201703) && (!defined(_MSC_VER) || _MSC_VER >= 1900)
+constexpr NetworkMessage_MessageType NetworkMessage::CreateGame;
+constexpr NetworkMessage_MessageType NetworkMessage::JoinGame;
+constexpr NetworkMessage_MessageType NetworkMessage::Update;
+constexpr NetworkMessage_MessageType NetworkMessage::ID;
+constexpr NetworkMessage_MessageType NetworkMessage::Error;
+constexpr NetworkMessage_MessageType NetworkMessage::MessageType_MIN;
+constexpr NetworkMessage_MessageType NetworkMessage::MessageType_MAX;
+constexpr int NetworkMessage::MessageType_ARRAYSIZE;
+#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || _MSC_VER >= 1900)
 
 // ===================================================================
 
@@ -134,8 +266,14 @@ class Token::_Internal {
   static void set_has_posy(HasBits* has_bits) {
     (*has_bits)[0] |= 8u;
   }
+  static void set_has_id(HasBits* has_bits) {
+    (*has_bits)[0] |= 16u;
+  }
+  static void set_has_isdestroy(HasBits* has_bits) {
+    (*has_bits)[0] |= 32u;
+  }
   static bool MissingRequiredFields(const HasBits& has_bits) {
-    return ((has_bits[0] & 0x0000000f) ^ 0x0000000f) != 0;
+    return ((has_bits[0] & 0x00000010) ^ 0x00000010) != 0;
   }
 };
 
@@ -155,8 +293,8 @@ Token::Token(const Token& from)
       GetArena());
   }
   ::memcpy(&color_, &from.color_,
-    static_cast<size_t>(reinterpret_cast<char*>(&posy_) -
-    reinterpret_cast<char*>(&color_)) + sizeof(posy_));
+    static_cast<size_t>(reinterpret_cast<char*>(&isdestroy_) -
+    reinterpret_cast<char*>(&color_)) + sizeof(isdestroy_));
   // @@protoc_insertion_point(copy_constructor:DNDProto.Token)
 }
 
@@ -164,8 +302,8 @@ void Token::SharedCtor() {
 name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
     reinterpret_cast<char*>(&color_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&posy_) -
-    reinterpret_cast<char*>(&color_)) + sizeof(posy_));
+    0, static_cast<size_t>(reinterpret_cast<char*>(&isdestroy_) -
+    reinterpret_cast<char*>(&color_)) + sizeof(isdestroy_));
 }
 
 Token::~Token() {
@@ -199,10 +337,10 @@ void Token::Clear() {
   if (cached_has_bits & 0x00000001u) {
     name_.ClearNonDefaultToEmpty();
   }
-  if (cached_has_bits & 0x0000000eu) {
+  if (cached_has_bits & 0x0000003eu) {
     ::memset(&color_, 0, static_cast<size_t>(
-        reinterpret_cast<char*>(&posy_) -
-        reinterpret_cast<char*>(&color_)) + sizeof(posy_));
+        reinterpret_cast<char*>(&isdestroy_) -
+        reinterpret_cast<char*>(&color_)) + sizeof(isdestroy_));
   }
   _has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
@@ -216,7 +354,7 @@ const char* Token::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::inte
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
     CHK_(ptr);
     switch (tag >> 3) {
-      // required string name = 1;
+      // optional string name = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
           auto str = _internal_mutable_name();
@@ -227,7 +365,7 @@ const char* Token::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::inte
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // required int32 color = 2;
+      // optional int32 color = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 16)) {
           _Internal::set_has_color(&has_bits);
@@ -235,7 +373,7 @@ const char* Token::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::inte
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // required float posX = 3;
+      // optional float posX = 3;
       case 3:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 29)) {
           _Internal::set_has_posx(&has_bits);
@@ -243,12 +381,28 @@ const char* Token::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::inte
           ptr += sizeof(float);
         } else goto handle_unusual;
         continue;
-      // required float posY = 4;
+      // optional float posY = 4;
       case 4:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 37)) {
           _Internal::set_has_posy(&has_bits);
           posy_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
           ptr += sizeof(float);
+        } else goto handle_unusual;
+        continue;
+      // required int32 id = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 40)) {
+          _Internal::set_has_id(&has_bits);
+          id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // optional bool isDestroy = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 48)) {
+          _Internal::set_has_isdestroy(&has_bits);
+          isdestroy_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
         } else goto handle_unusual;
         continue;
       default: {
@@ -281,7 +435,7 @@ failure:
   (void) cached_has_bits;
 
   cached_has_bits = _has_bits_[0];
-  // required string name = 1;
+  // optional string name = 1;
   if (cached_has_bits & 0x00000001u) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(
       this->_internal_name().data(), static_cast<int>(this->_internal_name().length()),
@@ -291,22 +445,34 @@ failure:
         1, this->_internal_name(), target);
   }
 
-  // required int32 color = 2;
+  // optional int32 color = 2;
   if (cached_has_bits & 0x00000002u) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(2, this->_internal_color(), target);
   }
 
-  // required float posX = 3;
+  // optional float posX = 3;
   if (cached_has_bits & 0x00000004u) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFloatToArray(3, this->_internal_posx(), target);
   }
 
-  // required float posY = 4;
+  // optional float posY = 4;
   if (cached_has_bits & 0x00000008u) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFloatToArray(4, this->_internal_posy(), target);
+  }
+
+  // required int32 id = 5;
+  if (cached_has_bits & 0x00000010u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(5, this->_internal_id(), target);
+  }
+
+  // optional bool isDestroy = 6;
+  if (cached_has_bits & 0x00000020u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(6, this->_internal_isdestroy(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -317,63 +483,51 @@ failure:
   return target;
 }
 
-size_t Token::RequiredFieldsByteSizeFallback() const {
-// @@protoc_insertion_point(required_fields_byte_size_fallback_start:DNDProto.Token)
-  size_t total_size = 0;
-
-  if (_internal_has_name()) {
-    // required string name = 1;
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-        this->_internal_name());
-  }
-
-  if (_internal_has_color()) {
-    // required int32 color = 2;
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
-        this->_internal_color());
-  }
-
-  if (_internal_has_posx()) {
-    // required float posX = 3;
-    total_size += 1 + 4;
-  }
-
-  if (_internal_has_posy()) {
-    // required float posY = 4;
-    total_size += 1 + 4;
-  }
-
-  return total_size;
-}
 size_t Token::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:DNDProto.Token)
   size_t total_size = 0;
 
-  if (((_has_bits_[0] & 0x0000000f) ^ 0x0000000f) == 0) {  // All required fields are present.
-    // required string name = 1;
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-        this->_internal_name());
-
-    // required int32 color = 2;
+  // required int32 id = 5;
+  if (_internal_has_id()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
-        this->_internal_color());
-
-    // required float posX = 3;
-    total_size += 1 + 4;
-
-    // required float posY = 4;
-    total_size += 1 + 4;
-
-  } else {
-    total_size += RequiredFieldsByteSizeFallback();
+        this->_internal_id());
   }
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
+
+  cached_has_bits = _has_bits_[0];
+  if (cached_has_bits & 0x0000000fu) {
+    // optional string name = 1;
+    if (cached_has_bits & 0x00000001u) {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+          this->_internal_name());
+    }
+
+    // optional int32 color = 2;
+    if (cached_has_bits & 0x00000002u) {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+          this->_internal_color());
+    }
+
+    // optional float posX = 3;
+    if (cached_has_bits & 0x00000004u) {
+      total_size += 1 + 4;
+    }
+
+    // optional float posY = 4;
+    if (cached_has_bits & 0x00000008u) {
+      total_size += 1 + 4;
+    }
+
+  }
+  // optional bool isDestroy = 6;
+  if (cached_has_bits & 0x00000020u) {
+    total_size += 1 + 1;
+  }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
@@ -407,7 +561,7 @@ void Token::MergeFrom(const Token& from) {
   (void) cached_has_bits;
 
   cached_has_bits = from._has_bits_[0];
-  if (cached_has_bits & 0x0000000fu) {
+  if (cached_has_bits & 0x0000003fu) {
     if (cached_has_bits & 0x00000001u) {
       _internal_set_name(from._internal_name());
     }
@@ -419,6 +573,12 @@ void Token::MergeFrom(const Token& from) {
     }
     if (cached_has_bits & 0x00000008u) {
       posy_ = from.posy_;
+    }
+    if (cached_has_bits & 0x00000010u) {
+      id_ = from.id_;
+    }
+    if (cached_has_bits & 0x00000020u) {
+      isdestroy_ = from.isdestroy_;
     }
     _has_bits_[0] |= cached_has_bits;
   }
@@ -449,8 +609,8 @@ void Token::InternalSwap(Token* other) {
   swap(_has_bits_[0], other->_has_bits_[0]);
   name_.Swap(&other->name_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(Token, posy_)
-      + sizeof(Token::posy_)
+      PROTOBUF_FIELD_OFFSET(Token, isdestroy_)
+      + sizeof(Token::isdestroy_)
       - PROTOBUF_FIELD_OFFSET(Token, color_)>(
           reinterpret_cast<char*>(&color_),
           reinterpret_cast<char*>(&other->color_));
@@ -834,6 +994,762 @@ void Map::InternalSwap(Map* other) {
 }
 
 
+// ===================================================================
+
+class TileUpdate::_Internal {
+ public:
+  using HasBits = decltype(std::declval<TileUpdate>()._has_bits_);
+  static void set_has_posx(HasBits* has_bits) {
+    (*has_bits)[0] |= 1u;
+  }
+  static void set_has_posy(HasBits* has_bits) {
+    (*has_bits)[0] |= 2u;
+  }
+  static void set_has_newcolor(HasBits* has_bits) {
+    (*has_bits)[0] |= 4u;
+  }
+  static void set_has_newfogged(HasBits* has_bits) {
+    (*has_bits)[0] |= 8u;
+  }
+  static bool MissingRequiredFields(const HasBits& has_bits) {
+    return ((has_bits[0] & 0x00000003) ^ 0x00000003) != 0;
+  }
+};
+
+TileUpdate::TileUpdate(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor();
+  RegisterArenaDtor(arena);
+  // @@protoc_insertion_point(arena_constructor:DNDProto.TileUpdate)
+}
+TileUpdate::TileUpdate(const TileUpdate& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      _has_bits_(from._has_bits_) {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  ::memcpy(&posx_, &from.posx_,
+    static_cast<size_t>(reinterpret_cast<char*>(&newfogged_) -
+    reinterpret_cast<char*>(&posx_)) + sizeof(newfogged_));
+  // @@protoc_insertion_point(copy_constructor:DNDProto.TileUpdate)
+}
+
+void TileUpdate::SharedCtor() {
+::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
+    reinterpret_cast<char*>(&posx_) - reinterpret_cast<char*>(this)),
+    0, static_cast<size_t>(reinterpret_cast<char*>(&newfogged_) -
+    reinterpret_cast<char*>(&posx_)) + sizeof(newfogged_));
+}
+
+TileUpdate::~TileUpdate() {
+  // @@protoc_insertion_point(destructor:DNDProto.TileUpdate)
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+void TileUpdate::SharedDtor() {
+  GOOGLE_DCHECK(GetArena() == nullptr);
+}
+
+void TileUpdate::ArenaDtor(void* object) {
+  TileUpdate* _this = reinterpret_cast< TileUpdate* >(object);
+  (void)_this;
+}
+void TileUpdate::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void TileUpdate::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void TileUpdate::Clear() {
+// @@protoc_insertion_point(message_clear_start:DNDProto.TileUpdate)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _has_bits_[0];
+  if (cached_has_bits & 0x0000000fu) {
+    ::memset(&posx_, 0, static_cast<size_t>(
+        reinterpret_cast<char*>(&newfogged_) -
+        reinterpret_cast<char*>(&posx_)) + sizeof(newfogged_));
+  }
+  _has_bits_.Clear();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* TileUpdate::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  _Internal::HasBits has_bits{};
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    CHK_(ptr);
+    switch (tag >> 3) {
+      // required int32 posX = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 8)) {
+          _Internal::set_has_posx(&has_bits);
+          posx_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // required int32 posY = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 16)) {
+          _Internal::set_has_posy(&has_bits);
+          posy_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // optional int32 newColor = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 24)) {
+          _Internal::set_has_newcolor(&has_bits);
+          newcolor_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // optional bool newFogged = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 32)) {
+          _Internal::set_has_newfogged(&has_bits);
+          newfogged_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag,
+            _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+            ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
+    }  // switch
+  }  // while
+success:
+  _has_bits_.Or(has_bits);
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto success;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* TileUpdate::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:DNDProto.TileUpdate)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  cached_has_bits = _has_bits_[0];
+  // required int32 posX = 1;
+  if (cached_has_bits & 0x00000001u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(1, this->_internal_posx(), target);
+  }
+
+  // required int32 posY = 2;
+  if (cached_has_bits & 0x00000002u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(2, this->_internal_posy(), target);
+  }
+
+  // optional int32 newColor = 3;
+  if (cached_has_bits & 0x00000004u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(3, this->_internal_newcolor(), target);
+  }
+
+  // optional bool newFogged = 4;
+  if (cached_has_bits & 0x00000008u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(4, this->_internal_newfogged(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:DNDProto.TileUpdate)
+  return target;
+}
+
+size_t TileUpdate::RequiredFieldsByteSizeFallback() const {
+// @@protoc_insertion_point(required_fields_byte_size_fallback_start:DNDProto.TileUpdate)
+  size_t total_size = 0;
+
+  if (_internal_has_posx()) {
+    // required int32 posX = 1;
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+        this->_internal_posx());
+  }
+
+  if (_internal_has_posy()) {
+    // required int32 posY = 2;
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+        this->_internal_posy());
+  }
+
+  return total_size;
+}
+size_t TileUpdate::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:DNDProto.TileUpdate)
+  size_t total_size = 0;
+
+  if (((_has_bits_[0] & 0x00000003) ^ 0x00000003) == 0) {  // All required fields are present.
+    // required int32 posX = 1;
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+        this->_internal_posx());
+
+    // required int32 posY = 2;
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+        this->_internal_posy());
+
+  } else {
+    total_size += RequiredFieldsByteSizeFallback();
+  }
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _has_bits_[0];
+  if (cached_has_bits & 0x0000000cu) {
+    // optional int32 newColor = 3;
+    if (cached_has_bits & 0x00000004u) {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+          this->_internal_newcolor());
+    }
+
+    // optional bool newFogged = 4;
+    if (cached_has_bits & 0x00000008u) {
+      total_size += 1 + 1;
+    }
+
+  }
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
+        _internal_metadata_, total_size, &_cached_size_);
+  }
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void TileUpdate::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:DNDProto.TileUpdate)
+  GOOGLE_DCHECK_NE(&from, this);
+  const TileUpdate* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<TileUpdate>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:DNDProto.TileUpdate)
+    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:DNDProto.TileUpdate)
+    MergeFrom(*source);
+  }
+}
+
+void TileUpdate::MergeFrom(const TileUpdate& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:DNDProto.TileUpdate)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  cached_has_bits = from._has_bits_[0];
+  if (cached_has_bits & 0x0000000fu) {
+    if (cached_has_bits & 0x00000001u) {
+      posx_ = from.posx_;
+    }
+    if (cached_has_bits & 0x00000002u) {
+      posy_ = from.posy_;
+    }
+    if (cached_has_bits & 0x00000004u) {
+      newcolor_ = from.newcolor_;
+    }
+    if (cached_has_bits & 0x00000008u) {
+      newfogged_ = from.newfogged_;
+    }
+    _has_bits_[0] |= cached_has_bits;
+  }
+}
+
+void TileUpdate::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:DNDProto.TileUpdate)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void TileUpdate::CopyFrom(const TileUpdate& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:DNDProto.TileUpdate)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool TileUpdate::IsInitialized() const {
+  if (_Internal::MissingRequiredFields(_has_bits_)) return false;
+  return true;
+}
+
+void TileUpdate::InternalSwap(TileUpdate* other) {
+  using std::swap;
+  _internal_metadata_.Swap<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(&other->_internal_metadata_);
+  swap(_has_bits_[0], other->_has_bits_[0]);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(TileUpdate, newfogged_)
+      + sizeof(TileUpdate::newfogged_)
+      - PROTOBUF_FIELD_OFFSET(TileUpdate, posx_)>(
+          reinterpret_cast<char*>(&posx_),
+          reinterpret_cast<char*>(&other->posx_));
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata TileUpdate::GetMetadata() const {
+  return GetMetadataStatic();
+}
+
+
+// ===================================================================
+
+class NetworkMessage::_Internal {
+ public:
+  using HasBits = decltype(std::declval<NetworkMessage>()._has_bits_);
+  static void set_has_messagetype(HasBits* has_bits) {
+    (*has_bits)[0] |= 16u;
+  }
+  static const ::DNDProto::Map& map(const NetworkMessage* msg);
+  static void set_has_map(HasBits* has_bits) {
+    (*has_bits)[0] |= 1u;
+  }
+  static const ::DNDProto::TileUpdate& tileupdate(const NetworkMessage* msg);
+  static void set_has_tileupdate(HasBits* has_bits) {
+    (*has_bits)[0] |= 2u;
+  }
+  static void set_has_gameid(HasBits* has_bits) {
+    (*has_bits)[0] |= 8u;
+  }
+  static const ::DNDProto::Token& tokenupdate(const NetworkMessage* msg);
+  static void set_has_tokenupdate(HasBits* has_bits) {
+    (*has_bits)[0] |= 4u;
+  }
+  static void set_has_error(HasBits* has_bits) {
+    (*has_bits)[0] |= 32u;
+  }
+  static bool MissingRequiredFields(const HasBits& has_bits) {
+    return ((has_bits[0] & 0x00000010) ^ 0x00000010) != 0;
+  }
+};
+
+const ::DNDProto::Map&
+NetworkMessage::_Internal::map(const NetworkMessage* msg) {
+  return *msg->map_;
+}
+const ::DNDProto::TileUpdate&
+NetworkMessage::_Internal::tileupdate(const NetworkMessage* msg) {
+  return *msg->tileupdate_;
+}
+const ::DNDProto::Token&
+NetworkMessage::_Internal::tokenupdate(const NetworkMessage* msg) {
+  return *msg->tokenupdate_;
+}
+NetworkMessage::NetworkMessage(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor();
+  RegisterArenaDtor(arena);
+  // @@protoc_insertion_point(arena_constructor:DNDProto.NetworkMessage)
+}
+NetworkMessage::NetworkMessage(const NetworkMessage& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      _has_bits_(from._has_bits_) {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  if (from._internal_has_map()) {
+    map_ = new ::DNDProto::Map(*from.map_);
+  } else {
+    map_ = nullptr;
+  }
+  if (from._internal_has_tileupdate()) {
+    tileupdate_ = new ::DNDProto::TileUpdate(*from.tileupdate_);
+  } else {
+    tileupdate_ = nullptr;
+  }
+  if (from._internal_has_tokenupdate()) {
+    tokenupdate_ = new ::DNDProto::Token(*from.tokenupdate_);
+  } else {
+    tokenupdate_ = nullptr;
+  }
+  ::memcpy(&gameid_, &from.gameid_,
+    static_cast<size_t>(reinterpret_cast<char*>(&error_) -
+    reinterpret_cast<char*>(&gameid_)) + sizeof(error_));
+  // @@protoc_insertion_point(copy_constructor:DNDProto.NetworkMessage)
+}
+
+void NetworkMessage::SharedCtor() {
+::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
+    reinterpret_cast<char*>(&map_) - reinterpret_cast<char*>(this)),
+    0, static_cast<size_t>(reinterpret_cast<char*>(&gameid_) -
+    reinterpret_cast<char*>(&map_)) + sizeof(gameid_));
+messagetype_ = 1;
+error_ = 1;
+}
+
+NetworkMessage::~NetworkMessage() {
+  // @@protoc_insertion_point(destructor:DNDProto.NetworkMessage)
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+void NetworkMessage::SharedDtor() {
+  GOOGLE_DCHECK(GetArena() == nullptr);
+  if (this != internal_default_instance()) delete map_;
+  if (this != internal_default_instance()) delete tileupdate_;
+  if (this != internal_default_instance()) delete tokenupdate_;
+}
+
+void NetworkMessage::ArenaDtor(void* object) {
+  NetworkMessage* _this = reinterpret_cast< NetworkMessage* >(object);
+  (void)_this;
+}
+void NetworkMessage::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void NetworkMessage::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void NetworkMessage::Clear() {
+// @@protoc_insertion_point(message_clear_start:DNDProto.NetworkMessage)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _has_bits_[0];
+  if (cached_has_bits & 0x00000007u) {
+    if (cached_has_bits & 0x00000001u) {
+      GOOGLE_DCHECK(map_ != nullptr);
+      map_->Clear();
+    }
+    if (cached_has_bits & 0x00000002u) {
+      GOOGLE_DCHECK(tileupdate_ != nullptr);
+      tileupdate_->Clear();
+    }
+    if (cached_has_bits & 0x00000004u) {
+      GOOGLE_DCHECK(tokenupdate_ != nullptr);
+      tokenupdate_->Clear();
+    }
+  }
+  if (cached_has_bits & 0x00000038u) {
+    gameid_ = 0;
+    messagetype_ = 1;
+    error_ = 1;
+  }
+  _has_bits_.Clear();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* NetworkMessage::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  _Internal::HasBits has_bits{};
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    CHK_(ptr);
+    switch (tag >> 3) {
+      // required .DNDProto.NetworkMessage.MessageType messageType = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 8)) {
+          ::PROTOBUF_NAMESPACE_ID::uint64 val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          if (PROTOBUF_PREDICT_TRUE(::DNDProto::NetworkMessage_MessageType_IsValid(val))) {
+            _internal_set_messagetype(static_cast<::DNDProto::NetworkMessage_MessageType>(val));
+          } else {
+            ::PROTOBUF_NAMESPACE_ID::internal::WriteVarint(1, val, mutable_unknown_fields());
+          }
+        } else goto handle_unusual;
+        continue;
+      // optional .DNDProto.Map map = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
+          ptr = ctx->ParseMessage(_internal_mutable_map(), ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // optional .DNDProto.TileUpdate tileUpdate = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 26)) {
+          ptr = ctx->ParseMessage(_internal_mutable_tileupdate(), ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // optional int32 gameID = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 32)) {
+          _Internal::set_has_gameid(&has_bits);
+          gameid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // optional .DNDProto.Token tokenUpdate = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 42)) {
+          ptr = ctx->ParseMessage(_internal_mutable_tokenupdate(), ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // optional .DNDProto.NetworkMessage.ErrorType error = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 48)) {
+          ::PROTOBUF_NAMESPACE_ID::uint64 val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          if (PROTOBUF_PREDICT_TRUE(::DNDProto::NetworkMessage_ErrorType_IsValid(val))) {
+            _internal_set_error(static_cast<::DNDProto::NetworkMessage_ErrorType>(val));
+          } else {
+            ::PROTOBUF_NAMESPACE_ID::internal::WriteVarint(6, val, mutable_unknown_fields());
+          }
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag,
+            _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+            ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
+    }  // switch
+  }  // while
+success:
+  _has_bits_.Or(has_bits);
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto success;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* NetworkMessage::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:DNDProto.NetworkMessage)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  cached_has_bits = _has_bits_[0];
+  // required .DNDProto.NetworkMessage.MessageType messageType = 1;
+  if (cached_has_bits & 0x00000010u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnumToArray(
+      1, this->_internal_messagetype(), target);
+  }
+
+  // optional .DNDProto.Map map = 2;
+  if (cached_has_bits & 0x00000001u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(
+        2, _Internal::map(this), target, stream);
+  }
+
+  // optional .DNDProto.TileUpdate tileUpdate = 3;
+  if (cached_has_bits & 0x00000002u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(
+        3, _Internal::tileupdate(this), target, stream);
+  }
+
+  // optional int32 gameID = 4;
+  if (cached_has_bits & 0x00000008u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(4, this->_internal_gameid(), target);
+  }
+
+  // optional .DNDProto.Token tokenUpdate = 5;
+  if (cached_has_bits & 0x00000004u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(
+        5, _Internal::tokenupdate(this), target, stream);
+  }
+
+  // optional .DNDProto.NetworkMessage.ErrorType error = 6;
+  if (cached_has_bits & 0x00000020u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnumToArray(
+      6, this->_internal_error(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:DNDProto.NetworkMessage)
+  return target;
+}
+
+size_t NetworkMessage::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:DNDProto.NetworkMessage)
+  size_t total_size = 0;
+
+  // required .DNDProto.NetworkMessage.MessageType messageType = 1;
+  if (_internal_has_messagetype()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_messagetype());
+  }
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _has_bits_[0];
+  if (cached_has_bits & 0x0000000fu) {
+    // optional .DNDProto.Map map = 2;
+    if (cached_has_bits & 0x00000001u) {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+          *map_);
+    }
+
+    // optional .DNDProto.TileUpdate tileUpdate = 3;
+    if (cached_has_bits & 0x00000002u) {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+          *tileupdate_);
+    }
+
+    // optional .DNDProto.Token tokenUpdate = 5;
+    if (cached_has_bits & 0x00000004u) {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+          *tokenupdate_);
+    }
+
+    // optional int32 gameID = 4;
+    if (cached_has_bits & 0x00000008u) {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+          this->_internal_gameid());
+    }
+
+  }
+  // optional .DNDProto.NetworkMessage.ErrorType error = 6;
+  if (cached_has_bits & 0x00000020u) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_error());
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
+        _internal_metadata_, total_size, &_cached_size_);
+  }
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void NetworkMessage::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:DNDProto.NetworkMessage)
+  GOOGLE_DCHECK_NE(&from, this);
+  const NetworkMessage* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<NetworkMessage>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:DNDProto.NetworkMessage)
+    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:DNDProto.NetworkMessage)
+    MergeFrom(*source);
+  }
+}
+
+void NetworkMessage::MergeFrom(const NetworkMessage& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:DNDProto.NetworkMessage)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  cached_has_bits = from._has_bits_[0];
+  if (cached_has_bits & 0x0000003fu) {
+    if (cached_has_bits & 0x00000001u) {
+      _internal_mutable_map()->::DNDProto::Map::MergeFrom(from._internal_map());
+    }
+    if (cached_has_bits & 0x00000002u) {
+      _internal_mutable_tileupdate()->::DNDProto::TileUpdate::MergeFrom(from._internal_tileupdate());
+    }
+    if (cached_has_bits & 0x00000004u) {
+      _internal_mutable_tokenupdate()->::DNDProto::Token::MergeFrom(from._internal_tokenupdate());
+    }
+    if (cached_has_bits & 0x00000008u) {
+      gameid_ = from.gameid_;
+    }
+    if (cached_has_bits & 0x00000010u) {
+      messagetype_ = from.messagetype_;
+    }
+    if (cached_has_bits & 0x00000020u) {
+      error_ = from.error_;
+    }
+    _has_bits_[0] |= cached_has_bits;
+  }
+}
+
+void NetworkMessage::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:DNDProto.NetworkMessage)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void NetworkMessage::CopyFrom(const NetworkMessage& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:DNDProto.NetworkMessage)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool NetworkMessage::IsInitialized() const {
+  if (_Internal::MissingRequiredFields(_has_bits_)) return false;
+  if (_internal_has_map()) {
+    if (!map_->IsInitialized()) return false;
+  }
+  if (_internal_has_tileupdate()) {
+    if (!tileupdate_->IsInitialized()) return false;
+  }
+  if (_internal_has_tokenupdate()) {
+    if (!tokenupdate_->IsInitialized()) return false;
+  }
+  return true;
+}
+
+void NetworkMessage::InternalSwap(NetworkMessage* other) {
+  using std::swap;
+  _internal_metadata_.Swap<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(&other->_internal_metadata_);
+  swap(_has_bits_[0], other->_has_bits_[0]);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(NetworkMessage, gameid_)
+      + sizeof(NetworkMessage::gameid_)
+      - PROTOBUF_FIELD_OFFSET(NetworkMessage, map_)>(
+          reinterpret_cast<char*>(&map_),
+          reinterpret_cast<char*>(&other->map_));
+  swap(messagetype_, other->messagetype_);
+  swap(error_, other->error_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata NetworkMessage::GetMetadata() const {
+  return GetMetadataStatic();
+}
+
+
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace DNDProto
 PROTOBUF_NAMESPACE_OPEN
@@ -842,6 +1758,12 @@ template<> PROTOBUF_NOINLINE ::DNDProto::Token* Arena::CreateMaybeMessage< ::DND
 }
 template<> PROTOBUF_NOINLINE ::DNDProto::Map* Arena::CreateMaybeMessage< ::DNDProto::Map >(Arena* arena) {
   return Arena::CreateMessageInternal< ::DNDProto::Map >(arena);
+}
+template<> PROTOBUF_NOINLINE ::DNDProto::TileUpdate* Arena::CreateMaybeMessage< ::DNDProto::TileUpdate >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::DNDProto::TileUpdate >(arena);
+}
+template<> PROTOBUF_NOINLINE ::DNDProto::NetworkMessage* Arena::CreateMaybeMessage< ::DNDProto::NetworkMessage >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::DNDProto::NetworkMessage >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

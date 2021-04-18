@@ -30,6 +30,7 @@
 #include <google/protobuf/message.h>
 #include <google/protobuf/repeated_field.h>  // IWYU pragma: export
 #include <google/protobuf/extension_set.h>  // IWYU pragma: export
+#include <google/protobuf/generated_enum_reflection.h>
 #include <google/protobuf/unknown_field_set.h>
 // @@protoc_insertion_point(includes)
 #include <google/protobuf/port_def.inc>
@@ -46,7 +47,7 @@ struct TableStruct_DNDMapper_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[2]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[4]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -58,16 +59,72 @@ namespace DNDProto {
 class Map;
 struct MapDefaultTypeInternal;
 extern MapDefaultTypeInternal _Map_default_instance_;
+class NetworkMessage;
+struct NetworkMessageDefaultTypeInternal;
+extern NetworkMessageDefaultTypeInternal _NetworkMessage_default_instance_;
+class TileUpdate;
+struct TileUpdateDefaultTypeInternal;
+extern TileUpdateDefaultTypeInternal _TileUpdate_default_instance_;
 class Token;
 struct TokenDefaultTypeInternal;
 extern TokenDefaultTypeInternal _Token_default_instance_;
 }  // namespace DNDProto
 PROTOBUF_NAMESPACE_OPEN
 template<> ::DNDProto::Map* Arena::CreateMaybeMessage<::DNDProto::Map>(Arena*);
+template<> ::DNDProto::NetworkMessage* Arena::CreateMaybeMessage<::DNDProto::NetworkMessage>(Arena*);
+template<> ::DNDProto::TileUpdate* Arena::CreateMaybeMessage<::DNDProto::TileUpdate>(Arena*);
 template<> ::DNDProto::Token* Arena::CreateMaybeMessage<::DNDProto::Token>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace DNDProto {
 
+enum NetworkMessage_ErrorType : int {
+  NetworkMessage_ErrorType_GameDoesNotExistError = 1
+};
+bool NetworkMessage_ErrorType_IsValid(int value);
+constexpr NetworkMessage_ErrorType NetworkMessage_ErrorType_ErrorType_MIN = NetworkMessage_ErrorType_GameDoesNotExistError;
+constexpr NetworkMessage_ErrorType NetworkMessage_ErrorType_ErrorType_MAX = NetworkMessage_ErrorType_GameDoesNotExistError;
+constexpr int NetworkMessage_ErrorType_ErrorType_ARRAYSIZE = NetworkMessage_ErrorType_ErrorType_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* NetworkMessage_ErrorType_descriptor();
+template<typename T>
+inline const std::string& NetworkMessage_ErrorType_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, NetworkMessage_ErrorType>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function NetworkMessage_ErrorType_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    NetworkMessage_ErrorType_descriptor(), enum_t_value);
+}
+inline bool NetworkMessage_ErrorType_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, NetworkMessage_ErrorType* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<NetworkMessage_ErrorType>(
+    NetworkMessage_ErrorType_descriptor(), name, value);
+}
+enum NetworkMessage_MessageType : int {
+  NetworkMessage_MessageType_CreateGame = 1,
+  NetworkMessage_MessageType_JoinGame = 2,
+  NetworkMessage_MessageType_Update = 3,
+  NetworkMessage_MessageType_ID = 4,
+  NetworkMessage_MessageType_Error = 5
+};
+bool NetworkMessage_MessageType_IsValid(int value);
+constexpr NetworkMessage_MessageType NetworkMessage_MessageType_MessageType_MIN = NetworkMessage_MessageType_CreateGame;
+constexpr NetworkMessage_MessageType NetworkMessage_MessageType_MessageType_MAX = NetworkMessage_MessageType_Error;
+constexpr int NetworkMessage_MessageType_MessageType_ARRAYSIZE = NetworkMessage_MessageType_MessageType_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* NetworkMessage_MessageType_descriptor();
+template<typename T>
+inline const std::string& NetworkMessage_MessageType_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, NetworkMessage_MessageType>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function NetworkMessage_MessageType_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    NetworkMessage_MessageType_descriptor(), enum_t_value);
+}
+inline bool NetworkMessage_MessageType_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, NetworkMessage_MessageType* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<NetworkMessage_MessageType>(
+    NetworkMessage_MessageType_descriptor(), name, value);
+}
 // ===================================================================
 
 class Token PROTOBUF_FINAL :
@@ -194,8 +251,10 @@ class Token PROTOBUF_FINAL :
     kColorFieldNumber = 2,
     kPosXFieldNumber = 3,
     kPosYFieldNumber = 4,
+    kIdFieldNumber = 5,
+    kIsDestroyFieldNumber = 6,
   };
-  // required string name = 1;
+  // optional string name = 1;
   bool has_name() const;
   private:
   bool _internal_has_name() const;
@@ -215,7 +274,7 @@ class Token PROTOBUF_FINAL :
   std::string* _internal_mutable_name();
   public:
 
-  // required int32 color = 2;
+  // optional int32 color = 2;
   bool has_color() const;
   private:
   bool _internal_has_color() const;
@@ -228,7 +287,7 @@ class Token PROTOBUF_FINAL :
   void _internal_set_color(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
 
-  // required float posX = 3;
+  // optional float posX = 3;
   bool has_posx() const;
   private:
   bool _internal_has_posx() const;
@@ -241,7 +300,7 @@ class Token PROTOBUF_FINAL :
   void _internal_set_posx(float value);
   public:
 
-  // required float posY = 4;
+  // optional float posY = 4;
   bool has_posy() const;
   private:
   bool _internal_has_posy() const;
@@ -254,12 +313,35 @@ class Token PROTOBUF_FINAL :
   void _internal_set_posy(float value);
   public:
 
+  // required int32 id = 5;
+  bool has_id() const;
+  private:
+  bool _internal_has_id() const;
+  public:
+  void clear_id();
+  ::PROTOBUF_NAMESPACE_ID::int32 id() const;
+  void set_id(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_id() const;
+  void _internal_set_id(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // optional bool isDestroy = 6;
+  bool has_isdestroy() const;
+  private:
+  bool _internal_has_isdestroy() const;
+  public:
+  void clear_isdestroy();
+  bool isdestroy() const;
+  void set_isdestroy(bool value);
+  private:
+  bool _internal_isdestroy() const;
+  void _internal_set_isdestroy(bool value);
+  public:
+
   // @@protoc_insertion_point(class_scope:DNDProto.Token)
  private:
   class _Internal;
-
-  // helper for ByteSizeLong()
-  size_t RequiredFieldsByteSizeFallback() const;
 
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
@@ -270,6 +352,8 @@ class Token PROTOBUF_FINAL :
   ::PROTOBUF_NAMESPACE_ID::int32 color_;
   float posx_;
   float posy_;
+  ::PROTOBUF_NAMESPACE_ID::int32 id_;
+  bool isdestroy_;
   friend struct ::TableStruct_DNDMapper_2eproto;
 };
 // -------------------------------------------------------------------
@@ -507,6 +591,506 @@ class Map PROTOBUF_FINAL :
   ::PROTOBUF_NAMESPACE_ID::int32 sizey_;
   friend struct ::TableStruct_DNDMapper_2eproto;
 };
+// -------------------------------------------------------------------
+
+class TileUpdate PROTOBUF_FINAL :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:DNDProto.TileUpdate) */ {
+ public:
+  inline TileUpdate() : TileUpdate(nullptr) {}
+  virtual ~TileUpdate();
+  explicit constexpr TileUpdate(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  TileUpdate(const TileUpdate& from);
+  TileUpdate(TileUpdate&& from) noexcept
+    : TileUpdate() {
+    *this = ::std::move(from);
+  }
+
+  inline TileUpdate& operator=(const TileUpdate& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline TileUpdate& operator=(TileUpdate&& from) noexcept {
+    if (GetArena() == from.GetArena()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const TileUpdate& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const TileUpdate* internal_default_instance() {
+    return reinterpret_cast<const TileUpdate*>(
+               &_TileUpdate_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    2;
+
+  friend void swap(TileUpdate& a, TileUpdate& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(TileUpdate* other) {
+    if (other == this) return;
+    if (GetArena() == other->GetArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(TileUpdate* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline TileUpdate* New() const final {
+    return CreateMaybeMessage<TileUpdate>(nullptr);
+  }
+
+  TileUpdate* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<TileUpdate>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const TileUpdate& from);
+  void MergeFrom(const TileUpdate& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(TileUpdate* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "DNDProto.TileUpdate";
+  }
+  protected:
+  explicit TileUpdate(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    return ::descriptor_table_DNDMapper_2eproto_metadata_getter(kIndexInFileMessages);
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kPosXFieldNumber = 1,
+    kPosYFieldNumber = 2,
+    kNewColorFieldNumber = 3,
+    kNewFoggedFieldNumber = 4,
+  };
+  // required int32 posX = 1;
+  bool has_posx() const;
+  private:
+  bool _internal_has_posx() const;
+  public:
+  void clear_posx();
+  ::PROTOBUF_NAMESPACE_ID::int32 posx() const;
+  void set_posx(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_posx() const;
+  void _internal_set_posx(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // required int32 posY = 2;
+  bool has_posy() const;
+  private:
+  bool _internal_has_posy() const;
+  public:
+  void clear_posy();
+  ::PROTOBUF_NAMESPACE_ID::int32 posy() const;
+  void set_posy(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_posy() const;
+  void _internal_set_posy(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // optional int32 newColor = 3;
+  bool has_newcolor() const;
+  private:
+  bool _internal_has_newcolor() const;
+  public:
+  void clear_newcolor();
+  ::PROTOBUF_NAMESPACE_ID::int32 newcolor() const;
+  void set_newcolor(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_newcolor() const;
+  void _internal_set_newcolor(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // optional bool newFogged = 4;
+  bool has_newfogged() const;
+  private:
+  bool _internal_has_newfogged() const;
+  public:
+  void clear_newfogged();
+  bool newfogged() const;
+  void set_newfogged(bool value);
+  private:
+  bool _internal_newfogged() const;
+  void _internal_set_newfogged(bool value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:DNDProto.TileUpdate)
+ private:
+  class _Internal;
+
+  // helper for ByteSizeLong()
+  size_t RequiredFieldsByteSizeFallback() const;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  ::PROTOBUF_NAMESPACE_ID::int32 posx_;
+  ::PROTOBUF_NAMESPACE_ID::int32 posy_;
+  ::PROTOBUF_NAMESPACE_ID::int32 newcolor_;
+  bool newfogged_;
+  friend struct ::TableStruct_DNDMapper_2eproto;
+};
+// -------------------------------------------------------------------
+
+class NetworkMessage PROTOBUF_FINAL :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:DNDProto.NetworkMessage) */ {
+ public:
+  inline NetworkMessage() : NetworkMessage(nullptr) {}
+  virtual ~NetworkMessage();
+  explicit constexpr NetworkMessage(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  NetworkMessage(const NetworkMessage& from);
+  NetworkMessage(NetworkMessage&& from) noexcept
+    : NetworkMessage() {
+    *this = ::std::move(from);
+  }
+
+  inline NetworkMessage& operator=(const NetworkMessage& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline NetworkMessage& operator=(NetworkMessage&& from) noexcept {
+    if (GetArena() == from.GetArena()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const NetworkMessage& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const NetworkMessage* internal_default_instance() {
+    return reinterpret_cast<const NetworkMessage*>(
+               &_NetworkMessage_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    3;
+
+  friend void swap(NetworkMessage& a, NetworkMessage& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(NetworkMessage* other) {
+    if (other == this) return;
+    if (GetArena() == other->GetArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(NetworkMessage* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline NetworkMessage* New() const final {
+    return CreateMaybeMessage<NetworkMessage>(nullptr);
+  }
+
+  NetworkMessage* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<NetworkMessage>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const NetworkMessage& from);
+  void MergeFrom(const NetworkMessage& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(NetworkMessage* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "DNDProto.NetworkMessage";
+  }
+  protected:
+  explicit NetworkMessage(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    return ::descriptor_table_DNDMapper_2eproto_metadata_getter(kIndexInFileMessages);
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  typedef NetworkMessage_ErrorType ErrorType;
+  static constexpr ErrorType GameDoesNotExistError =
+    NetworkMessage_ErrorType_GameDoesNotExistError;
+  static inline bool ErrorType_IsValid(int value) {
+    return NetworkMessage_ErrorType_IsValid(value);
+  }
+  static constexpr ErrorType ErrorType_MIN =
+    NetworkMessage_ErrorType_ErrorType_MIN;
+  static constexpr ErrorType ErrorType_MAX =
+    NetworkMessage_ErrorType_ErrorType_MAX;
+  static constexpr int ErrorType_ARRAYSIZE =
+    NetworkMessage_ErrorType_ErrorType_ARRAYSIZE;
+  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+  ErrorType_descriptor() {
+    return NetworkMessage_ErrorType_descriptor();
+  }
+  template<typename T>
+  static inline const std::string& ErrorType_Name(T enum_t_value) {
+    static_assert(::std::is_same<T, ErrorType>::value ||
+      ::std::is_integral<T>::value,
+      "Incorrect type passed to function ErrorType_Name.");
+    return NetworkMessage_ErrorType_Name(enum_t_value);
+  }
+  static inline bool ErrorType_Parse(::PROTOBUF_NAMESPACE_ID::ConstStringParam name,
+      ErrorType* value) {
+    return NetworkMessage_ErrorType_Parse(name, value);
+  }
+
+  typedef NetworkMessage_MessageType MessageType;
+  static constexpr MessageType CreateGame =
+    NetworkMessage_MessageType_CreateGame;
+  static constexpr MessageType JoinGame =
+    NetworkMessage_MessageType_JoinGame;
+  static constexpr MessageType Update =
+    NetworkMessage_MessageType_Update;
+  static constexpr MessageType ID =
+    NetworkMessage_MessageType_ID;
+  static constexpr MessageType Error =
+    NetworkMessage_MessageType_Error;
+  static inline bool MessageType_IsValid(int value) {
+    return NetworkMessage_MessageType_IsValid(value);
+  }
+  static constexpr MessageType MessageType_MIN =
+    NetworkMessage_MessageType_MessageType_MIN;
+  static constexpr MessageType MessageType_MAX =
+    NetworkMessage_MessageType_MessageType_MAX;
+  static constexpr int MessageType_ARRAYSIZE =
+    NetworkMessage_MessageType_MessageType_ARRAYSIZE;
+  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+  MessageType_descriptor() {
+    return NetworkMessage_MessageType_descriptor();
+  }
+  template<typename T>
+  static inline const std::string& MessageType_Name(T enum_t_value) {
+    static_assert(::std::is_same<T, MessageType>::value ||
+      ::std::is_integral<T>::value,
+      "Incorrect type passed to function MessageType_Name.");
+    return NetworkMessage_MessageType_Name(enum_t_value);
+  }
+  static inline bool MessageType_Parse(::PROTOBUF_NAMESPACE_ID::ConstStringParam name,
+      MessageType* value) {
+    return NetworkMessage_MessageType_Parse(name, value);
+  }
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kMapFieldNumber = 2,
+    kTileUpdateFieldNumber = 3,
+    kTokenUpdateFieldNumber = 5,
+    kGameIDFieldNumber = 4,
+    kMessageTypeFieldNumber = 1,
+    kErrorFieldNumber = 6,
+  };
+  // optional .DNDProto.Map map = 2;
+  bool has_map() const;
+  private:
+  bool _internal_has_map() const;
+  public:
+  void clear_map();
+  const ::DNDProto::Map& map() const;
+  ::DNDProto::Map* release_map();
+  ::DNDProto::Map* mutable_map();
+  void set_allocated_map(::DNDProto::Map* map);
+  private:
+  const ::DNDProto::Map& _internal_map() const;
+  ::DNDProto::Map* _internal_mutable_map();
+  public:
+  void unsafe_arena_set_allocated_map(
+      ::DNDProto::Map* map);
+  ::DNDProto::Map* unsafe_arena_release_map();
+
+  // optional .DNDProto.TileUpdate tileUpdate = 3;
+  bool has_tileupdate() const;
+  private:
+  bool _internal_has_tileupdate() const;
+  public:
+  void clear_tileupdate();
+  const ::DNDProto::TileUpdate& tileupdate() const;
+  ::DNDProto::TileUpdate* release_tileupdate();
+  ::DNDProto::TileUpdate* mutable_tileupdate();
+  void set_allocated_tileupdate(::DNDProto::TileUpdate* tileupdate);
+  private:
+  const ::DNDProto::TileUpdate& _internal_tileupdate() const;
+  ::DNDProto::TileUpdate* _internal_mutable_tileupdate();
+  public:
+  void unsafe_arena_set_allocated_tileupdate(
+      ::DNDProto::TileUpdate* tileupdate);
+  ::DNDProto::TileUpdate* unsafe_arena_release_tileupdate();
+
+  // optional .DNDProto.Token tokenUpdate = 5;
+  bool has_tokenupdate() const;
+  private:
+  bool _internal_has_tokenupdate() const;
+  public:
+  void clear_tokenupdate();
+  const ::DNDProto::Token& tokenupdate() const;
+  ::DNDProto::Token* release_tokenupdate();
+  ::DNDProto::Token* mutable_tokenupdate();
+  void set_allocated_tokenupdate(::DNDProto::Token* tokenupdate);
+  private:
+  const ::DNDProto::Token& _internal_tokenupdate() const;
+  ::DNDProto::Token* _internal_mutable_tokenupdate();
+  public:
+  void unsafe_arena_set_allocated_tokenupdate(
+      ::DNDProto::Token* tokenupdate);
+  ::DNDProto::Token* unsafe_arena_release_tokenupdate();
+
+  // optional int32 gameID = 4;
+  bool has_gameid() const;
+  private:
+  bool _internal_has_gameid() const;
+  public:
+  void clear_gameid();
+  ::PROTOBUF_NAMESPACE_ID::int32 gameid() const;
+  void set_gameid(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_gameid() const;
+  void _internal_set_gameid(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // required .DNDProto.NetworkMessage.MessageType messageType = 1;
+  bool has_messagetype() const;
+  private:
+  bool _internal_has_messagetype() const;
+  public:
+  void clear_messagetype();
+  ::DNDProto::NetworkMessage_MessageType messagetype() const;
+  void set_messagetype(::DNDProto::NetworkMessage_MessageType value);
+  private:
+  ::DNDProto::NetworkMessage_MessageType _internal_messagetype() const;
+  void _internal_set_messagetype(::DNDProto::NetworkMessage_MessageType value);
+  public:
+
+  // optional .DNDProto.NetworkMessage.ErrorType error = 6;
+  bool has_error() const;
+  private:
+  bool _internal_has_error() const;
+  public:
+  void clear_error();
+  ::DNDProto::NetworkMessage_ErrorType error() const;
+  void set_error(::DNDProto::NetworkMessage_ErrorType value);
+  private:
+  ::DNDProto::NetworkMessage_ErrorType _internal_error() const;
+  void _internal_set_error(::DNDProto::NetworkMessage_ErrorType value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:DNDProto.NetworkMessage)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  ::DNDProto::Map* map_;
+  ::DNDProto::TileUpdate* tileupdate_;
+  ::DNDProto::Token* tokenupdate_;
+  ::PROTOBUF_NAMESPACE_ID::int32 gameid_;
+  int messagetype_;
+  int error_;
+  friend struct ::TableStruct_DNDMapper_2eproto;
+};
 // ===================================================================
 
 
@@ -518,7 +1102,7 @@ class Map PROTOBUF_FINAL :
 #endif  // __GNUC__
 // Token
 
-// required string name = 1;
+// optional string name = 1;
 inline bool Token::_internal_has_name() const {
   bool value = (_has_bits_[0] & 0x00000001u) != 0;
   return value;
@@ -591,7 +1175,7 @@ inline void Token::set_allocated_name(std::string* name) {
   // @@protoc_insertion_point(field_set_allocated:DNDProto.Token.name)
 }
 
-// required int32 color = 2;
+// optional int32 color = 2;
 inline bool Token::_internal_has_color() const {
   bool value = (_has_bits_[0] & 0x00000002u) != 0;
   return value;
@@ -619,7 +1203,7 @@ inline void Token::set_color(::PROTOBUF_NAMESPACE_ID::int32 value) {
   // @@protoc_insertion_point(field_set:DNDProto.Token.color)
 }
 
-// required float posX = 3;
+// optional float posX = 3;
 inline bool Token::_internal_has_posx() const {
   bool value = (_has_bits_[0] & 0x00000004u) != 0;
   return value;
@@ -647,7 +1231,7 @@ inline void Token::set_posx(float value) {
   // @@protoc_insertion_point(field_set:DNDProto.Token.posX)
 }
 
-// required float posY = 4;
+// optional float posY = 4;
 inline bool Token::_internal_has_posy() const {
   bool value = (_has_bits_[0] & 0x00000008u) != 0;
   return value;
@@ -673,6 +1257,62 @@ inline void Token::_internal_set_posy(float value) {
 inline void Token::set_posy(float value) {
   _internal_set_posy(value);
   // @@protoc_insertion_point(field_set:DNDProto.Token.posY)
+}
+
+// required int32 id = 5;
+inline bool Token::_internal_has_id() const {
+  bool value = (_has_bits_[0] & 0x00000010u) != 0;
+  return value;
+}
+inline bool Token::has_id() const {
+  return _internal_has_id();
+}
+inline void Token::clear_id() {
+  id_ = 0;
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 Token::_internal_id() const {
+  return id_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 Token::id() const {
+  // @@protoc_insertion_point(field_get:DNDProto.Token.id)
+  return _internal_id();
+}
+inline void Token::_internal_set_id(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _has_bits_[0] |= 0x00000010u;
+  id_ = value;
+}
+inline void Token::set_id(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_id(value);
+  // @@protoc_insertion_point(field_set:DNDProto.Token.id)
+}
+
+// optional bool isDestroy = 6;
+inline bool Token::_internal_has_isdestroy() const {
+  bool value = (_has_bits_[0] & 0x00000020u) != 0;
+  return value;
+}
+inline bool Token::has_isdestroy() const {
+  return _internal_has_isdestroy();
+}
+inline void Token::clear_isdestroy() {
+  isdestroy_ = false;
+  _has_bits_[0] &= ~0x00000020u;
+}
+inline bool Token::_internal_isdestroy() const {
+  return isdestroy_;
+}
+inline bool Token::isdestroy() const {
+  // @@protoc_insertion_point(field_get:DNDProto.Token.isDestroy)
+  return _internal_isdestroy();
+}
+inline void Token::_internal_set_isdestroy(bool value) {
+  _has_bits_[0] |= 0x00000020u;
+  isdestroy_ = value;
+}
+inline void Token::set_isdestroy(bool value) {
+  _internal_set_isdestroy(value);
+  // @@protoc_insertion_point(field_set:DNDProto.Token.isDestroy)
 }
 
 // -------------------------------------------------------------------
@@ -868,15 +1508,489 @@ Map::tokens() const {
   return tokens_;
 }
 
+// -------------------------------------------------------------------
+
+// TileUpdate
+
+// required int32 posX = 1;
+inline bool TileUpdate::_internal_has_posx() const {
+  bool value = (_has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline bool TileUpdate::has_posx() const {
+  return _internal_has_posx();
+}
+inline void TileUpdate::clear_posx() {
+  posx_ = 0;
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 TileUpdate::_internal_posx() const {
+  return posx_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 TileUpdate::posx() const {
+  // @@protoc_insertion_point(field_get:DNDProto.TileUpdate.posX)
+  return _internal_posx();
+}
+inline void TileUpdate::_internal_set_posx(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _has_bits_[0] |= 0x00000001u;
+  posx_ = value;
+}
+inline void TileUpdate::set_posx(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_posx(value);
+  // @@protoc_insertion_point(field_set:DNDProto.TileUpdate.posX)
+}
+
+// required int32 posY = 2;
+inline bool TileUpdate::_internal_has_posy() const {
+  bool value = (_has_bits_[0] & 0x00000002u) != 0;
+  return value;
+}
+inline bool TileUpdate::has_posy() const {
+  return _internal_has_posy();
+}
+inline void TileUpdate::clear_posy() {
+  posy_ = 0;
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 TileUpdate::_internal_posy() const {
+  return posy_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 TileUpdate::posy() const {
+  // @@protoc_insertion_point(field_get:DNDProto.TileUpdate.posY)
+  return _internal_posy();
+}
+inline void TileUpdate::_internal_set_posy(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _has_bits_[0] |= 0x00000002u;
+  posy_ = value;
+}
+inline void TileUpdate::set_posy(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_posy(value);
+  // @@protoc_insertion_point(field_set:DNDProto.TileUpdate.posY)
+}
+
+// optional int32 newColor = 3;
+inline bool TileUpdate::_internal_has_newcolor() const {
+  bool value = (_has_bits_[0] & 0x00000004u) != 0;
+  return value;
+}
+inline bool TileUpdate::has_newcolor() const {
+  return _internal_has_newcolor();
+}
+inline void TileUpdate::clear_newcolor() {
+  newcolor_ = 0;
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 TileUpdate::_internal_newcolor() const {
+  return newcolor_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 TileUpdate::newcolor() const {
+  // @@protoc_insertion_point(field_get:DNDProto.TileUpdate.newColor)
+  return _internal_newcolor();
+}
+inline void TileUpdate::_internal_set_newcolor(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _has_bits_[0] |= 0x00000004u;
+  newcolor_ = value;
+}
+inline void TileUpdate::set_newcolor(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_newcolor(value);
+  // @@protoc_insertion_point(field_set:DNDProto.TileUpdate.newColor)
+}
+
+// optional bool newFogged = 4;
+inline bool TileUpdate::_internal_has_newfogged() const {
+  bool value = (_has_bits_[0] & 0x00000008u) != 0;
+  return value;
+}
+inline bool TileUpdate::has_newfogged() const {
+  return _internal_has_newfogged();
+}
+inline void TileUpdate::clear_newfogged() {
+  newfogged_ = false;
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline bool TileUpdate::_internal_newfogged() const {
+  return newfogged_;
+}
+inline bool TileUpdate::newfogged() const {
+  // @@protoc_insertion_point(field_get:DNDProto.TileUpdate.newFogged)
+  return _internal_newfogged();
+}
+inline void TileUpdate::_internal_set_newfogged(bool value) {
+  _has_bits_[0] |= 0x00000008u;
+  newfogged_ = value;
+}
+inline void TileUpdate::set_newfogged(bool value) {
+  _internal_set_newfogged(value);
+  // @@protoc_insertion_point(field_set:DNDProto.TileUpdate.newFogged)
+}
+
+// -------------------------------------------------------------------
+
+// NetworkMessage
+
+// required .DNDProto.NetworkMessage.MessageType messageType = 1;
+inline bool NetworkMessage::_internal_has_messagetype() const {
+  bool value = (_has_bits_[0] & 0x00000010u) != 0;
+  return value;
+}
+inline bool NetworkMessage::has_messagetype() const {
+  return _internal_has_messagetype();
+}
+inline void NetworkMessage::clear_messagetype() {
+  messagetype_ = 1;
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline ::DNDProto::NetworkMessage_MessageType NetworkMessage::_internal_messagetype() const {
+  return static_cast< ::DNDProto::NetworkMessage_MessageType >(messagetype_);
+}
+inline ::DNDProto::NetworkMessage_MessageType NetworkMessage::messagetype() const {
+  // @@protoc_insertion_point(field_get:DNDProto.NetworkMessage.messageType)
+  return _internal_messagetype();
+}
+inline void NetworkMessage::_internal_set_messagetype(::DNDProto::NetworkMessage_MessageType value) {
+  assert(::DNDProto::NetworkMessage_MessageType_IsValid(value));
+  _has_bits_[0] |= 0x00000010u;
+  messagetype_ = value;
+}
+inline void NetworkMessage::set_messagetype(::DNDProto::NetworkMessage_MessageType value) {
+  _internal_set_messagetype(value);
+  // @@protoc_insertion_point(field_set:DNDProto.NetworkMessage.messageType)
+}
+
+// optional .DNDProto.Map map = 2;
+inline bool NetworkMessage::_internal_has_map() const {
+  bool value = (_has_bits_[0] & 0x00000001u) != 0;
+  PROTOBUF_ASSUME(!value || map_ != nullptr);
+  return value;
+}
+inline bool NetworkMessage::has_map() const {
+  return _internal_has_map();
+}
+inline void NetworkMessage::clear_map() {
+  if (map_ != nullptr) map_->Clear();
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline const ::DNDProto::Map& NetworkMessage::_internal_map() const {
+  const ::DNDProto::Map* p = map_;
+  return p != nullptr ? *p : reinterpret_cast<const ::DNDProto::Map&>(
+      ::DNDProto::_Map_default_instance_);
+}
+inline const ::DNDProto::Map& NetworkMessage::map() const {
+  // @@protoc_insertion_point(field_get:DNDProto.NetworkMessage.map)
+  return _internal_map();
+}
+inline void NetworkMessage::unsafe_arena_set_allocated_map(
+    ::DNDProto::Map* map) {
+  if (GetArena() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(map_);
+  }
+  map_ = map;
+  if (map) {
+    _has_bits_[0] |= 0x00000001u;
+  } else {
+    _has_bits_[0] &= ~0x00000001u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:DNDProto.NetworkMessage.map)
+}
+inline ::DNDProto::Map* NetworkMessage::release_map() {
+  _has_bits_[0] &= ~0x00000001u;
+  ::DNDProto::Map* temp = map_;
+  map_ = nullptr;
+  if (GetArena() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+  return temp;
+}
+inline ::DNDProto::Map* NetworkMessage::unsafe_arena_release_map() {
+  // @@protoc_insertion_point(field_release:DNDProto.NetworkMessage.map)
+  _has_bits_[0] &= ~0x00000001u;
+  ::DNDProto::Map* temp = map_;
+  map_ = nullptr;
+  return temp;
+}
+inline ::DNDProto::Map* NetworkMessage::_internal_mutable_map() {
+  _has_bits_[0] |= 0x00000001u;
+  if (map_ == nullptr) {
+    auto* p = CreateMaybeMessage<::DNDProto::Map>(GetArena());
+    map_ = p;
+  }
+  return map_;
+}
+inline ::DNDProto::Map* NetworkMessage::mutable_map() {
+  // @@protoc_insertion_point(field_mutable:DNDProto.NetworkMessage.map)
+  return _internal_mutable_map();
+}
+inline void NetworkMessage::set_allocated_map(::DNDProto::Map* map) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArena();
+  if (message_arena == nullptr) {
+    delete map_;
+  }
+  if (map) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+      ::PROTOBUF_NAMESPACE_ID::Arena::GetArena(map);
+    if (message_arena != submessage_arena) {
+      map = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, map, submessage_arena);
+    }
+    _has_bits_[0] |= 0x00000001u;
+  } else {
+    _has_bits_[0] &= ~0x00000001u;
+  }
+  map_ = map;
+  // @@protoc_insertion_point(field_set_allocated:DNDProto.NetworkMessage.map)
+}
+
+// optional .DNDProto.TileUpdate tileUpdate = 3;
+inline bool NetworkMessage::_internal_has_tileupdate() const {
+  bool value = (_has_bits_[0] & 0x00000002u) != 0;
+  PROTOBUF_ASSUME(!value || tileupdate_ != nullptr);
+  return value;
+}
+inline bool NetworkMessage::has_tileupdate() const {
+  return _internal_has_tileupdate();
+}
+inline void NetworkMessage::clear_tileupdate() {
+  if (tileupdate_ != nullptr) tileupdate_->Clear();
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline const ::DNDProto::TileUpdate& NetworkMessage::_internal_tileupdate() const {
+  const ::DNDProto::TileUpdate* p = tileupdate_;
+  return p != nullptr ? *p : reinterpret_cast<const ::DNDProto::TileUpdate&>(
+      ::DNDProto::_TileUpdate_default_instance_);
+}
+inline const ::DNDProto::TileUpdate& NetworkMessage::tileupdate() const {
+  // @@protoc_insertion_point(field_get:DNDProto.NetworkMessage.tileUpdate)
+  return _internal_tileupdate();
+}
+inline void NetworkMessage::unsafe_arena_set_allocated_tileupdate(
+    ::DNDProto::TileUpdate* tileupdate) {
+  if (GetArena() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(tileupdate_);
+  }
+  tileupdate_ = tileupdate;
+  if (tileupdate) {
+    _has_bits_[0] |= 0x00000002u;
+  } else {
+    _has_bits_[0] &= ~0x00000002u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:DNDProto.NetworkMessage.tileUpdate)
+}
+inline ::DNDProto::TileUpdate* NetworkMessage::release_tileupdate() {
+  _has_bits_[0] &= ~0x00000002u;
+  ::DNDProto::TileUpdate* temp = tileupdate_;
+  tileupdate_ = nullptr;
+  if (GetArena() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+  return temp;
+}
+inline ::DNDProto::TileUpdate* NetworkMessage::unsafe_arena_release_tileupdate() {
+  // @@protoc_insertion_point(field_release:DNDProto.NetworkMessage.tileUpdate)
+  _has_bits_[0] &= ~0x00000002u;
+  ::DNDProto::TileUpdate* temp = tileupdate_;
+  tileupdate_ = nullptr;
+  return temp;
+}
+inline ::DNDProto::TileUpdate* NetworkMessage::_internal_mutable_tileupdate() {
+  _has_bits_[0] |= 0x00000002u;
+  if (tileupdate_ == nullptr) {
+    auto* p = CreateMaybeMessage<::DNDProto::TileUpdate>(GetArena());
+    tileupdate_ = p;
+  }
+  return tileupdate_;
+}
+inline ::DNDProto::TileUpdate* NetworkMessage::mutable_tileupdate() {
+  // @@protoc_insertion_point(field_mutable:DNDProto.NetworkMessage.tileUpdate)
+  return _internal_mutable_tileupdate();
+}
+inline void NetworkMessage::set_allocated_tileupdate(::DNDProto::TileUpdate* tileupdate) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArena();
+  if (message_arena == nullptr) {
+    delete tileupdate_;
+  }
+  if (tileupdate) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+      ::PROTOBUF_NAMESPACE_ID::Arena::GetArena(tileupdate);
+    if (message_arena != submessage_arena) {
+      tileupdate = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, tileupdate, submessage_arena);
+    }
+    _has_bits_[0] |= 0x00000002u;
+  } else {
+    _has_bits_[0] &= ~0x00000002u;
+  }
+  tileupdate_ = tileupdate;
+  // @@protoc_insertion_point(field_set_allocated:DNDProto.NetworkMessage.tileUpdate)
+}
+
+// optional int32 gameID = 4;
+inline bool NetworkMessage::_internal_has_gameid() const {
+  bool value = (_has_bits_[0] & 0x00000008u) != 0;
+  return value;
+}
+inline bool NetworkMessage::has_gameid() const {
+  return _internal_has_gameid();
+}
+inline void NetworkMessage::clear_gameid() {
+  gameid_ = 0;
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 NetworkMessage::_internal_gameid() const {
+  return gameid_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 NetworkMessage::gameid() const {
+  // @@protoc_insertion_point(field_get:DNDProto.NetworkMessage.gameID)
+  return _internal_gameid();
+}
+inline void NetworkMessage::_internal_set_gameid(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _has_bits_[0] |= 0x00000008u;
+  gameid_ = value;
+}
+inline void NetworkMessage::set_gameid(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_gameid(value);
+  // @@protoc_insertion_point(field_set:DNDProto.NetworkMessage.gameID)
+}
+
+// optional .DNDProto.Token tokenUpdate = 5;
+inline bool NetworkMessage::_internal_has_tokenupdate() const {
+  bool value = (_has_bits_[0] & 0x00000004u) != 0;
+  PROTOBUF_ASSUME(!value || tokenupdate_ != nullptr);
+  return value;
+}
+inline bool NetworkMessage::has_tokenupdate() const {
+  return _internal_has_tokenupdate();
+}
+inline void NetworkMessage::clear_tokenupdate() {
+  if (tokenupdate_ != nullptr) tokenupdate_->Clear();
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline const ::DNDProto::Token& NetworkMessage::_internal_tokenupdate() const {
+  const ::DNDProto::Token* p = tokenupdate_;
+  return p != nullptr ? *p : reinterpret_cast<const ::DNDProto::Token&>(
+      ::DNDProto::_Token_default_instance_);
+}
+inline const ::DNDProto::Token& NetworkMessage::tokenupdate() const {
+  // @@protoc_insertion_point(field_get:DNDProto.NetworkMessage.tokenUpdate)
+  return _internal_tokenupdate();
+}
+inline void NetworkMessage::unsafe_arena_set_allocated_tokenupdate(
+    ::DNDProto::Token* tokenupdate) {
+  if (GetArena() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(tokenupdate_);
+  }
+  tokenupdate_ = tokenupdate;
+  if (tokenupdate) {
+    _has_bits_[0] |= 0x00000004u;
+  } else {
+    _has_bits_[0] &= ~0x00000004u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:DNDProto.NetworkMessage.tokenUpdate)
+}
+inline ::DNDProto::Token* NetworkMessage::release_tokenupdate() {
+  _has_bits_[0] &= ~0x00000004u;
+  ::DNDProto::Token* temp = tokenupdate_;
+  tokenupdate_ = nullptr;
+  if (GetArena() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+  return temp;
+}
+inline ::DNDProto::Token* NetworkMessage::unsafe_arena_release_tokenupdate() {
+  // @@protoc_insertion_point(field_release:DNDProto.NetworkMessage.tokenUpdate)
+  _has_bits_[0] &= ~0x00000004u;
+  ::DNDProto::Token* temp = tokenupdate_;
+  tokenupdate_ = nullptr;
+  return temp;
+}
+inline ::DNDProto::Token* NetworkMessage::_internal_mutable_tokenupdate() {
+  _has_bits_[0] |= 0x00000004u;
+  if (tokenupdate_ == nullptr) {
+    auto* p = CreateMaybeMessage<::DNDProto::Token>(GetArena());
+    tokenupdate_ = p;
+  }
+  return tokenupdate_;
+}
+inline ::DNDProto::Token* NetworkMessage::mutable_tokenupdate() {
+  // @@protoc_insertion_point(field_mutable:DNDProto.NetworkMessage.tokenUpdate)
+  return _internal_mutable_tokenupdate();
+}
+inline void NetworkMessage::set_allocated_tokenupdate(::DNDProto::Token* tokenupdate) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArena();
+  if (message_arena == nullptr) {
+    delete tokenupdate_;
+  }
+  if (tokenupdate) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+      ::PROTOBUF_NAMESPACE_ID::Arena::GetArena(tokenupdate);
+    if (message_arena != submessage_arena) {
+      tokenupdate = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, tokenupdate, submessage_arena);
+    }
+    _has_bits_[0] |= 0x00000004u;
+  } else {
+    _has_bits_[0] &= ~0x00000004u;
+  }
+  tokenupdate_ = tokenupdate;
+  // @@protoc_insertion_point(field_set_allocated:DNDProto.NetworkMessage.tokenUpdate)
+}
+
+// optional .DNDProto.NetworkMessage.ErrorType error = 6;
+inline bool NetworkMessage::_internal_has_error() const {
+  bool value = (_has_bits_[0] & 0x00000020u) != 0;
+  return value;
+}
+inline bool NetworkMessage::has_error() const {
+  return _internal_has_error();
+}
+inline void NetworkMessage::clear_error() {
+  error_ = 1;
+  _has_bits_[0] &= ~0x00000020u;
+}
+inline ::DNDProto::NetworkMessage_ErrorType NetworkMessage::_internal_error() const {
+  return static_cast< ::DNDProto::NetworkMessage_ErrorType >(error_);
+}
+inline ::DNDProto::NetworkMessage_ErrorType NetworkMessage::error() const {
+  // @@protoc_insertion_point(field_get:DNDProto.NetworkMessage.error)
+  return _internal_error();
+}
+inline void NetworkMessage::_internal_set_error(::DNDProto::NetworkMessage_ErrorType value) {
+  assert(::DNDProto::NetworkMessage_ErrorType_IsValid(value));
+  _has_bits_[0] |= 0x00000020u;
+  error_ = value;
+}
+inline void NetworkMessage::set_error(::DNDProto::NetworkMessage_ErrorType value) {
+  _internal_set_error(value);
+  // @@protoc_insertion_point(field_set:DNDProto.NetworkMessage.error)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 
 // @@protoc_insertion_point(namespace_scope)
 
 }  // namespace DNDProto
+
+PROTOBUF_NAMESPACE_OPEN
+
+template <> struct is_proto_enum< ::DNDProto::NetworkMessage_ErrorType> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::DNDProto::NetworkMessage_ErrorType>() {
+  return ::DNDProto::NetworkMessage_ErrorType_descriptor();
+}
+template <> struct is_proto_enum< ::DNDProto::NetworkMessage_MessageType> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::DNDProto::NetworkMessage_MessageType>() {
+  return ::DNDProto::NetworkMessage_MessageType_descriptor();
+}
+
+PROTOBUF_NAMESPACE_CLOSE
 
 // @@protoc_insertion_point(global_scope)
 

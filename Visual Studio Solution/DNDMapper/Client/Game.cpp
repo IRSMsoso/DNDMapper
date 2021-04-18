@@ -86,57 +86,44 @@ void Game::update(){
 	fpsText.setString(std::to_string(fps));
 
 	//Update from all networking commands.
-	std::vector<Command> inCommands;
-	inCommands = networkManager->getCanvasUpdateCommands();
-	for (int i = 0; i < inCommands.size(); i++) {
-		switch (inCommands.at(i).type) {
-		case CommandType::FogPainted:
-			canvas.fogTile(sf::Vector2f(inCommands.at(i).gridLocation) * TILESIZE, false); //Those vector functions should be cleaned up. Make the normal function use tilegrid and an overload use that after converting down from worldxy.
-			break;
+	std::vector<DNDProto::NetworkMessage> inMessages;
+	inMessages = networkManager->getMessagesOfType(DNDProto::NetworkMessage::MessageType::NetworkMessage_MessageType_Update);
+	for (int i = 0; i < inMessages.size(); i++) {
+		DNDProto::NetworkMessage message = inMessages.at(i);
 
-		case CommandType::FogRemoved:
-			canvas.unfogTile(sf::Vector2f(inCommands.at(i).gridLocation) * TILESIZE, false);
-			break;
-
-		case CommandType::TilePainted:
-			canvas.paintTile(sf::Vector2f(inCommands.at(i).gridLocation) * TILESIZE, inCommands.at(i).color, false);
-			break;
-
-		case CommandType::TokenCreated:
-			canvas.createToken(inCommands.at(i).worldLocation, inCommands.at(i).color, inCommands.at(i).id, false);
-			break;
-
-		case CommandType::TokenDeleted:
-			canvas.eraseToken(inCommands.at(i).id);
-			break;
-
-		case CommandType::TokenRenamed:
-		{
-			Token* tokenPointer = canvas.getTokenFromID(inCommands.at(i).id);
-			if (tokenPointer != nullptr) {
-				tokenPointer->setName(inCommands.at(i).name);
-			}
-			else {
-				std::cout << "ERROR: Token is being renamed, but it doesn't exist client side!\n";
-			}
-			break;
+		if (message.has_tileupdate()) {
+			DNDProto::TileUpdate tileUpdate = message.tileupdate();
+			if (tileUpdate.has_newcolor())
+				canvas.paintTile(tileUpdate.posx(), tileUpdate.posy(), sf::Color(tileUpdate.newcolor()), false);
+			if (tileUpdate.has_newfogged())
+				if (tileUpdate.newfogged())
+					canvas.fogTile(sf::Vector2f(tileUpdate.posx(), tileUpdate.posy()), false);
+				else
+					canvas.unfogTile(sf::Vector2f(tileUpdate.posx(), tileUpdate.posy()), false);
 		}
 
-		case CommandType::TokenMoved:
-		{
-			Token* tokenPointer = canvas.getTokenFromID(inCommands.at(i).id);
-			if (tokenPointer != nullptr) {
-				if (mouseAction == MouseAction::tokenMoving) { //Take away control from client of server is moving it.
-					mouseAction = MouseAction::none;
-					selectedToken = nullptr;
-				}
-				tokenPointer->setPosition(inCommands.at(i).worldLocation);
+		if (message.has_tokenupdate()) {
+
+			DNDProto::Token tokenUpdate = message.tokenupdate();
+
+			if (tokenUpdate.has_isdestroy() && tokenUpdate.isdestroy()) {
+				canvas.eraseToken(tokenUpdate.id());
+			}
+			else if (canvas.getTokenFromID(tokenUpdate.id()) == nullptr) {
+				canvas.createToken(sf::Vector2f(tokenUpdate.posx(), tokenUpdate.posy()), sf::Color(tokenUpdate.color()), tokenUpdate.id(), false);
 			}
 			else {
-				std::cout << "ERROR: Token is being moved, but it doesn't exist client side!\n";
+				Token* change_token = canvas.getTokenFromID(tokenUpdate.id());
+				change_token->setName(tokenUpdate.name());
+				change_token->setPosition(sf::Vector2f(tokenUpdate.posx(), tokenUpdate.posy()));
 			}
-			break;
 		}
+
+		if (!isDM && message.has_map()) {
+			DNDProto::Map map = message.map();
+
+			canvas.loadMap(map);
+
 		}
 	}
 
@@ -186,11 +173,14 @@ void Game::update(){
 			selectedToken->setPosition(window->mapPixelToCoords(sf::Mouse::getPosition(*window)));
 			std::cout << "Selected Token ID: " << selectedToken->getID() << std::endl;
 			//Networking.
-			Command outCommand;
-			outCommand.type = CommandType::TokenMoved;
-			outCommand.id = selectedToken->getID();
-			outCommand.worldLocation = selectedToken->getPosition();
-			networkManager->sendCommand(outCommand);
+			DNDProto::NetworkMessage message;
+			message.set_messagetype(DNDProto::NetworkMessage::MessageType::NetworkMessage_MessageType_Update);
+			DNDProto::Token* token = new DNDProto::Token;
+			token->set_id(selectedToken->getID());
+			token->set_posx(selectedToken->getPosition().x);
+			token->set_posy(selectedToken->getPosition().y);
+			message.set_allocated_tokenupdate(token);
+			networkManager->sendMessage(message);
 		}
 		else if (mouseAction == MouseAction::tokenResizing) {
 			sf::Vector2f currentMouse = window->mapPixelToCoords(sf::Mouse::getPosition(*window));
@@ -218,14 +208,12 @@ void Game::update(){
 	ui.updateElementsAnimations(frameTime, selectedColor);
 
 
-	if (!gameIDAquired) {
-		std::vector<Command> gameIDCommands = networkManager->getCommandsFromType(CommandType::GameID);
-		if (gameIDCommands.size() > 0) {
-			std::cout << "SUCCESS\n";
-			sf::Uint16 gameID = gameIDCommands.at(0).id;
-			window->setTitle("Dungeons and Dragons! Game ID: " + std::to_string(gameID));
-			gameIDAquired = true;
-		}
+
+	std::vector<DNDProto::NetworkMessage> gameIDMessages = networkManager->getMessagesOfType(DNDProto::NetworkMessage::MessageType::NetworkMessage_MessageType_ID);
+	if (gameIDMessages.size() > 0) {
+		std::cout << "SUCCESS\n";
+		sf::Uint16 gameID = gameIDMessages.at(0).gameid();
+		window->setTitle("Dungeons and Dragons! Game ID: " + std::to_string(gameID));
 	}
 
 	//If disconnected, get outta there.
@@ -235,7 +223,7 @@ void Game::update(){
 
 	//Saving
 	if (saveClock.getElapsedTime() > sf::seconds(20) && isDM) {
-		save();
+		save(true);
 	}
 }
 
@@ -247,7 +235,7 @@ void Game::interpretEvent(sf::Event pollingEvent){
 
 	case sf::Event::Closed:
 		if (isDM)
-			save();
+			save(false);
 		close();
 		
 		//Also send message that we are leaving the game.
@@ -431,11 +419,14 @@ void Game::interpretEvent(sf::Event pollingEvent){
 					selectedToken->snap();
 
 					//Networking the Snap Movement.
-					Command outCommand;
-					outCommand.type = CommandType::TokenMoved;
-					outCommand.id = selectedToken->getID();
-					outCommand.worldLocation = selectedToken->getPosition();
-					networkManager->sendCommand(outCommand);
+					DNDProto::NetworkMessage message;
+					message.set_messagetype(DNDProto::NetworkMessage::MessageType::NetworkMessage_MessageType_Update);
+					DNDProto::Token* token = new DNDProto::Token;
+					token->set_id(selectedToken->getID());
+					token->set_posx(selectedToken->getPosition().x);
+					token->set_posy(selectedToken->getPosition().y);
+					message.set_allocated_tokenupdate(token);
+					networkManager->sendMessage(message);
 
 					selectedToken = nullptr;
 				}
@@ -483,20 +474,24 @@ void Game::interpretEvent(sf::Event pollingEvent){
 					selectedToken->addNameLetter(LOWERCASEALPHABET[newKey]);
 				}
 				//Networking
-				Command outCommand;
-				outCommand.type = CommandType::TokenRenamed;
-				outCommand.id = selectedToken->getID();
-				outCommand.name = selectedToken->getName();
-				networkManager->sendCommand(outCommand);
+				DNDProto::NetworkMessage message;
+				message.set_messagetype(DNDProto::NetworkMessage::MessageType::NetworkMessage_MessageType_Update);
+				DNDProto::Token* token = new DNDProto::Token;
+				token->set_id(selectedToken->getID());
+				token->set_name(selectedToken->getName());
+				message.set_allocated_tokenupdate(token);
+				networkManager->sendMessage(message);
 			}
 			else if (pollingEvent.key.code == sf::Keyboard::Key::Backspace) {
 				selectedToken->removeNameLetter();
 				//Networking
-				Command outCommand;
-				outCommand.type = CommandType::TokenRenamed;
-				outCommand.id = selectedToken->getID();
-				outCommand.name = selectedToken->getName();
-				networkManager->sendCommand(outCommand);
+				DNDProto::NetworkMessage message;
+				message.set_messagetype(DNDProto::NetworkMessage::MessageType::NetworkMessage_MessageType_Update);
+				DNDProto::Token* token = new DNDProto::Token;
+				token->set_id(selectedToken->getID());
+				token->set_name(selectedToken->getName());
+				message.set_allocated_tokenupdate(token);
+				networkManager->sendMessage(message);
 			}
 			else if (pollingEvent.key.code == sf::Keyboard::Key::Enter) {
 				selectedToken->setIsEditing(false);
@@ -538,7 +533,7 @@ void Game::interpretEvent(sf::Event pollingEvent){
 
 }
 
-void Game::save() {
+void Game::save(bool send) {
 	DNDProto::Map map;
 	canvas.saveMap(map);
 
@@ -546,6 +541,18 @@ void Game::save() {
 	if (!map.SerializeToOstream(&output)) {
 		printf("Failed to write map to file &s", (m_filename + ".cam").c_str());
 	}
+	//Also send it to network
+
+	if (send) {
+		DNDProto::NetworkMessage message;
+		message.set_messagetype(DNDProto::NetworkMessage::MessageType::NetworkMessage_MessageType_Update);
+		DNDProto::Map* map = new DNDProto::Map;
+		canvas.saveMap(*map);
+		message.set_allocated_map(map);
+		networkManager->sendMessage(message);
+	}
+
+
 	saveClock.restart();
 }
 

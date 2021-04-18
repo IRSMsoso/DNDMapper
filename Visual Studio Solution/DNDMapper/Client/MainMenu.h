@@ -29,15 +29,18 @@ private:
 	AnimatedSprite flamesSprite2;
 	AnimatedSprite connectedSprite;
 	AnimatedSprite disconnectedSprite;
+	AnimatedSprite loadGameSprite;
 
 
 	Animation fireEyeAnimation;
 	Animation fireJoinAnimation;
+	Animation fireLoadAnimation;
 	Animation flameAnimation;
 	Animation connectedAnimation;
 	Animation disconnectedAnimation;
 	sf::Texture flameTexture;
 	sf::Texture fireEyeTexture;
+	sf::Texture fireLoadTexture;
 	sf::Texture fireJoinTexture;
 	sf::Texture connectedTexture;
 	sf::Texture disconnectedTexture;
@@ -51,7 +54,6 @@ private:
 
 	//Networking
 	bool isConnected;
-	bool isVersionCorrect;
 	sf::Clock connectionUpdateClock;
 
 };

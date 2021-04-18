@@ -25,15 +25,26 @@ void InputMenu::interpretEvent(sf::Event pollingEvent){
 
 		int newKey = -1;
 		std::cout << "Code: " << pollingEvent.key.code << std::endl;
-		for (int i = 0; i < (sizeof(ALLOWEDKEYS) / sizeof(*ALLOWEDKEYS)); i++) {
-			if (ALLOWEDKEYS[i] == pollingEvent.key.code)
-				newKey = i;
+		if (m_purpose == GameAction::newGame || m_purpose == GameAction::loadGame) {
+			for (int i = 0; i < (sizeof(ALLOWEDKEYS) / sizeof(*ALLOWEDKEYS)); i++) {
+				if (ALLOWEDKEYS[i] == pollingEvent.key.code)
+					newKey = i;
+			}
 		}
-
+		else {
+			for (int i = 0; i < (sizeof(NUMBERSALLOWEDKEYS) / sizeof(*NUMBERSALLOWEDKEYS)); i++) {
+				if (NUMBERSALLOWEDKEYS[i] == pollingEvent.key.code)
+					newKey = i;
+			}
+		}
 		
 		
 		if (newKey != -1 and text.getString().getSize() <= 20) {
-			text.setString(text.getString() + LOWERCASEALPHABET[newKey]);
+			if (m_purpose == GameAction::newGame || m_purpose == GameAction::loadGame)
+				text.setString(text.getString() + LOWERCASEALPHABET[newKey]);
+			else
+				text.setString(text.getString() + NUMBERSALPHABET[newKey]);
+
 			std::cout << "Set new string to " << (std::string)text.getString() << std::endl;
 		}
 		else if (pollingEvent.key.code == 59) {
@@ -43,10 +54,17 @@ void InputMenu::interpretEvent(sf::Event pollingEvent){
 			if (text.getString().getSize() > 0) {
 				//Enter pressed. Time to move on from this Menu.
 				if (m_purpose == GameAction::newGame || m_purpose == GameAction::loadGame) {
+					DNDProto::NetworkMessage message;
+					message.set_messagetype(DNDProto::NetworkMessage::MessageType::NetworkMessage_MessageType_CreateGame);
+					networkManager->sendMessage(message);
 					menuStack->push_back(std::unique_ptr<Game>(new Game(window, menuStack, networkManager, m_purpose, text.getString())));
 				}
 				else if (m_purpose == GameAction::joinGame) {
-					//Push back connecting menu.
+					DNDProto::NetworkMessage message;
+					message.set_messagetype(DNDProto::NetworkMessage::MessageType::NetworkMessage_MessageType_JoinGame);
+					message.set_gameid(std::stoi(text.getString().toAnsiString()));
+					networkManager->sendMessage(message);
+					menuStack->push_back(std::unique_ptr<Game>(new Game(window, menuStack, networkManager, m_purpose, text.getString())));
 				}
 				close();
 			}

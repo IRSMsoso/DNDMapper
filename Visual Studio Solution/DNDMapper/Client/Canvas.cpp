@@ -51,11 +51,14 @@ bool Canvas::paintTile(sf::Vector2f worldxy, sf::Color newColor, bool shouldSend
 				std::cout << "Painted Tile";
 				//Network Stuff.
 				if (shouldSend) {
-					Command outCommand;
-					outCommand.type = CommandType::TilePainted;
-					outCommand.gridLocation = sf::Vector2i(tileX, tileY);
-					outCommand.color = newColor;
-					networkManager->sendCommand(outCommand);
+					DNDProto::NetworkMessage message;
+					message.set_messagetype(DNDProto::NetworkMessage::MessageType::NetworkMessage_MessageType_Update);
+					DNDProto::TileUpdate* tileUpdate = new DNDProto::TileUpdate;
+					tileUpdate->set_posx(tileX);
+					tileUpdate->set_posy(tileY);
+					tileUpdate->set_newcolor(newColor.toInteger());
+					message.set_allocated_tileupdate(tileUpdate);
+					networkManager->sendMessage(message);
 				}
 				return true;
 			}
@@ -76,10 +79,14 @@ bool Canvas::fogTile(sf::Vector2f worldxy, bool shouldSend) {
 				updateQueue.push_back(sf::Vector2i(tileX, tileY));
 				//Network Stuff.
 				if (shouldSend) {
-					Command outCommand;
-					outCommand.type = CommandType::FogPainted;
-					outCommand.gridLocation = sf::Vector2i(tileX, tileY);
-					networkManager->sendCommand(outCommand);
+					DNDProto::NetworkMessage message;
+					message.set_messagetype(DNDProto::NetworkMessage::MessageType::NetworkMessage_MessageType_Update);
+					DNDProto::TileUpdate* tileUpdate = new DNDProto::TileUpdate;
+					tileUpdate->set_posx(tileX);
+					tileUpdate->set_posy(tileY);
+					tileUpdate->set_newfogged(true);
+					message.set_allocated_tileupdate(tileUpdate);
+					networkManager->sendMessage(message);
 				}
 				return true;
 			}
@@ -100,10 +107,14 @@ bool Canvas::unfogTile(sf::Vector2f worldxy, bool shouldSend) {
 				updateQueue.push_back(sf::Vector2i(tileX, tileY));
 				//Network Stuff.
 				if (shouldSend) {
-					Command outCommand;
-					outCommand.type = CommandType::FogRemoved;
-					outCommand.gridLocation = sf::Vector2i(tileX, tileY);
-					networkManager->sendCommand(outCommand);
+					DNDProto::NetworkMessage message;
+					message.set_messagetype(DNDProto::NetworkMessage::MessageType::NetworkMessage_MessageType_Update);
+					DNDProto::TileUpdate* tileUpdate = new DNDProto::TileUpdate;
+					tileUpdate->set_posx(tileX);
+					tileUpdate->set_posy(tileY);
+					tileUpdate->set_newfogged(false);
+					message.set_allocated_tileupdate(tileUpdate);
+					networkManager->sendMessage(message);
 				}
 				return true;
 			}
@@ -152,12 +163,15 @@ bool Canvas::createToken(sf::Vector2f worldxy, sf::Color newColor, sf::Uint16 ne
 
 			//Network Stuff.
 			if (shouldSend) {
-				Command outCommand;
-				outCommand.type = CommandType::TokenCreated;
-				outCommand.gridLocation = sf::Vector2i(tileX, tileY);
-				outCommand.color = newColor;
-				outCommand.id = newID;
-				networkManager->sendCommand(outCommand);
+				DNDProto::NetworkMessage message;
+				message.set_messagetype(DNDProto::NetworkMessage::MessageType::NetworkMessage_MessageType_Update);
+				DNDProto::Token* token = new DNDProto::Token;
+				token->set_posx(tileX);
+				token->set_posy(tileY);
+				token->set_name(newToken.getName());
+				token->set_id(newToken.getID());
+				message.set_allocated_tokenupdate(token);
+				networkManager->sendMessage(message);
 			}
 			return true;
 		}
@@ -173,10 +187,13 @@ bool Canvas::eraseToken(sf::Vector2f worldxy, bool shouldSend)
 		if (tokenList.at(i).isClicked(worldxy)) {
 			//Network Stuff.
 			if (shouldSend) {
-				Command outCommand;
-				outCommand.type = CommandType::TokenDeleted;
-				outCommand.id = tokenList.at(i).getID();
-				networkManager->sendCommand(outCommand);
+				DNDProto::NetworkMessage message;
+				message.set_messagetype(DNDProto::NetworkMessage::MessageType::NetworkMessage_MessageType_Update);
+				DNDProto::Token* token = new DNDProto::Token;
+				token->set_id(tokenList.at(i).getID());
+				token->set_isdestroy(true);
+				message.set_allocated_tokenupdate(token);
+				networkManager->sendMessage(message);
 			}
 			//Client Stuff last because it deletes it.
 			tokenList.erase(tokenList.begin() + i);
@@ -382,6 +399,9 @@ void Canvas::saveMap(DNDProto::Map& map) {
 
 		//posY
 		token->set_posy(tokenList.at(i).getPosition().y);
+
+		//ID
+		token->set_id(tokenList.at(i).getID());
 
 	}
 }

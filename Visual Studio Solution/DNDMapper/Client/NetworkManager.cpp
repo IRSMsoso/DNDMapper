@@ -3,7 +3,6 @@
 NetworkManager::NetworkManager(): connectThread(&NetworkManager::connect, this), listenThread(&NetworkManager::listenForMessages, this){
 	ipAddress = sf::IpAddress::None;
 	isConnected = false;
-	SERVER_VERSION = 0;
 }
 
 bool NetworkManager::startConnect(sf::IpAddress address) {
@@ -29,11 +28,6 @@ void NetworkManager::connect() {
 		listenThread.launch();
 		isConnected = true;
 
-		//Make sure version is correct.
-		Command versionCommand;
-		versionCommand.type = CommandType::VersionConfirmation;
-		versionCommand.version = VERSION;
-		sendCommand(versionCommand);
 
 	}
 	else {
@@ -45,64 +39,37 @@ void NetworkManager::connect() {
 }
 
 //Get all commands that are of a certain message type and delete them from the backlog.
-std::vector<Command> NetworkManager::getCommandsFromType(CommandType type) {
-	std::vector<Command> returnCommands;
+std::vector<DNDProto::NetworkMessage> NetworkManager::getMessagesOfType(DNDProto::NetworkMessage::MessageType type) {
+	std::vector<DNDProto::NetworkMessage> returnMessages;
 
-	commandQueueMutex.lock();
-	for (int i = 0; i < commandQueue.size(); i++) {
-		if (commandQueue.at(i).type == type) {
-			returnCommands.push_back(commandQueue.at(i));
-			std::cout << "Successfully returned commands of type: " << type << std::endl;
-			commandQueue.erase(commandQueue.begin() + i);
+	messageQueueMutex.lock();
+	for (int i = 0; i < messageQueue.size(); i++) {
+		if (messageQueue.at(i).messagetype() == type) {
+			returnMessages.push_back(messageQueue.at(i));
+			messageQueue.erase(messageQueue.begin() + i);
 			i--;
 		}
 	}
 
-	commandQueueMutex.unlock();
+	messageQueueMutex.unlock();
 
-	return returnCommands;
+	return returnMessages;
 }
 
-
-//Get and delete all messages that are related to updating the canvas.
-std::vector<Command> NetworkManager::getCanvasUpdateCommands() {
-	std::vector<Command> returnCommands;
-	CommandType commandTypes[] = {
-		CommandType::FogPainted,
-		CommandType::FogRemoved,
-		CommandType::TilePainted,
-		CommandType::TokenCreated,
-		CommandType::TokenDeleted,
-		CommandType::TokenMoved,
-		CommandType::TokenRenamed,
-	};
-
-	commandQueueMutex.lock();
-	for (int i = 0; i < commandQueue.size(); i++) {
-		bool isNeeded = false;
-		for (int w = 0; w < (sizeof(commandTypes) / sizeof(CommandType)); w++) {
-			if (commandQueue.at(i).type == commandTypes[w])
-				isNeeded = true;
-				break;
-		}
-		if (isNeeded) {
-			returnCommands.push_back(commandQueue.at(i));
-			commandQueue.erase(commandQueue.begin() + i);
-			i--;
-		}
-	}
-	commandQueueMutex.unlock();
-
-
-	return returnCommands;
-}
 
 //Send a message through the Network Manager.
-sf::Socket::Status NetworkManager::sendCommand(Command command) {
-	
-	sf::Packet outPacket;
-	outPacket << command;
-	sf::Socket::Status status = socket.send(outPacket);
+sf::Socket::Status NetworkManager::sendMessage(DNDProto::NetworkMessage message) {
+	UINT32* length = new UINT32;
+	*length = message.ByteSizeLong();
+	std::cout << "Length_Bytes: " << (char*)length << std::endl; //WTF
+	std::cout << "Length: " << *length << std::endl;
+	void* data = new void*;
+	message.SerializeToArray(data, *length);
+	socket.send((void*)length, 4);
+	sf::Socket::Status status = socket.send(data, *length);
+	std::cout << "IS " << *length << " == " << sizeof(data) << std::endl;
+
+	delete length;
 
 	std::cout << "Successfully Sent Command.\n";
 	return status;
@@ -111,35 +78,33 @@ sf::Socket::Status NetworkManager::sendCommand(Command command) {
 void NetworkManager::listenForMessages() {
 	while (isConnected) {
 
-		commandQueueMutex.lock();
-		if (commandQueue.size() > 0) {
-			std::cout << "Command Queue Size: " << commandQueue.size();
+		messageQueueMutex.lock();
+		if (messageQueue.size() > 0) {
+			std::cout << "Command Queue Size: " << messageQueue.size();
 		}
-		commandQueueMutex.unlock();
+		messageQueueMutex.unlock();
 
-		sf::Packet incomingPacket;
+		void* size_data = new void*;
+		size_t size_message_size;
+		socket.receive(size_data, 4, size_message_size);
+		UINT32* size = (UINT32*)size_data;
 
-		sf::Socket::Status status = socket.receive(incomingPacket);
+
+
+		void* data = new void*;
+		size_t actual_received;
+		sf::Socket::Status status = socket.receive(data, *size, actual_received);
 		if (status == sf::Socket::Status::Done) {
 			std::cout << "Received Message\n";
-			Command newCommand;
-			incomingPacket >> newCommand;
-			std::cout << "Message:\nType: " << newCommand.type << "\nName: " << newCommand.name << "\nID: " << newCommand.id << "\nVersion: " << newCommand.version << std::endl;
 
-			//Handles version checks itself.
-			//std::cout << "Check: " << newCommand.type << " == " << CommandType::VersionConfirmation << std::endl;
-			if (newCommand.type == CommandType::VersionConfirmation) {
-				SERVER_VERSION = newCommand.version;
-				std::cout << "Server_Version set to " << SERVER_VERSION << std::endl;
-			}
-			else { //Rest of the messages.
-				commandQueueMutex.lock();
+			DNDProto::NetworkMessage message;
+			message.ParseFromArray(data, *size);
+			
+			messageQueueMutex.lock();
 
-				commandQueue.push_back(newCommand);
-				std::cout << "Pushed Back Command\n";
+			messageQueue.push_back(message);
 
-				commandQueueMutex.unlock();
-			}
+			messageQueueMutex.unlock();
 
 		}
 		else if (status == sf::Socket::Disconnected) {
@@ -168,7 +133,6 @@ void NetworkManager::resetManager() {
 	std::cout << "Resetting Network Manager.\n;";
 	isConnected = false;
 	isConnecting = false;
-	SERVER_VERSION = 0;
 	ipAddress = sf::IpAddress::None;
 	listenThread.terminate();
 	connectThread.terminate();

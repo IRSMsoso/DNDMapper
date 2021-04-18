@@ -6,6 +6,7 @@
 #include "ColorWheel.h"
 #include "Canvas.h"
 #include <fstream>
+#include "DNDMapper.pb.h"
 
 
 namespace MouseAction {
@@ -57,7 +58,7 @@ public:
 
 	void update();
 	void interpretEvent(sf::Event);
-	void save();
+	void save(bool send);
 
 
 private:
