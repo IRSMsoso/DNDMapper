@@ -54,8 +54,8 @@ bool Canvas::paintTile(sf::Vector2f worldxy, sf::Color newColor, bool shouldSend
 					DNDProto::NetworkMessage message;
 					message.set_messagetype(DNDProto::NetworkMessage::MessageType::NetworkMessage_MessageType_Update);
 					DNDProto::TileUpdate* tileUpdate = new DNDProto::TileUpdate;
-					tileUpdate->set_posx(tileX);
-					tileUpdate->set_posy(tileY);
+					tileUpdate->set_posx(worldxy.x);
+					tileUpdate->set_posy(worldxy.y);
 					tileUpdate->set_newcolor(newColor.toInteger());
 					message.set_allocated_tileupdate(tileUpdate);
 					networkManager->sendMessage(message);

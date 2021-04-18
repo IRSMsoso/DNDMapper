@@ -174,7 +174,7 @@ const char descriptor_table_protodef_DNDMapper_2eproto[] PROTOBUF_SECTION_VARIAB
   " \001(\010\"c\n\003Map\022\r\n\005sizeX\030\001 \002(\005\022\r\n\005sizeY\030\002 \002("
   "\005\022\r\n\005tiles\030\003 \003(\005\022\016\n\006fogged\030\004 \003(\010\022\037\n\006toke"
   "ns\030\005 \003(\0132\017.DNDProto.Token\"M\n\nTileUpdate\022"
-  "\014\n\004posX\030\001 \002(\005\022\014\n\004posY\030\002 \002(\005\022\020\n\010newColor\030"
+  "\014\n\004posX\030\001 \002(\002\022\014\n\004posY\030\002 \002(\002\022\020\n\010newColor\030"
   "\003 \001(\005\022\021\n\tnewFogged\030\004 \001(\010\"\356\002\n\016NetworkMess"
   "age\0229\n\013messageType\030\001 \002(\0162$.DNDProto.Netw"
   "orkMessage.MessageType\022\032\n\003map\030\002 \001(\0132\r.DN"
@@ -1083,20 +1083,20 @@ const char* TileUpdate::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID:
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
     CHK_(ptr);
     switch (tag >> 3) {
-      // required int32 posX = 1;
+      // required float posX = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 8)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 13)) {
           _Internal::set_has_posx(&has_bits);
-          posx_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
-          CHK_(ptr);
+          posx_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
+          ptr += sizeof(float);
         } else goto handle_unusual;
         continue;
-      // required int32 posY = 2;
+      // required float posY = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 16)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 21)) {
           _Internal::set_has_posy(&has_bits);
-          posy_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
-          CHK_(ptr);
+          posy_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
+          ptr += sizeof(float);
         } else goto handle_unusual;
         continue;
       // optional int32 newColor = 3;
@@ -1145,16 +1145,16 @@ failure:
   (void) cached_has_bits;
 
   cached_has_bits = _has_bits_[0];
-  // required int32 posX = 1;
+  // required float posX = 1;
   if (cached_has_bits & 0x00000001u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(1, this->_internal_posx(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFloatToArray(1, this->_internal_posx(), target);
   }
 
-  // required int32 posY = 2;
+  // required float posY = 2;
   if (cached_has_bits & 0x00000002u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(2, this->_internal_posy(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFloatToArray(2, this->_internal_posy(), target);
   }
 
   // optional int32 newColor = 3;
@@ -1182,17 +1182,13 @@ size_t TileUpdate::RequiredFieldsByteSizeFallback() const {
   size_t total_size = 0;
 
   if (_internal_has_posx()) {
-    // required int32 posX = 1;
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
-        this->_internal_posx());
+    // required float posX = 1;
+    total_size += 1 + 4;
   }
 
   if (_internal_has_posy()) {
-    // required int32 posY = 2;
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
-        this->_internal_posy());
+    // required float posY = 2;
+    total_size += 1 + 4;
   }
 
   return total_size;
@@ -1202,15 +1198,11 @@ size_t TileUpdate::ByteSizeLong() const {
   size_t total_size = 0;
 
   if (((_has_bits_[0] & 0x00000003) ^ 0x00000003) == 0) {  // All required fields are present.
-    // required int32 posX = 1;
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
-        this->_internal_posx());
+    // required float posX = 1;
+    total_size += 1 + 4;
 
-    // required int32 posY = 2;
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
-        this->_internal_posy());
+    // required float posY = 2;
+    total_size += 1 + 4;
 
   } else {
     total_size += RequiredFieldsByteSizeFallback();

@@ -63,12 +63,12 @@ sf::Socket::Status NetworkManager::sendMessage(DNDProto::NetworkMessage message)
 	*length = message.ByteSizeLong();
 	std::cout << "Length_Bytes: " << (char*)length << std::endl; //WTF
 	std::cout << "Length: " << *length << std::endl;
-	void* data = new void*;
-	message.SerializeToArray(data, *length);
+	std::vector<BYTE> data(*length);
+	message.SerializeToArray(data.data(), *length);
 	socket.send((void*)length, 4);
-	sf::Socket::Status status = socket.send(data, *length);
+	sf::Socket::Status status = socket.send(data.data(), *length);
 	std::cout << "IS " << *length << " == " << sizeof(data) << std::endl;
-
+	
 	delete length;
 
 	std::cout << "Successfully Sent Command.\n";
@@ -84,21 +84,53 @@ void NetworkManager::listenForMessages() {
 		}
 		messageQueueMutex.unlock();
 
-		void* size_data = new void*;
-		size_t size_message_size;
-		socket.receive(size_data, 4, size_message_size);
-		UINT32* size = (UINT32*)size_data;
+		std::vector<BYTE> data(4); //Use Vector so that we can dynamically resize our data.
+		std::vector<BYTE> data_buffer(4); //Max 4 bytes we will receive.
+		size_t received_size;
+		size_t bytes_to_receive = 4;
+		do {
+			socket.receive(data_buffer.data(), bytes_to_receive, received_size);
+
+			//Iterate through and copy the bytes from the data buffer into the entire data message.
+
+			for (int i = (4 - bytes_to_receive); i < (4 - bytes_to_receive + received_size); i++) {
+				data[i] = data_buffer[i - (4 - bytes_to_receive)];
+			}
+
+			bytes_to_receive -= received_size;
+
+
+		} while (bytes_to_receive > 0);
+		UINT32 message_size = *(UINT32*)data.data();
 
 
 
-		void* data = new void*;
-		size_t actual_received;
-		sf::Socket::Status status = socket.receive(data, *size, actual_received);
+		bytes_to_receive = message_size;
+		data.clear();
+		data.resize(message_size);
+		data_buffer.clear();
+		data_buffer.resize(message_size);
+		sf::Socket::Status status = sf::Socket::Status::Done; //We lose information other than done vs something else but that's ok.
+		do {
+			sf::Socket::Status tempStatus = socket.receive(data_buffer.data(), bytes_to_receive, received_size);
+			if (tempStatus != sf::Socket::Status::Done)
+				status = tempStatus;
+
+			for (int i = (message_size - bytes_to_receive); i < (message_size - bytes_to_receive + received_size); i++) {
+				data[i] = data_buffer[i - (message_size - bytes_to_receive)];
+
+			}
+
+			bytes_to_receive -= received_size;
+
+
+		} while (bytes_to_receive > 0);
+
 		if (status == sf::Socket::Status::Done) {
 			std::cout << "Received Message\n";
 
 			DNDProto::NetworkMessage message;
-			message.ParseFromArray(data, *size);
+			message.ParseFromArray(data.data(), message_size);
 			
 			messageQueueMutex.lock();
 
@@ -113,6 +145,7 @@ void NetworkManager::listenForMessages() {
 		}
 		else {
 			std::cout << "Unknown networking error occured.\n";
+			resetManager();
 		}
 	}
 

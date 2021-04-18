@@ -5,6 +5,7 @@
 #include "DNDMapper.pb.h"
 
 
+typedef unsigned char BYTE;
 
 //Network Manager Class.
 class NetworkManager {

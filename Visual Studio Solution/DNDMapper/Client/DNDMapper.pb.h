@@ -718,30 +718,30 @@ class TileUpdate PROTOBUF_FINAL :
     kNewColorFieldNumber = 3,
     kNewFoggedFieldNumber = 4,
   };
-  // required int32 posX = 1;
+  // required float posX = 1;
   bool has_posx() const;
   private:
   bool _internal_has_posx() const;
   public:
   void clear_posx();
-  ::PROTOBUF_NAMESPACE_ID::int32 posx() const;
-  void set_posx(::PROTOBUF_NAMESPACE_ID::int32 value);
+  float posx() const;
+  void set_posx(float value);
   private:
-  ::PROTOBUF_NAMESPACE_ID::int32 _internal_posx() const;
-  void _internal_set_posx(::PROTOBUF_NAMESPACE_ID::int32 value);
+  float _internal_posx() const;
+  void _internal_set_posx(float value);
   public:
 
-  // required int32 posY = 2;
+  // required float posY = 2;
   bool has_posy() const;
   private:
   bool _internal_has_posy() const;
   public:
   void clear_posy();
-  ::PROTOBUF_NAMESPACE_ID::int32 posy() const;
-  void set_posy(::PROTOBUF_NAMESPACE_ID::int32 value);
+  float posy() const;
+  void set_posy(float value);
   private:
-  ::PROTOBUF_NAMESPACE_ID::int32 _internal_posy() const;
-  void _internal_set_posy(::PROTOBUF_NAMESPACE_ID::int32 value);
+  float _internal_posy() const;
+  void _internal_set_posy(float value);
   public:
 
   // optional int32 newColor = 3;
@@ -782,8 +782,8 @@ class TileUpdate PROTOBUF_FINAL :
   typedef void DestructorSkippable_;
   ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
-  ::PROTOBUF_NAMESPACE_ID::int32 posx_;
-  ::PROTOBUF_NAMESPACE_ID::int32 posy_;
+  float posx_;
+  float posy_;
   ::PROTOBUF_NAMESPACE_ID::int32 newcolor_;
   bool newfogged_;
   friend struct ::TableStruct_DNDMapper_2eproto;
@@ -1512,7 +1512,7 @@ Map::tokens() const {
 
 // TileUpdate
 
-// required int32 posX = 1;
+// required float posX = 1;
 inline bool TileUpdate::_internal_has_posx() const {
   bool value = (_has_bits_[0] & 0x00000001u) != 0;
   return value;
@@ -1524,23 +1524,23 @@ inline void TileUpdate::clear_posx() {
   posx_ = 0;
   _has_bits_[0] &= ~0x00000001u;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 TileUpdate::_internal_posx() const {
+inline float TileUpdate::_internal_posx() const {
   return posx_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 TileUpdate::posx() const {
+inline float TileUpdate::posx() const {
   // @@protoc_insertion_point(field_get:DNDProto.TileUpdate.posX)
   return _internal_posx();
 }
-inline void TileUpdate::_internal_set_posx(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void TileUpdate::_internal_set_posx(float value) {
   _has_bits_[0] |= 0x00000001u;
   posx_ = value;
 }
-inline void TileUpdate::set_posx(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void TileUpdate::set_posx(float value) {
   _internal_set_posx(value);
   // @@protoc_insertion_point(field_set:DNDProto.TileUpdate.posX)
 }
 
-// required int32 posY = 2;
+// required float posY = 2;
 inline bool TileUpdate::_internal_has_posy() const {
   bool value = (_has_bits_[0] & 0x00000002u) != 0;
   return value;
@@ -1552,18 +1552,18 @@ inline void TileUpdate::clear_posy() {
   posy_ = 0;
   _has_bits_[0] &= ~0x00000002u;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 TileUpdate::_internal_posy() const {
+inline float TileUpdate::_internal_posy() const {
   return posy_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 TileUpdate::posy() const {
+inline float TileUpdate::posy() const {
   // @@protoc_insertion_point(field_get:DNDProto.TileUpdate.posY)
   return _internal_posy();
 }
-inline void TileUpdate::_internal_set_posy(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void TileUpdate::_internal_set_posy(float value) {
   _has_bits_[0] |= 0x00000002u;
   posy_ = value;
 }
-inline void TileUpdate::set_posy(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void TileUpdate::set_posy(float value) {
   _internal_set_posy(value);
   // @@protoc_insertion_point(field_set:DNDProto.TileUpdate.posY)
 }
