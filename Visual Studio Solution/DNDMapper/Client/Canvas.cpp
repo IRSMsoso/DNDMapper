@@ -82,8 +82,8 @@ bool Canvas::fogTile(sf::Vector2f worldxy, bool shouldSend) {
 					DNDProto::NetworkMessage message;
 					message.set_messagetype(DNDProto::NetworkMessage::MessageType::NetworkMessage_MessageType_Update);
 					DNDProto::TileUpdate* tileUpdate = new DNDProto::TileUpdate;
-					tileUpdate->set_posx(tileX);
-					tileUpdate->set_posy(tileY);
+					tileUpdate->set_posx(worldxy.x);
+					tileUpdate->set_posy(worldxy.y);
 					tileUpdate->set_newfogged(true);
 					message.set_allocated_tileupdate(tileUpdate);
 					networkManager->sendMessage(message);
@@ -110,8 +110,8 @@ bool Canvas::unfogTile(sf::Vector2f worldxy, bool shouldSend) {
 					DNDProto::NetworkMessage message;
 					message.set_messagetype(DNDProto::NetworkMessage::MessageType::NetworkMessage_MessageType_Update);
 					DNDProto::TileUpdate* tileUpdate = new DNDProto::TileUpdate;
-					tileUpdate->set_posx(tileX);
-					tileUpdate->set_posy(tileY);
+					tileUpdate->set_posx(worldxy.y);
+					tileUpdate->set_posy(worldxy.y);
 					tileUpdate->set_newfogged(false);
 					message.set_allocated_tileupdate(tileUpdate);
 					networkManager->sendMessage(message);
@@ -166,10 +166,11 @@ bool Canvas::createToken(sf::Vector2f worldxy, sf::Color newColor, sf::Uint16 ne
 				DNDProto::NetworkMessage message;
 				message.set_messagetype(DNDProto::NetworkMessage::MessageType::NetworkMessage_MessageType_Update);
 				DNDProto::Token* token = new DNDProto::Token;
-				token->set_posx(tileX);
-				token->set_posy(tileY);
+				token->set_posx(worldxy.x);
+				token->set_posy(worldxy.y);
 				token->set_name(newToken.getName());
 				token->set_id(newToken.getID());
+				token->set_color(newToken.getColor().toInteger());
 				message.set_allocated_tokenupdate(token);
 				networkManager->sendMessage(message);
 			}
@@ -415,6 +416,7 @@ bool Canvas::loadMap(DNDProto::Map& map) {
 
 	//tiles
 	tileGrid.clear();
+	tokenList.clear();
 
 	printf("SizeX: %u\n", map.sizex());
 	printf("SizeX: %u\n", map.sizex());
@@ -441,7 +443,8 @@ bool Canvas::loadMap(DNDProto::Map& map) {
 	//tokens
 	for (int i = 0; i < map.tokens_size(); i++) {
 		DNDProto::Token tokenMessage = map.tokens(i);
-		Token token(sf::Color(tokenMessage.color()), sf::Vector2f(tokenMessage.posx(), tokenMessage.posy()), tokenFont, i);
+		Token token(sf::Color(tokenMessage.color()), sf::Vector2f(tokenMessage.posx(), tokenMessage.posy()), tokenFont, tokenMessage.id());
+		token.setName(tokenMessage.name());
 		tokenList.push_back(token);
 	}
 

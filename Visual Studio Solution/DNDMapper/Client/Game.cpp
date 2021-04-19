@@ -38,6 +38,9 @@ Game::Game(sf::RenderWindow* newWindow, std::vector<std::unique_ptr<Menu>>* newS
 		isDM = false;
 	}
 
+	//UI setup
+	ui.setup(isDM);
+
 
 	//Loading
 	if (action == GameAction::loadGame) {
@@ -114,8 +117,10 @@ void Game::update(){
 			}
 			else {
 				Token* change_token = canvas.getTokenFromID(tokenUpdate.id());
-				change_token->setName(tokenUpdate.name());
-				change_token->setPosition(sf::Vector2f(tokenUpdate.posx(), tokenUpdate.posy()));
+				if (tokenUpdate.has_name())
+					change_token->setName(tokenUpdate.name());
+				if (tokenUpdate.has_posx() && tokenUpdate.has_posy())
+					change_token->setPosition(sf::Vector2f(tokenUpdate.posx(), tokenUpdate.posy()));
 			}
 		}
 

@@ -13,6 +13,7 @@ public:
 	~UI();
 
 	void draw(sf::RenderTarget&, sf::RenderStates) const;
+	void setup(bool isDM);
 
 
 	ToolType::ToolType getToolClicked(sf::Vector2i);

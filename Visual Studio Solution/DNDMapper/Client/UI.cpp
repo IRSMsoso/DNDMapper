@@ -3,10 +3,6 @@
 UI::UI(sf::RenderWindow* newWindow){
 	window = newWindow;
 	
-	elements.push_back(new Tab(window));
-	elements.push_back(new PaintTool(window));
-	elements.push_back(new FogTool(window));
-	elements.push_back(new TokenTool(window));
 }
 
 UI::~UI(){
@@ -18,6 +14,18 @@ void UI::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 	for (int i = 0; i < elements.size(); i++) {
 		target.draw(*elements.at(i));
 	}
+}
+
+void UI::setup(bool isDM) {
+
+
+	elements.push_back(new Tab(window));
+	elements.push_back(new TokenTool(window));
+	if (isDM) {
+		elements.push_back(new PaintTool(window));
+		elements.push_back(new FogTool(window));
+	}
+
 }
 
 
