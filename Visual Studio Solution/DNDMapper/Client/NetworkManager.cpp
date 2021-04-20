@@ -61,17 +61,17 @@ std::vector<DNDProto::NetworkMessage> NetworkManager::getMessagesOfType(DNDProto
 sf::Socket::Status NetworkManager::sendMessage(DNDProto::NetworkMessage message) {
 	UINT32* length = new UINT32;
 	*length = message.ByteSizeLong();
-	std::cout << "Length_Bytes: " << (char*)length << std::endl; //WTF
-	std::cout << "Length: " << *length << std::endl;
+	//std::cout << "Length_Bytes: " << (char*)length << std::endl; //WTF
+	//std::cout << "Length: " << *length << std::endl;
 	std::vector<BYTE> data(*length);
 	message.SerializeToArray(data.data(), *length);
 	socket.send((void*)length, 4);
 	sf::Socket::Status status = socket.send(data.data(), *length);
-	std::cout << "IS " << *length << " == " << sizeof(data) << std::endl;
+	//std::cout << "IS " << *length << " == " << sizeof(data) << std::endl;
 	
 	delete length;
 
-	std::cout << "Successfully Sent Command.\n";
+	//std::cout << "Successfully Sent Command.\n";
 	return status;
 }
 
@@ -80,7 +80,7 @@ void NetworkManager::listenForMessages() {
 
 		messageQueueMutex.lock();
 		if (messageQueue.size() > 0) {
-			std::cout << "Command Queue Size: " << messageQueue.size();
+			//std::cout << "Command Queue Size: " << messageQueue.size();
 		}
 		messageQueueMutex.unlock();
 

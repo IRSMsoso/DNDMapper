@@ -16,7 +16,10 @@ Game::Game(sf::RenderWindow* newWindow, std::vector<std::unique_ptr<Menu>>* newS
 	//Set cursor to default to start
 	window->setMouseCursor(defaultCursor);
 
-	selectedTool = ToolType::paintingTool;
+	if (isDM)
+		selectedTool = ToolType::paintingTool;
+	else
+		selectedTool = ToolType::tokenTool;
 
 	mouseAction = MouseAction::none;
 	previousAction = MouseAction::none;
@@ -93,6 +96,8 @@ void Game::update(){
 	inMessages = networkManager->getMessagesOfType(DNDProto::NetworkMessage::MessageType::NetworkMessage_MessageType_Update);
 	for (int i = 0; i < inMessages.size(); i++) {
 		DNDProto::NetworkMessage message = inMessages.at(i);
+
+		std::cout << "Resolving network message\n";
 
 		if (message.has_tileupdate()) {
 			DNDProto::TileUpdate tileUpdate = message.tileupdate();
@@ -176,7 +181,7 @@ void Game::update(){
 		}
 		else if (mouseAction == MouseAction::tokenMoving) {
 			selectedToken->setPosition(window->mapPixelToCoords(sf::Mouse::getPosition(*window)));
-			std::cout << "Selected Token ID: " << selectedToken->getID() << std::endl;
+			//std::cout << "Selected Token ID: " << selectedToken->getID() << std::endl;
 			//Networking.
 			DNDProto::NetworkMessage message;
 			message.set_messagetype(DNDProto::NetworkMessage::MessageType::NetworkMessage_MessageType_Update);

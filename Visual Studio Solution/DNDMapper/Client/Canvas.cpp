@@ -48,7 +48,7 @@ bool Canvas::paintTile(sf::Vector2f worldxy, sf::Color newColor, bool shouldSend
 				//Client Stuff.
 				tileGrid.at(tileY).at(tileX).changeColor(newColor);
 				updateQueue.push_back(sf::Vector2i(tileX, tileY));
-				std::cout << "Painted Tile";
+				//std::cout << "Painted Tile";
 				//Network Stuff.
 				if (shouldSend) {
 					DNDProto::NetworkMessage message;
