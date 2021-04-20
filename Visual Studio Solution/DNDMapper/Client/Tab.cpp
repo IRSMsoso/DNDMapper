@@ -1,9 +1,11 @@
 #include "Tab.h"
 
-Tab::Tab(sf::RenderWindow* newWindow): UIElement(newWindow){
+Tab::Tab(sf::RenderWindow* newWindow) {
 
 
-	changeUIRectangle(sf::IntRect(0, 300, 60, 500));
+	//changeUIRectangle(sf::IntRect(0, 300, 60, 500));
+	uiRectangle = sf::IntRect(0, 300, 60, 500);
+	setPosition(0, 300);
 
 
 	shape.setSize(sf::Vector2f(uiRectangle.width, uiRectangle.height));

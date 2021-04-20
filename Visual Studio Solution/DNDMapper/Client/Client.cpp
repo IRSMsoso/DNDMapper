@@ -19,14 +19,10 @@ int main()
 	//Creating manager, passing in window settings.
 	Manager manager(settings);
 
-	sf::VertexArray vertexes;
-	vertexes.setPrimitiveType(sf::Quads);
-	vertexes.resize(8);
-	sf::Vertex* quad = &vertexes[4];
-	
-
 
 	manager.mainLoop();
+
+	//std::system("pause");
 
 	return 0;
 }

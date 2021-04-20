@@ -1,10 +1,12 @@
 #include "Token.h"
 
 
-Token::Token(sf::Color newColor, sf::Vector2f location, sf::Font& newFont) {
+Token::Token(sf::Color newColor, sf::Vector2f location, sf::Font& newFont, sf::Uint16 newID) {
 	circle.setRadius(10);
 	circle.setOrigin(10, 10);
 	circle.setFillColor(newColor);
+
+	id = newID;
 
 
 	if (newColor.r * 0.299 + newColor.g * 0.587 + newColor.b * 0.114 > 186) {
@@ -148,7 +150,6 @@ void Token::snap(){
 
 void Token::updateName(){
 	if ((!cursorVisible) && beingEdited) {
-		std::cout << "Yes\n";
 		std::string newName = name;
 		if (newName.back() == '|') {
 			newName.pop_back();
@@ -162,7 +163,7 @@ void Token::updateName(){
 
 void Token::updateNameLocation(){
 	sf::FloatRect bounds = nameText.getGlobalBounds();
-	std::cout << "Bounds: " << bounds.left << ", " << bounds.top << ", " << bounds.width << ", " << bounds.height << std::endl;
+	//std::cout << "Bounds: " << bounds.left << ", " << bounds.top << ", " << bounds.width << ", " << bounds.height << std::endl;
 	nameText.setOrigin(bounds.width / 2.f, nameText.getCharacterSize());
 	nameText.setPosition(sf::Vector2f(circle.getPosition().x, circle.getGlobalBounds().top - 15));
 }

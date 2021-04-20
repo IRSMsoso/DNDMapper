@@ -7,17 +7,22 @@
 #include "TokenTool.h"
 
 
-class UI: public sf::Transformable{
+class UI: public sf::Drawable {
 public:
 	UI(sf::RenderWindow*);
 	~UI();
 
-	void drawElements();
-	void updateElementPositions();
-	void updateElementScales(float);
-	void updateElementsAnimations(sf::Time, sf::Color);
+	void draw(sf::RenderTarget&, sf::RenderStates) const;
+	void setup(bool isDM);
+
 
 	ToolType::ToolType getToolClicked(sf::Vector2i);
+
+	void updateElementsPositions();
+	void updateElementsScales(float);
+	void updateElementsAnimations(sf::Time delta, sf::Color newColor);
+
+
 
 private:
 	sf::RenderWindow* window;

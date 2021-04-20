@@ -4,7 +4,7 @@
 
 class Token: public sf::Drawable, public sf::Transformable {
 public:
-	Token(sf::Color, sf::Vector2f, sf::Font&);
+	Token(sf::Color, sf::Vector2f, sf::Font&, sf::Uint16);
 	~Token();
 
 	void setSize(sf::Vector2i);
@@ -23,6 +23,13 @@ public:
 
 	void update();
 
+	sf::Uint16 getID() { return id; }
+	void setID(sf::Uint16 newID) { id = newID; }
+
+	std::string getName() { return name; }
+
+	sf::Color getColor() { return circle.getFillColor(); }
+
 	void snap();
 
 private:
@@ -30,6 +37,7 @@ private:
 	sf::Vector2i size;
 	std::string name;
 	sf::Text nameText;
+	sf::Uint16 id;
 
 	bool beingEdited;
 	bool cursorVisible;

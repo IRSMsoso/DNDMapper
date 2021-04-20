@@ -1,0 +1,54 @@
+syntax = "proto2";
+
+package DNDProto;
+
+
+message Token {
+
+    optional string name = 1;
+    optional int32 color = 2;
+    optional float posX = 3;
+    optional float posY = 4;
+    required int32 id = 5;
+    optional bool isDestroy = 6;
+  }
+
+message Map {
+
+  required int32 sizeX = 1;
+  required int32 sizeY = 2;
+  repeated int32 tiles = 3;
+  repeated bool fogged = 4;
+  repeated Token tokens = 5;
+
+}
+
+message TileUpdate {
+  required float posX = 1;
+  required float posY = 2;
+  optional int32 newColor = 3;
+  optional bool newFogged = 4;
+}
+
+message NetworkMessage {
+
+  enum ErrorType {
+    GameDoesNotExistError = 1;
+  }
+
+  enum MessageType {
+    CreateGame = 1; //Player sending will become DM of new game.
+    JoinGame = 2; //Player sending will become player of existing game.
+    Update = 3;
+    ID = 4;
+    Error = 5;
+  }
+
+  required MessageType messageType = 1;
+  optional Map map = 2; //For CreateGame message.
+  optional TileUpdate tileUpdate = 3;
+  optional int32 gameID = 4; //For JoinGame and Sending back ID to DM
+  optional Token tokenUpdate = 5;
+  optional ErrorType error = 6;
+
+}

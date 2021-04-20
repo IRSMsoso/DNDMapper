@@ -1,5 +1,6 @@
 #pragma once
-#include "Token.h"
+#include <SFML/Graphics.hpp>
+
 class Tile {
 public:
 	Tile(sf::Color);
@@ -13,7 +14,6 @@ public:
 
 
 private:
-	std::vector<Token> tokenList;
 	sf::Color color;
 	bool isFogged;
 

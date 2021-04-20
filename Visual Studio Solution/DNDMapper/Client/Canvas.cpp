@@ -1,7 +1,9 @@
 #include "Canvas.h"
 
-Canvas::Canvas(sf::View* newView){
+Canvas::Canvas(sf::View* newView, NetworkManager* newNetworkManager){
 	sf::Clock setupClock;
+
+	networkManager = newNetworkManager;
 
 	//Set camera pointer.
 	camera = newView;
@@ -32,47 +34,90 @@ Canvas::~Canvas(){
 }
 
 //Same call as other paintTile function
-bool Canvas::paintTile(float worldx, float worldy, sf::Color newColor) {
-	return paintTile(sf::Vector2f(worldx, worldy), newColor);
+bool Canvas::paintTile(float worldx, float worldy, sf::Color newColor, bool shouldSend) {
+	return paintTile(sf::Vector2f(worldx, worldy), newColor, shouldSend);
 }
 
-bool Canvas::paintTile(sf::Vector2f worldxy, sf::Color newColor) {
+bool Canvas::paintTile(sf::Vector2f worldxy, sf::Color newColor, bool shouldSend) {
 	if (worldxy.x > 0 && worldxy.y > 0) {
 		int tileX = static_cast<int>(worldxy.x / TILESIZE);
 		int tileY = static_cast<int>(worldxy.y / TILESIZE);
 
 		if (tileY < tileGrid.size() && tileX < tileGrid.at(tileY).size()) {
-			tileGrid.at(tileY).at(tileX).changeColor(newColor);
-			updateQueue.push_back(sf::Vector2i(tileX, tileY));
-			return true;
+			if (tileGrid.at(tileY).at(tileX).getColor() != newColor) {
+				//Client Stuff.
+				tileGrid.at(tileY).at(tileX).changeColor(newColor);
+				updateQueue.push_back(sf::Vector2i(tileX, tileY));
+				//std::cout << "Painted Tile";
+				//Network Stuff.
+				if (shouldSend) {
+					DNDProto::NetworkMessage message;
+					message.set_messagetype(DNDProto::NetworkMessage::MessageType::NetworkMessage_MessageType_Update);
+					DNDProto::TileUpdate* tileUpdate = new DNDProto::TileUpdate;
+					tileUpdate->set_posx(worldxy.x);
+					tileUpdate->set_posy(worldxy.y);
+					tileUpdate->set_newcolor(newColor.toInteger());
+					message.set_allocated_tileupdate(tileUpdate);
+					networkManager->sendMessage(message);
+				}
+				return true;
+			}
 		}
 	}
 	return false;
 }
 
-bool Canvas::fogTile(sf::Vector2f worldxy) {
+bool Canvas::fogTile(sf::Vector2f worldxy, bool shouldSend) {
 	if (worldxy.x > 0 && worldxy.y > 0) {
 		int tileX = static_cast<int>(worldxy.x / TILESIZE);
 		int tileY = static_cast<int>(worldxy.y / TILESIZE);
 
 		if (tileY < tileGrid.size() && tileX < tileGrid.at(tileY).size()) {
-			tileGrid.at(tileY).at(tileX).setFog(true);
-			updateQueue.push_back(sf::Vector2i(tileX, tileY));
-			return true;
+			if (!isFogged(sf::Vector2i(tileX, tileY))) {
+				//Client Stuff.
+				tileGrid.at(tileY).at(tileX).setFog(true);
+				updateQueue.push_back(sf::Vector2i(tileX, tileY));
+				//Network Stuff.
+				if (shouldSend) {
+					DNDProto::NetworkMessage message;
+					message.set_messagetype(DNDProto::NetworkMessage::MessageType::NetworkMessage_MessageType_Update);
+					DNDProto::TileUpdate* tileUpdate = new DNDProto::TileUpdate;
+					tileUpdate->set_posx(worldxy.x);
+					tileUpdate->set_posy(worldxy.y);
+					tileUpdate->set_newfogged(true);
+					message.set_allocated_tileupdate(tileUpdate);
+					networkManager->sendMessage(message);
+				}
+				return true;
+			}
 		}
 	}
 	return false;
 }
 
-bool Canvas::unfogTile(sf::Vector2f worldxy) {
+bool Canvas::unfogTile(sf::Vector2f worldxy, bool shouldSend) {
 	if (worldxy.x > 0 && worldxy.y > 0) {
 		int tileX = static_cast<int>(worldxy.x / TILESIZE);
 		int tileY = static_cast<int>(worldxy.y / TILESIZE);
 
 		if (tileY < tileGrid.size() && tileX < tileGrid.at(tileY).size()) {
-			tileGrid.at(tileY).at(tileX).setFog(false);
-			updateQueue.push_back(sf::Vector2i(tileX, tileY));
-			return true;
+			if (isFogged(sf::Vector2i(tileX, tileY))) {
+				//Client Stuff.
+				tileGrid.at(tileY).at(tileX).setFog(false);
+				updateQueue.push_back(sf::Vector2i(tileX, tileY));
+				//Network Stuff.
+				if (shouldSend) {
+					DNDProto::NetworkMessage message;
+					message.set_messagetype(DNDProto::NetworkMessage::MessageType::NetworkMessage_MessageType_Update);
+					DNDProto::TileUpdate* tileUpdate = new DNDProto::TileUpdate;
+					tileUpdate->set_posx(worldxy.y);
+					tileUpdate->set_posy(worldxy.y);
+					tileUpdate->set_newfogged(false);
+					message.set_allocated_tileupdate(tileUpdate);
+					networkManager->sendMessage(message);
+				}
+				return true;
+			}
 		}
 	}
 	return false;
@@ -90,18 +135,45 @@ bool Canvas::isFogged(sf::Vector2i vectorPos) {
 	return false;
 }
 
-bool Canvas::createToken(sf::Vector2f worldxy, sf::Color newColor){
+bool Canvas::createToken(sf::Vector2f worldxy, sf::Color newColor, bool shouldSend){
 
+	sf::Uint16 newID = 0;
+	for (int i = 0; i < tokenList.size(); i++) {
+		if (tokenList.at(i).getID() == newID) {
+			newID += 1;
+			i = -1;
+		}
+	}
+
+	return createToken(worldxy, newColor, newID, shouldSend);
+}
+
+bool Canvas::createToken(sf::Vector2f worldxy, sf::Color newColor, sf::Uint16 newID, bool shouldSend)
+{
 	if (worldxy.x >= 0 && worldxy.y >= 0) {
 		int tileX = static_cast<int>(worldxy.x / TILESIZE);
 		int tileY = static_cast<int>(worldxy.y / TILESIZE);
 
 		if (tileY < tileGrid.size() && tileX < tileGrid.at(tileY).size()) {
-			
-			Token newToken(newColor, sf::Vector2f(tileX * TILESIZE, tileY * TILESIZE) + sf::Vector2f(TILESIZE / 2.f, TILESIZE / 2.f), tokenFont);
-			tokenList.push_back(newToken);
 
+			//Client Stuff
+			Token newToken(newColor, sf::Vector2f(tileX * TILESIZE, tileY * TILESIZE) + sf::Vector2f(TILESIZE / 2.f, TILESIZE / 2.f), tokenFont, newID);
+			tokenList.push_back(newToken);
 			std::cout << "Created Token\n";
+
+			//Network Stuff.
+			if (shouldSend) {
+				DNDProto::NetworkMessage message;
+				message.set_messagetype(DNDProto::NetworkMessage::MessageType::NetworkMessage_MessageType_Update);
+				DNDProto::Token* token = new DNDProto::Token;
+				token->set_posx(worldxy.x);
+				token->set_posy(worldxy.y);
+				token->set_name(newToken.getName());
+				token->set_id(newToken.getID());
+				token->set_color(newToken.getColor().toInteger());
+				message.set_allocated_tokenupdate(token);
+				networkManager->sendMessage(message);
+			}
 			return true;
 		}
 	}
@@ -109,11 +181,34 @@ bool Canvas::createToken(sf::Vector2f worldxy, sf::Color newColor){
 	return false;
 }
 
-bool Canvas::eraseToken(sf::Vector2f worldxy)
+bool Canvas::eraseToken(sf::Vector2f worldxy, bool shouldSend)
 {
 
 	for (int i = tokenList.size() - 1; i >= 0; i--) {
 		if (tokenList.at(i).isClicked(worldxy)) {
+			//Network Stuff.
+			if (shouldSend) {
+				DNDProto::NetworkMessage message;
+				message.set_messagetype(DNDProto::NetworkMessage::MessageType::NetworkMessage_MessageType_Update);
+				DNDProto::Token* token = new DNDProto::Token;
+				token->set_id(tokenList.at(i).getID());
+				token->set_isdestroy(true);
+				message.set_allocated_tokenupdate(token);
+				networkManager->sendMessage(message);
+			}
+			//Client Stuff last because it deletes it.
+			tokenList.erase(tokenList.begin() + i);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool Canvas::eraseToken(sf::Uint16 id) {
+
+	for (int i = 0; i < tokenList.size(); i++) {
+		if (tokenList.at(i).getID() == id) {
 			tokenList.erase(tokenList.begin() + i);
 			return true;
 		}
@@ -133,8 +228,18 @@ Token * Canvas::getClickedToken(sf::Vector2f worldxy)
 	return nullptr;
 }
 
+Token * Canvas::getTokenFromID(sf::Uint16 id) {
+
+	for (int i = 0; i < tokenList.size(); i++) {
+		if (tokenList.at(i).getID() == id)
+			return &tokenList.at(i);
+	}
+
+	return nullptr;
+}
+
 bool Canvas::eraseTile(sf::Vector2f worldxy) {
-	return paintTile(worldxy, defaultColor);
+	return paintTile(worldxy, defaultColor, true);
 }
 
 std::vector<std::vector<Tile>>* Canvas::getTileGrid(){
@@ -238,10 +343,12 @@ bool Canvas::expand()
 	}
 	while ((maxx < tileGrid.at(0).size() - EXPANDDISTANCE - 1 || maxx == -1) && tileGrid.at(0).size() > MINSIZE.x) {
 		removeColumn(tileGrid.at(0).size() - 1);
+		changed = true;
 	}
 	
 	while ((maxy < tileGrid.size() - EXPANDDISTANCE - 1 || maxy == -1) && tileGrid.size() > MINSIZE.y) {
 		removeRow(tileGrid.size() - 1);
+		changed = true;
 	}
 	
 	
@@ -255,6 +362,96 @@ bool Canvas::expand()
 
 
 	return false;
+}
+
+void Canvas::saveMap(DNDProto::Map& map) {
+	//sizeX
+	map.set_sizex(tileGrid.at(0).size());
+
+	//sizeY
+	map.set_sizey(tileGrid.size());
+
+	//tiles
+	for (int y = 0; y < tileGrid.size(); y++) {
+		for (int x = 0; x < tileGrid.at(y).size(); x++) {
+			map.add_tiles(tileGrid.at(y).at(x).getColor().toInteger());
+		}
+	}
+
+	//fogged
+	for (int y = 0; y < tileGrid.size(); y++) {
+		for (int x = 0; x < tileGrid.at(y).size(); x++) {
+			map.add_fogged(tileGrid.at(y).at(x).getFog());
+		}
+	}
+
+	//tokens
+	for (int i = 0; i < tokenList.size(); i++) {
+		DNDProto::Token* token = map.add_tokens();
+
+		//name
+		token->set_name(tokenList.at(i).getName());
+
+		//color
+		token->set_color(tokenList.at(i).getColor().toInteger());
+
+		//posX
+		token->set_posx(tokenList.at(i).getPosition().x);
+
+		//posY
+		token->set_posy(tokenList.at(i).getPosition().y);
+
+		//ID
+		token->set_id(tokenList.at(i).getID());
+
+	}
+}
+
+bool Canvas::loadMap(DNDProto::Map& map) {
+
+	//Checks.
+	if (map.fogged_size() != map.tiles_size()) {
+		return false;
+	}
+
+	//tiles
+	tileGrid.clear();
+	tokenList.clear();
+
+	printf("SizeX: %u\n", map.sizex());
+	printf("SizeX: %u\n", map.sizex());
+	printf("SizeTiles: %u\n", map.tiles_size());
+	printf("SizeFogs: %u\n", map.fogged_size());
+	
+	int i = 0;
+	for (int y = 0; y < map.sizey(); y++) {
+		std::vector<Tile> newRow;
+		for (int x = 0; x < map.sizex(); x++) {
+			if (i < map.tiles_size() && i < map.fogged_size()) {
+				Tile tile(sf::Color(map.tiles(i)));
+				tile.setFog(map.fogged(i));
+				newRow.push_back(tile);
+			}
+			else {
+				newRow.push_back(Tile(defaultColor));
+			}
+			i++;
+		}
+		tileGrid.push_back(newRow);
+	}
+
+	//tokens
+	for (int i = 0; i < map.tokens_size(); i++) {
+		DNDProto::Token tokenMessage = map.tokens(i);
+		Token token(sf::Color(tokenMessage.color()), sf::Vector2f(tokenMessage.posx(), tokenMessage.posy()), tokenFont, tokenMessage.id());
+		token.setName(tokenMessage.name());
+		tokenList.push_back(token);
+	}
+
+	reconstruct(); //Gotta make all those changes real. Fo sho.
+
+
+	return true;
 }
 
 void Canvas::removeRow(unsigned int locY){
@@ -342,20 +539,20 @@ void Canvas::addColumnToLeft(bool shouldReconstruct){
 }
 
 
-void Canvas::draw(sf::RenderWindow& window) {
+void Canvas::draw(sf::RenderTarget& target, sf::RenderStates states) const{
 	
 
-	window.draw(tileVertexes);
-	window.draw(beadVertexes);
+	target.draw(tileVertexes);
+	target.draw(beadVertexes);
 
 	//int numDrawn = 0;
 	for (int i = 0; i < tokenList.size(); i++) {
-		window.draw(tokenList.at(i));
+		target.draw(tokenList.at(i));
 		//numDrawn += 1;
 	}
 	//std::cout << numDrawn << " tokens drawn\n";
 
-	window.draw(fogVertexes, &fogCloudTexture);
+	target.draw(fogVertexes, &fogCloudTexture);
 }
 
 

@@ -13,17 +13,17 @@ ColorWheel::ColorWheel(): fan(sf::PrimitiveType::TriangleFan){
 	}
 	for (int i = 0; i < wedgeNum; i++) {
 		float normalized = sqrt((float)i / (float)wedgeNum);
-		std::cout << normalized << "\n";
+		//std::cout << normalized << "\n";
 		float inverseNormalized = abs(normalized - 1.f);
-		std::cout << inverseNormalized << "\n";
+		//std::cout << inverseNormalized << "\n";
 		fan.append(sf::Vertex(sf::Vector2f(WHEELRADIUS * cosf((2 * PI / (float)VERTEXES)*(float)(i + wedgeNum)), WHEELRADIUS * sinf((2 * PI / (float)VERTEXES)*(float)(i + wedgeNum))), sf::Color(inverseNormalized * 255, 255, 0, 255)));
 		
 	}
 	for (int i = 0; i < wedgeNum; i++) {
 		float normalized = sqrt((float)i / (float)wedgeNum);
-		std::cout << normalized << "\n";
+		//std::cout << normalized << "\n";
 		float inverseNormalized = abs(normalized - 1.f);
-		std::cout << inverseNormalized << "\n";
+		//std::cout << inverseNormalized << "\n";
 		fan.append(sf::Vertex(sf::Vector2f(WHEELRADIUS * cosf((2 * PI / (float)VERTEXES)*(float)(i + wedgeNum * 2)), WHEELRADIUS * sinf((2 * PI / (float)VERTEXES)*(float)(i + wedgeNum * 2))), sf::Color(0, 255, normalized * 255, 255)));
 
 	}
@@ -35,17 +35,17 @@ ColorWheel::ColorWheel(): fan(sf::PrimitiveType::TriangleFan){
 	}
 	for (int i = 0; i < wedgeNum; i++) {
 		float normalized = sqrt((float)i / (float)wedgeNum);
-		std::cout << normalized << "\n";
+		//std::cout << normalized << "\n";
 		float inverseNormalized = abs(normalized - 1.f);
-		std::cout << inverseNormalized << "\n";
+		//std::cout << inverseNormalized << "\n";
 		fan.append(sf::Vertex(sf::Vector2f(WHEELRADIUS * cosf((2 * PI / (float)VERTEXES)*(float)(i + wedgeNum * 4)), WHEELRADIUS * sinf((2 * PI / (float)VERTEXES)*(float)(i + wedgeNum * 4))), sf::Color(normalized * 255, 0, 255, 255)));
 
 	}
 	for (int i = 0; i < wedgeNum; i++) {
 		float normalized = sqrt((float)i / (float)wedgeNum);
-		std::cout << normalized << "\n";
+		//std::cout << normalized << "\n";
 		float inverseNormalized = abs(normalized - 1.f);
-		std::cout << inverseNormalized << "\n";
+		//std::cout << inverseNormalized << "\n";
 		fan.append(sf::Vertex(sf::Vector2f(WHEELRADIUS * cosf((2 * PI / (float)VERTEXES)*(float)(i + wedgeNum * 5)), WHEELRADIUS * sinf((2 * PI / (float)VERTEXES)*(float)(i + wedgeNum * 5))), sf::Color(255, 0, inverseNormalized * 255, 255)));
 
 	}

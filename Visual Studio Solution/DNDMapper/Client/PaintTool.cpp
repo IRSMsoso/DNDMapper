@@ -1,6 +1,6 @@
 #include "PaintTool.h"
 
-PaintTool::PaintTool(sf::RenderWindow* newWindow) : UIElement(newWindow) {
+PaintTool::PaintTool(sf::RenderWindow* newWindow) {
 	paintTexture.loadFromFile("PaintBucket.png");
 	flowingAnimation.setSpriteSheet(paintTexture);
 
@@ -12,7 +12,7 @@ PaintTool::PaintTool(sf::RenderWindow* newWindow) : UIElement(newWindow) {
 	paintSprite.setFrameTime(sf::milliseconds(150));
 	paintSprite.play(flowingAnimation);
 
-	changeUIRectangle(sf::IntRect(0, 740, 60, 60));
+	uiRectangle = sf::IntRect(0, 740, 60, 60);
 	std::cout << "PaintBucket Texture Rect: " << uiRectangle.left << ", " << uiRectangle.top << ", " << uiRectangle.width << ", " << uiRectangle.height << std::endl;
 
 
@@ -32,4 +32,5 @@ void PaintTool::draw(sf::RenderTarget& target, sf::RenderStates states) const{
 void PaintTool::update(sf::Time delta, sf::Color newColor){
 	paintSprite.update(delta);
 	paintSprite.setColor(newColor);
+	//std::cout << "Painttool updated\n";
 }

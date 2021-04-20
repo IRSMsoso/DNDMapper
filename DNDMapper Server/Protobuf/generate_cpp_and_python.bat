@@ -1,0 +1,1 @@
+protoc -I="C:\Users\camva\PycharmProjects\DNDMapper Server\Protobuf" --python_out="C:\Users\camva\PycharmProjects\DNDMapper Server\Protobuf\Output" --cpp_out="C:\Users\camva\PycharmProjects\DNDMapper Server\Protobuf\Output" "C:\Users\camva\PycharmProjects\DNDMapper Server\Protobuf\DNDMapper.proto"
