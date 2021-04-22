@@ -15,14 +15,14 @@ NetworkManager::~NetworkManager() {
 
 bool NetworkManager::startConnect(sf::IpAddress address) {
 	if (!isConnected && !isConnecting) {
-		std::cout << "Starting the thread to connect to the server...\n";
+		//std::cout << "Starting the thread to connect to the server...\n";
 
 		ipAddress = address;
 		connectThread.launch();
 		return true;
 	}
 	else {
-		std::cout << "Error, tried to start connect thread but client is already connected.\n";
+		//std::cout << "Error, tried to start connect thread but client is already connected.\n";
 		return false;
 	}
 }
@@ -31,7 +31,7 @@ void NetworkManager::connect() {
 	isConnecting = true;
 
 	if (ipAddress != sf::IpAddress::None && socket.connect(ipAddress, 51248) == sf::TcpSocket::Status::Done) {
-		std::cout << "Successfully connected to the network. Launching Listening Thread.\n";
+		//std::cout << "Successfully connected to the network. Launching Listening Thread.\n";
 		listenThread.terminate(); //Incase the thread hasn't stopped from a previous connection period.
 		listenThread.launch();
 		isConnected = true;
@@ -39,7 +39,7 @@ void NetworkManager::connect() {
 
 	}
 	else {
-		std::cout << "Connection to network failed. Clearing Stored IP Address\n";
+		//std::cout << "Connection to network failed. Clearing Stored IP Address\n";
 		ipAddress = sf::IpAddress::None;
 		isConnected = false;
 	}
@@ -98,7 +98,7 @@ void NetworkManager::listenForMessages() {
 		size_t bytes_to_receive = 4;
 		do {
 			socket.receive(data_buffer.data(), bytes_to_receive, received_size);
-			std::cout << "Received Size: " << received_size << std::endl;
+			//std::cout << "Received Size: " << received_size << std::endl;
 			if (received_size == 0)
 				break;
 
@@ -140,7 +140,7 @@ void NetworkManager::listenForMessages() {
 		} while (bytes_to_receive > 0);
 
 		if (status == sf::Socket::Status::Done) {
-			std::cout << "Received Message\n";
+			//std::cout << "Received Message\n";
 
 			DNDProto::NetworkMessage message;
 			message.ParseFromArray(data.data(), message_size);
@@ -153,29 +153,29 @@ void NetworkManager::listenForMessages() {
 
 		}
 		else if (status == sf::Socket::Disconnected) {
-			std::cout << "Disconnected from the server... Shutting down network manager.\n";
+			//std::cout << "Disconnected from the server... Shutting down network manager.\n";
 			resetManager();
 		}
 		else {
-			std::cout << "Unknown networking error occured.\n";
+			//std::cout << "Unknown networking error occured.\n";
 			resetManager();
 		}
 	}
 
-	std::cout << "Shutting down Network Manager.\n";
+	//std::cout << "Shutting down Network Manager.\n";
 
 }
 
 //Shutdown the Network Manager and reset it to default settings.
 void NetworkManager::shutdown() {
-	std::cout << "Shutting Down Network Manager.\n";
+	//std::cout << "Shutting Down Network Manager.\n";
 	resetManager();
 
 }
 
 //Reset the network manager to default settings and terminates all threads. startConnect() will need to be called again.
 void NetworkManager::resetManager() {
-	std::cout << "Resetting Network Manager.\n";
+	//std::cout << "Resetting Network Manager.\n";
 	isConnected = false;
 	isConnecting = false;
 	ipAddress = sf::IpAddress::None;

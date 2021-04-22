@@ -7,7 +7,7 @@ PaintTool::PaintTool(ResourceManager* newResourceManager): UIElement(newResource
 	paintSprite.play(*resourceManager->getAnimationResource("painttoolanimation"));
 
 	uiRectangle = sf::IntRect(0, 740, 60, 60);
-	std::cout << "PaintBucket Texture Rect: " << uiRectangle.left << ", " << uiRectangle.top << ", " << uiRectangle.width << ", " << uiRectangle.height << std::endl;
+	//std::cout << "PaintBucket Texture Rect: " << uiRectangle.left << ", " << uiRectangle.top << ", " << uiRectangle.width << ", " << uiRectangle.height << std::endl;
 
 
 	toolType = ToolType::paintingTool;

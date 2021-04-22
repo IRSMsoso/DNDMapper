@@ -4,7 +4,7 @@ FogTool::FogTool(ResourceManager* newResourceManager): UIElement(newResourceMana
 	fogSprite.setTexture(*resourceManager->getTextureResource("fogtooltexture"));
 
 	uiRectangle = sf::IntRect(0, 680, fogSprite.getTextureRect().width, fogSprite.getTextureRect().height);
-	std::cout << "FogTool Texture Rect: " << uiRectangle.left << ", " << uiRectangle.top << ", " << uiRectangle.width << ", " << uiRectangle.height << std::endl;
+	//std::cout << "FogTool Texture Rect: " << uiRectangle.left << ", " << uiRectangle.top << ", " << uiRectangle.width << ", " << uiRectangle.height << std::endl;
 
 
 	toolType = ToolType::fogTool;

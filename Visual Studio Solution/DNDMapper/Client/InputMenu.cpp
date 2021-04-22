@@ -20,10 +20,10 @@ void InputMenu::interpretEvent(sf::Event pollingEvent){
 		break;
 
 	case sf::Event::KeyPressed:
-		std::cout << "Key Pressed: " << pollingEvent.key.code << std::endl;
+		//std::cout << "Key Pressed: " << pollingEvent.key.code << std::endl;
 
 		int newKey = -1;
-		std::cout << "Code: " << pollingEvent.key.code << std::endl;
+		//std::cout << "Code: " << pollingEvent.key.code << std::endl;
 		if (m_purpose == GameAction::newGame || m_purpose == GameAction::loadGame) {
 			for (int i = 0; i < (sizeof(ALLOWEDKEYS) / sizeof(*ALLOWEDKEYS)); i++) {
 				if (ALLOWEDKEYS[i] == pollingEvent.key.code)
@@ -44,7 +44,7 @@ void InputMenu::interpretEvent(sf::Event pollingEvent){
 			else
 				text.setString(text.getString() + NUMBERSALPHABET[newKey]);
 
-			std::cout << "Set new string to " << (std::string)text.getString() << std::endl;
+			//std::cout << "Set new string to " << (std::string)text.getString() << std::endl;
 		}
 		else if (pollingEvent.key.code == 59) {
 			text.setString(text.getString().substring(0, text.getString().getSize() - 1));

@@ -41,6 +41,7 @@ Game::Game(MenuInfo menuInfo, GameAction action, std::string filename) : Menu(me
 		isDM = true;
 		selectedTool = ToolType::paintingTool;
 		canvas.setHiddenFog(false);
+		m_filename = filename;
 	}
 	else {
 		isDM = false;
@@ -65,9 +66,6 @@ Game::Game(MenuInfo menuInfo, GameAction action, std::string filename) : Menu(me
 			save(true);
 		}
 		input.close();
-	}
-	if (isDM) {
-		m_filename = filename;
 	}
 }
 
@@ -120,7 +118,7 @@ void Game::update(){
 	for (int i = 0; i < inMessages.size(); i++) {
 		DNDProto::NetworkMessage message = inMessages.at(i);
 
-		std::cout << "Resolving network message\n";
+		//std::cout << "Resolving network message\n";
 
 		if (message.has_tileupdate()) {
 			DNDProto::TileUpdate tileUpdate = message.tileupdate();
@@ -256,7 +254,7 @@ void Game::update(){
 
 	std::vector<DNDProto::NetworkMessage> gameIDMessages = networkManager->getMessagesOfType(DNDProto::NetworkMessage::MessageType::NetworkMessage_MessageType_ID);
 	if (gameIDMessages.size() > 0) {
-		std::cout << "SUCCESS\n";
+		//std::cout << "SUCCESS\n";
 		sf::Uint16 gameID = gameIDMessages.at(0).gameid();
 		window->setTitle("Dungeons and Dragons! Game ID: " + std::to_string(gameID));
 	}
@@ -346,7 +344,7 @@ void Game::interpretEvent(sf::Event pollingEvent){
 
 				if (newTool != ToolType::none) {
 					selectedTool = newTool;
-					std::cout << "Selected Tool: " << selectedTool << std::endl;
+					//std::cout << "Selected Tool: " << selectedTool << std::endl;
 				}
 				else {
 					switch (selectedTool) {
@@ -384,7 +382,7 @@ void Game::interpretEvent(sf::Event pollingEvent){
 
 			case MouseAction::colorPicking:
 			{
-				std::cout << "Picked Color\n";
+				//std::cout << "Picked Color\n";
 				sf::Texture screenshotTexture;
 				screenshotTexture.create(window->getSize().x, window->getSize().y);
 				screenshotTexture.update(*window);
@@ -514,7 +512,7 @@ void Game::interpretEvent(sf::Event pollingEvent){
 			bool shouldSendNetworkUpdate = false;
 
 			int newKey = -1;
-			std::cout << "Size: " << (sizeof(ALLOWEDKEYS) / sizeof(*ALLOWEDKEYS)) << std::endl;
+			//std::cout << "Size: " << (sizeof(ALLOWEDKEYS) / sizeof(*ALLOWEDKEYS)) << std::endl;
 			for (int i = 0; i < (sizeof(ALLOWEDKEYS) / sizeof(*ALLOWEDKEYS)); i++) {
 				if (ALLOWEDKEYS[i] == pollingEvent.key.code)
 					newKey = i;

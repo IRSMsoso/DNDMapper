@@ -64,13 +64,13 @@ void ColorWheel::changeMiddle(int delta){
 	}
 	else if ((int)middleScale + delta < 0) {
 		middleScale = 0;
-		std::cout << "LESS THAN !!\n";
+		//std::cout << "LESS THAN !!\n";
 	}
 	else {
 		middleScale += delta;
 	}
 	fan[0].color = sf::Color(middleScale, middleScale, middleScale, 255);
-	std::cout << "Changed Middle Scale to " << (int)middleScale << std::endl;
+	//std::cout << "Changed Middle Scale to " << (int)middleScale << std::endl;
 }
 
 void ColorWheel::draw(sf::RenderTarget& target, sf::RenderStates states) const{

@@ -134,11 +134,11 @@ void MainMenu::update() {
 
 	//Networking Update
 	if (connectionUpdateClock.getElapsedTime().asSeconds() >= 1) {
-		std::cout << "Updated Networking Info.\n";
+		//std::cout << "Updated Networking Info.\n";
 		isConnected = networkManager->getIsConnected();
 		if (isConnected) {
 			//Get Version Info.
-			std::cout << "Got Version Info\n";
+			//std::cout << "Got Version Info\n";
 
 		}
 		connectionUpdateClock.restart();

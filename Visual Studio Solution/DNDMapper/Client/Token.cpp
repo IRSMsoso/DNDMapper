@@ -34,7 +34,7 @@ Token::Token(sf::Color newColor, sf::Vector2f location, sf::Font& newFont, sf::U
 	updateName();
 	updateNameLocation();
 
-	std::cout << "Token created at " << location.x << ", " << location.y << std::endl;
+	//std::cout << "Token created at " << location.x << ", " << location.y << std::endl;
 }
 
 Token::~Token(){

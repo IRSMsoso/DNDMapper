@@ -23,7 +23,7 @@ Canvas::Canvas(sf::View* newView, NetworkManager* newNetworkManager, ResourceMan
 
 	setHiddenFog(true);
 
-	std::cout << "Canvas setup took " << setupClock.getElapsedTime().asSeconds() << " seconds.\n";
+	//std::cout << "Canvas setup took " << setupClock.getElapsedTime().asSeconds() << " seconds.\n";
 }
 
 Canvas::~Canvas(){
@@ -156,7 +156,7 @@ bool Canvas::createToken(sf::Vector2f worldxy, sf::Color newColor, sf::Uint16 ne
 			//Client Stuff
 			Token newToken(newColor, sf::Vector2f(tileX * TILESIZE, tileY * TILESIZE) + sf::Vector2f(TILESIZE / 2.f, TILESIZE / 2.f), *resourceManager->getFontResource("arialfont"), newID);
 			tokenList.push_back(newToken);
-			std::cout << "Created Token\n";
+			//std::cout << "Created Token\n";
 
 			//Network Stuff.
 			if (shouldSend) {
@@ -221,7 +221,7 @@ Token * Canvas::getClickedToken(sf::Vector2f worldxy)
 			return &tokenList.at(i);
 		}
 	}
-	std::cout << "Couldn't find token\n";
+	//std::cout << "Couldn't find token\n";
 	return nullptr;
 }
 
@@ -308,7 +308,7 @@ bool Canvas::expand()
 		}
 
 		if (maxx > (gridsizex - EXPANDDISTANCE - 1)) {
-			std::cout << (maxx - (gridsizex - EXPANDDISTANCE - 1));
+			//std::cout << (maxx - (gridsizex - EXPANDDISTANCE - 1));
 
 			for (int i = 0; i < (maxx - (gridsizex - EXPANDDISTANCE - 1)); i++) {
 				addColumnToRight(false);
@@ -353,7 +353,7 @@ bool Canvas::expand()
 
 	if (changed) {
 		reconstruct();
-		std::cout << "Size: " << tileGrid.at(0).size() << ", " << tileGrid.size() << std::endl;
+		//std::cout << "Size: " << tileGrid.at(0).size() << ", " << tileGrid.size() << std::endl;
 	}
 
 
@@ -705,6 +705,6 @@ void Canvas::reconstruct(){
 	beadVertexes = newVertexes;
 
 
-	std::cout << "Reconstructed" << std::endl;
+	//std::cout << "Reconstructed" << std::endl;
 
 }
