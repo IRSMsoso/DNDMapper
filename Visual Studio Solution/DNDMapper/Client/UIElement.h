@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include "ResourceManager.h"
 
 namespace ToolType {
 	enum ToolType {
@@ -13,7 +14,7 @@ namespace ToolType {
 
 class UIElement: public sf::Drawable, public sf::Transformable{
 public:
-	UIElement();
+	UIElement(ResourceManager* newResourceManager);
 	virtual ~UIElement();
 
 	virtual void draw(sf::RenderTarget&, sf::RenderStates) const = 0;
@@ -31,7 +32,8 @@ public:
 
 protected:
 	sf::IntRect uiRectangle;
-
 	ToolType::ToolType toolType;
+
+	ResourceManager* resourceManager;
 };
 

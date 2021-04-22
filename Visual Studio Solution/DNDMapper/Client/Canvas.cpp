@@ -1,9 +1,10 @@
 #include "Canvas.h"
 
-Canvas::Canvas(sf::View* newView, NetworkManager* newNetworkManager){
+Canvas::Canvas(sf::View* newView, NetworkManager* newNetworkManager, ResourceManager* newResourceManager){
 	sf::Clock setupClock;
 
 	networkManager = newNetworkManager;
+	resourceManager = newResourceManager;
 
 	//Set camera pointer.
 	camera = newView;
@@ -21,10 +22,6 @@ Canvas::Canvas(sf::View* newView, NetworkManager* newNetworkManager){
 	reconstruct();
 
 
-
-	fogCloudTexture.loadFromFile("FogCloud.png");
-
-	tokenFont.loadFromFile("arial.TTF");
 
 	std::cout << "Canvas setup took " << setupClock.getElapsedTime().asSeconds() << " seconds.\n";
 }
@@ -157,7 +154,7 @@ bool Canvas::createToken(sf::Vector2f worldxy, sf::Color newColor, sf::Uint16 ne
 		if (tileY < tileGrid.size() && tileX < tileGrid.at(tileY).size()) {
 
 			//Client Stuff
-			Token newToken(newColor, sf::Vector2f(tileX * TILESIZE, tileY * TILESIZE) + sf::Vector2f(TILESIZE / 2.f, TILESIZE / 2.f), tokenFont, newID);
+			Token newToken(newColor, sf::Vector2f(tileX * TILESIZE, tileY * TILESIZE) + sf::Vector2f(TILESIZE / 2.f, TILESIZE / 2.f), *resourceManager->getFontResource("arialfont"), newID);
 			tokenList.push_back(newToken);
 			std::cout << "Created Token\n";
 
@@ -443,7 +440,7 @@ bool Canvas::loadMap(DNDProto::Map& map) {
 	//tokens
 	for (int i = 0; i < map.tokens_size(); i++) {
 		DNDProto::Token tokenMessage = map.tokens(i);
-		Token token(sf::Color(tokenMessage.color()), sf::Vector2f(tokenMessage.posx(), tokenMessage.posy()), tokenFont, tokenMessage.id());
+		Token token(sf::Color(tokenMessage.color()), sf::Vector2f(tokenMessage.posx(), tokenMessage.posy()), *resourceManager->getFontResource("arialfont"), tokenMessage.id());
 		token.setName(tokenMessage.name());
 		tokenList.push_back(token);
 	}
@@ -552,7 +549,7 @@ void Canvas::draw(sf::RenderTarget& target, sf::RenderStates states) const{
 	}
 	//std::cout << numDrawn << " tokens drawn\n";
 
-	target.draw(fogVertexes, &fogCloudTexture);
+	target.draw(fogVertexes, resourceManager->getTextureResource("fogtiletexture"));
 }
 
 

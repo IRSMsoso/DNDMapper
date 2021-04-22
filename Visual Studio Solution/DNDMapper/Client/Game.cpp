@@ -1,6 +1,6 @@
 #include "Game.h"
 
-Game::Game(sf::RenderWindow* newWindow, std::vector<std::unique_ptr<Menu>>* newStack, NetworkManager* newNetworkManager, GameAction action, std::string filename) : Menu(newWindow, newStack, newNetworkManager), ui(window), canvas(&camera, networkManager) {
+Game::Game(MenuInfo menuInfo, GameAction action, std::string filename) : Menu(menuInfo), ui(window, menuInfo.resourceManager), canvas(&camera, networkManager, resourceManager) {
 	camera.move(10, 10);
 
 	window->setView(camera);
@@ -28,8 +28,7 @@ Game::Game(sf::RenderWindow* newWindow, std::vector<std::unique_ptr<Menu>>* newS
 
 
 	fpsText.setFillColor(sf::Color::Blue);
-	algerFont.loadFromFile("ALGER.TTF");
-	fpsText.setFont(algerFont);
+	fpsText.setFont(*resourceManager->getFontResource("arialfont"));
 
 
 	gameIDAquired = false;

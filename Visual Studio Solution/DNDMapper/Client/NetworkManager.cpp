@@ -156,17 +156,17 @@ void NetworkManager::listenForMessages() {
 //Shutdown the Network Manager and reset it to default settings.
 void NetworkManager::shutdown() {
 	std::cout << "Shutting Down Network Manager.\n";
-	socket.disconnect();
 	resetManager();
 
 }
 
 //Reset the network manager to default settings and terminates all threads. startConnect() will need to be called again.
 void NetworkManager::resetManager() {
-	std::cout << "Resetting Network Manager.\n;";
+	std::cout << "Resetting Network Manager.\n";
 	isConnected = false;
 	isConnecting = false;
 	ipAddress = sf::IpAddress::None;
+	socket.disconnect();
 	listenThread.terminate();
 	connectThread.terminate();
 }

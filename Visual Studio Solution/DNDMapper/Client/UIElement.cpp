@@ -1,7 +1,7 @@
 #include "UIElement.h"
 
-UIElement::UIElement(){
-
+UIElement::UIElement(ResourceManager* newResourceManager){
+	resourceManager = newResourceManager;
 	toolType = ToolType::none;
 }
 

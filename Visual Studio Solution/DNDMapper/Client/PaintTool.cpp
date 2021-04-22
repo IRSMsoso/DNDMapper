@@ -1,16 +1,10 @@
 #include "PaintTool.h"
 
-PaintTool::PaintTool(sf::RenderWindow* newWindow) {
-	paintTexture.loadFromFile("PaintBucket.png");
-	flowingAnimation.setSpriteSheet(paintTexture);
+PaintTool::PaintTool(ResourceManager* newResourceManager): UIElement(newResourceManager) {
 
-	for (int i = 0; i < 16; i++) {
-		flowingAnimation.addFrame(sf::IntRect(i * 60, 0, 60, 60));
-	}
 
-	paintSprite.setLooped(true);
 	paintSprite.setFrameTime(sf::milliseconds(150));
-	paintSprite.play(flowingAnimation);
+	paintSprite.play(*resourceManager->getAnimationResource("painttoolanimation"));
 
 	uiRectangle = sf::IntRect(0, 740, 60, 60);
 	std::cout << "PaintBucket Texture Rect: " << uiRectangle.left << ", " << uiRectangle.top << ", " << uiRectangle.width << ", " << uiRectangle.height << std::endl;

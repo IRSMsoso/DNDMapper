@@ -3,9 +3,7 @@
 #include "MainMenu.h"
 #include "NetworkManager.h"
 #include <assert.h>
-
-
-
+#include "ResourceManager.h"
 
 
 //Manager class, used to manage everything game related.
@@ -23,6 +21,10 @@ private:
 
 	//Network Manager
 	NetworkManager networkManager;
+
+	//Resource Manager
+	ResourceManager resourceManager;
+
 
 	std::vector<std::unique_ptr<Menu>> menuStack;
 };

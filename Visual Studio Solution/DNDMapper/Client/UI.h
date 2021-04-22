@@ -9,7 +9,7 @@
 
 class UI: public sf::Drawable {
 public:
-	UI(sf::RenderWindow*);
+	UI(sf::RenderWindow* newWindow, ResourceManager* newResourceManager);
 	~UI();
 
 	void draw(sf::RenderTarget&, sf::RenderStates) const;
@@ -26,6 +26,8 @@ public:
 
 private:
 	sf::RenderWindow* window;
+	ResourceManager* resourceManager;
+
 	std::vector<UIElement*> elements;
 };
 

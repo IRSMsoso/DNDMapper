@@ -1,8 +1,8 @@
 #include "UI.h"
 
-UI::UI(sf::RenderWindow* newWindow){
+UI::UI(sf::RenderWindow* newWindow, ResourceManager* newResourceManager){
 	window = newWindow;
-	
+	resourceManager = newResourceManager;
 }
 
 UI::~UI(){
@@ -19,11 +19,11 @@ void UI::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 void UI::setup(bool isDM) {
 
 
-	elements.push_back(new Tab(window));
-	elements.push_back(new TokenTool(window));
+	elements.push_back(new Tab(resourceManager));
+	elements.push_back(new TokenTool(resourceManager));
 	if (isDM) {
-		elements.push_back(new PaintTool(window));
-		elements.push_back(new FogTool(window));
+		elements.push_back(new PaintTool(resourceManager));
+		elements.push_back(new FogTool(resourceManager));
 	}
 
 }

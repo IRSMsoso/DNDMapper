@@ -2,10 +2,18 @@
 
 //Construct the Manager with the specific window settings.
 Manager::Manager(sf::ContextSettings settings): window(sf::VideoMode(WINDOWX, WINDOWY), "Dungeons and Dragons!", sf::Style::Close | sf::Style::Titlebar, settings) {
+	//Load all the resources we need. Needs to be done before the menus are constructed.
+	resourceManager.createResources("configuration/resources.json");
 
-	menuStack.push_back(std::unique_ptr<MainMenu>(new MainMenu(&window, &menuStack, &networkManager)));
 
-	//Start the connection to the server. Network Manager handles versioning.
+	Menu::MenuInfo menuInfo;
+	menuInfo.menuStack = &menuStack;
+	menuInfo.networkManager = &networkManager;
+	menuInfo.resourceManager = &resourceManager;
+	menuInfo.window = &window;
+	menuStack.push_back(std::unique_ptr<MainMenu>(new MainMenu(menuInfo)));
+
+	//Start the connection to the server.
 	networkManager.startConnect(sf::IpAddress("173.24.79.165"));
 
 	

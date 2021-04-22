@@ -5,6 +5,7 @@
 #include "NetworkManager.h"
 #include <iostream>
 #include "DNDMapper.pb.h"
+#include "ResourceManager.h"
 
 const float TILESIZE = 25.f;
 const int EXPANDDISTANCE = 8;
@@ -14,7 +15,7 @@ const sf::Color defaultColor = sf::Color(55, 55, 55, 255);
 
 class Canvas: public sf::Drawable {
 public:
-	Canvas(sf::View*, NetworkManager*);
+	Canvas(sf::View*, NetworkManager* newNetworkManager, ResourceManager* newResourceManager);
 	~Canvas();
 
 	bool paintTile(float x, float y, sf::Color, bool);
@@ -66,17 +67,13 @@ private:
 
 	std::vector<sf::Vector2i> updateQueue;
 
-	//Fog Cloud
-	sf::Texture fogCloudTexture;
-
 	//Network Manager Pointer.
 	NetworkManager* networkManager;
+	//Resource Manager Pointer.
+	ResourceManager* resourceManager;
 	
 	//List of tokens
 	std::vector<Token> tokenList;
-
-	//Font for tokens
-	sf::Font tokenFont;
 
 	//Pointer to Camera so that it can be moved upon expanding borders in negative coordinate directions
 	sf::View* camera;

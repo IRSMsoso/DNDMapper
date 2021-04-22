@@ -10,7 +10,7 @@ class MainMenu: public Menu {
 
 public:
 
-	MainMenu(sf::RenderWindow*, std::vector<std::unique_ptr<Menu>>*, NetworkManager*);
+	MainMenu(MenuInfo menuInfo);
 
 	virtual void interpretEvent(sf::Event);
 	virtual void update();
@@ -32,14 +32,12 @@ private:
 	AnimatedSprite loadGameSprite;
 
 
-	Animation fireEyeAnimation;
 	Animation fireJoinAnimation;
 	Animation fireLoadAnimation;
 	Animation flameAnimation;
 	Animation connectedAnimation;
 	Animation disconnectedAnimation;
 	sf::Texture flameTexture;
-	sf::Texture fireEyeTexture;
 	sf::Texture fireLoadTexture;
 	sf::Texture fireJoinTexture;
 	sf::Texture connectedTexture;

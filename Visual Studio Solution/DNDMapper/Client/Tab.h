@@ -5,7 +5,7 @@
 
 class Tab: public UIElement{
 public:
-	Tab(sf::RenderWindow*);
+	Tab(ResourceManager* newResourceManager);
 	virtual ~Tab();
 
 	virtual void draw(sf::RenderTarget&, sf::RenderStates) const;

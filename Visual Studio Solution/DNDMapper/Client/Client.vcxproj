@@ -162,7 +162,6 @@
     <ClCompile Include="Canvas.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="ColorWheel.cpp" />
-    <ClCompile Include="ConnectingMenu.cpp" />
     <ClCompile Include="DNDMapper.pb.cc" />
     <ClCompile Include="ExpandButton.cpp" />
     <ClCompile Include="FogTool.cpp" />
@@ -175,6 +174,8 @@
     <ClCompile Include="NetworkManager.cpp" />
     <ClCompile Include="NetworkStructs.cpp" />
     <ClCompile Include="PaintTool.cpp" />
+    <ClCompile Include="Resource.cpp" />
+    <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Tab.cpp" />
     <ClCompile Include="Tile.cpp" />
     <ClCompile Include="Token.cpp" />
@@ -187,12 +188,12 @@
     <ClInclude Include="Animation.h" />
     <ClInclude Include="Canvas.h" />
     <ClInclude Include="ColorWheel.h" />
-    <ClInclude Include="ConnectingMenu.h" />
     <ClInclude Include="DNDMapper.pb.h" />
     <ClInclude Include="ExpandButton.h" />
     <ClInclude Include="FogTool.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="InputMenu.h" />
+    <ClInclude Include="json.hpp" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Manager.h" />
     <ClInclude Include="Menu.h" />
@@ -200,7 +201,10 @@
     <ClInclude Include="NetworkManager.h" />
     <ClInclude Include="NetworkStructs.h" />
     <ClInclude Include="PaintTool.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Tab.h" />
+    <ClInclude Include="ResourceObjects.h" />
     <ClInclude Include="Tile.h" />
     <ClInclude Include="Token.h" />
     <ClInclude Include="TokenTool.h" />

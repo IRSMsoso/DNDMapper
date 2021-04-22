@@ -1,11 +1,10 @@
 #include "InputMenu.h"
 
-InputMenu::InputMenu(sf::RenderWindow * newWindow, std::vector<std::unique_ptr<Menu>>* newStack, NetworkManager * newNetworkManager, GameAction purpose) : Menu(newWindow, newStack, newNetworkManager) {
+InputMenu::InputMenu(MenuInfo menuInfo, GameAction purpose) : Menu(menuInfo) {
 	text.setPosition(500, 500);
 	text.setFillColor(sf::Color::White);
 	text.setScale(1, 1);
-	algerFont.loadFromFile("ALGER.TTF");
-	text.setFont(algerFont);
+	text.setFont(*resourceManager->getFontResource("arialfont"));
 	window->setKeyRepeatEnabled(true);
 	m_purpose = purpose;
 }
@@ -57,14 +56,14 @@ void InputMenu::interpretEvent(sf::Event pollingEvent){
 					DNDProto::NetworkMessage message;
 					message.set_messagetype(DNDProto::NetworkMessage::MessageType::NetworkMessage_MessageType_CreateGame);
 					networkManager->sendMessage(message);
-					menuStack->push_back(std::unique_ptr<Game>(new Game(window, menuStack, networkManager, m_purpose, text.getString())));
+					menuStack->push_back(std::unique_ptr<Game>(new Game(getMenuInfo(), m_purpose, text.getString())));
 				}
 				else if (m_purpose == GameAction::joinGame) {
 					DNDProto::NetworkMessage message;
 					message.set_messagetype(DNDProto::NetworkMessage::MessageType::NetworkMessage_MessageType_JoinGame);
 					message.set_gameid(std::stoi(text.getString().toAnsiString()));
 					networkManager->sendMessage(message);
-					menuStack->push_back(std::unique_ptr<Game>(new Game(window, menuStack, networkManager, m_purpose, text.getString())));
+					menuStack->push_back(std::unique_ptr<Game>(new Game(getMenuInfo(), m_purpose, text.getString())));
 				}
 				close();
 			}

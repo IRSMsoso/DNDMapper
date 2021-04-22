@@ -5,7 +5,7 @@
 class InputMenu: public Menu {
 
 public:
-	InputMenu(sf::RenderWindow* newWindow, std::vector<std::unique_ptr<Menu>>* newStack, NetworkManager* newNetworkManager, GameAction purpose);
+	InputMenu(MenuInfo menuInfo, GameAction purpose);
 
 	virtual ~InputMenu();
 
@@ -23,7 +23,5 @@ private:
 	sf::Text text;
 
 	GameAction m_purpose;
-
-	sf::Font algerFont; //Surprisingly OK
 
 };
