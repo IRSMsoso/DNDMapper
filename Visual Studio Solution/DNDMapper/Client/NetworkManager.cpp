@@ -98,6 +98,9 @@ void NetworkManager::listenForMessages() {
 		size_t bytes_to_receive = 4;
 		do {
 			socket.receive(data_buffer.data(), bytes_to_receive, received_size);
+			std::cout << "Received Size: " << received_size << std::endl;
+			if (received_size == 0)
+				break;
 
 			//Iterate through and copy the bytes from the data buffer into the entire data message.
 
@@ -123,6 +126,8 @@ void NetworkManager::listenForMessages() {
 			sf::Socket::Status tempStatus = socket.receive(data_buffer.data(), bytes_to_receive, received_size);
 			if (tempStatus != sf::Socket::Status::Done)
 				status = tempStatus;
+			if (received_size == 0)
+				break;
 
 			for (int i = (message_size - bytes_to_receive); i < (message_size - bytes_to_receive + received_size); i++) {
 				data[i] = data_buffer[i - (message_size - bytes_to_receive)];

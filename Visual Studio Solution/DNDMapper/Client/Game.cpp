@@ -63,6 +63,7 @@ Game::Game(MenuInfo menuInfo, GameAction action, std::string filename) : Menu(me
 		}
 		else {
 			canvas.loadMap(map);
+			save(true);
 		}
 		input.close();
 	}
@@ -110,6 +111,11 @@ void Game::update(){
 	fpsText.setString(std::to_string(fps));
 
 	//Update from all networking commands.
+	if (!networkManager->getIsConnected()) {
+		save(false);
+		close();
+	}
+
 	std::vector<DNDProto::NetworkMessage> inMessages;
 	inMessages = networkManager->getMessagesOfType(DNDProto::NetworkMessage::MessageType::NetworkMessage_MessageType_Update);
 	for (int i = 0; i < inMessages.size(); i++) {
