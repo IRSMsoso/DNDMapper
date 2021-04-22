@@ -1,9 +1,16 @@
 #include "Game.h"
 
-Game::Game(sf::RenderWindow* newWindow, std::vector<std::unique_ptr<Menu>>* newStack, NetworkManager* newNetworkManager, GameAction action, std::string filename) : Menu(newWindow, newStack, newNetworkManager), ui(window), canvas(&camera, networkManager) {
+/// <summary>
+/// Constructor for the Game menu. Sets up a lot of what is needed for this menu to function properly.
+/// </summary>
+/// <param name="menuInfo:">MenuInfo object containing neccessary pointers to important resources the game needs to function.</param>
+/// <param name="action:">What the game menu's objective is, whether that be creating a new game, loading a game, or joining a new one.</param>
+/// <param name="filename:">The filename of the save file this game menu will be working with.</param>
+Game::Game(MenuInfo menuInfo, GameAction action, std::string filename) : Menu(menuInfo), ui(window, menuInfo.resourceManager), canvas(&camera, networkManager, resourceManager) {
 	camera.move(10, 10);
 
-	window->setView(camera);
+	//Some window setup.
+	window->setView(camera); //Set the window view to be our view so we can move and scale it around.
 	window->setKeyRepeatEnabled(false);
 
 
@@ -16,29 +23,29 @@ Game::Game(sf::RenderWindow* newWindow, std::vector<std::unique_ptr<Menu>>* newS
 	//Set cursor to default to start
 	window->setMouseCursor(defaultCursor);
 
-	if (isDM)
-		selectedTool = ToolType::paintingTool;
-	else
-		selectedTool = ToolType::tokenTool;
-
 	mouseAction = MouseAction::none;
 	previousAction = MouseAction::none;
 
 	selectedColor = sf::Color::White;
 
-
+	//FPS text.
 	fpsText.setFillColor(sf::Color::Blue);
-	algerFont.loadFromFile("ALGER.TTF");
-	fpsText.setFont(algerFont);
+	fpsText.setFont(*resourceManager->getFontResource("arialfont"));
 
 
 	gameIDAquired = false;
 
+
+	//DM VS NON DM SPECIFIC SETUP
 	if (action == GameAction::newGame || action == GameAction::loadGame) {
 		isDM = true;
+		selectedTool = ToolType::paintingTool;
+		canvas.setHiddenFog(false);
 	}
 	else {
 		isDM = false;
+		selectedTool = ToolType::tokenTool;
+		canvas.setHiddenFog(true);
 	}
 
 	//UI setup
@@ -48,13 +55,14 @@ Game::Game(sf::RenderWindow* newWindow, std::vector<std::unique_ptr<Menu>>* newS
 	//Loading
 	if (action == GameAction::loadGame) {
 		DNDProto::Map map;
-		std::fstream input(filename + ".cam", std::ios::in | std::ios::binary);
+		std::fstream input("saves/" + filename + ".cam", std::ios::in | std::ios::binary);
 		if (!map.ParseFromIstream(&input)) {
-			printf("Error, could not parse map from file %s", (filename + ".cam").c_str());
+			printf("Error, could not parse map from file %s", ("saves/" + filename + ".cam").c_str());
 			close();
 		}
 		else {
 			canvas.loadMap(map);
+			save(true);
 		}
 		input.close();
 	}
@@ -63,10 +71,18 @@ Game::Game(sf::RenderWindow* newWindow, std::vector<std::unique_ptr<Menu>>* newS
 	}
 }
 
+/// <summary>
+/// Destructor for the Game menu.
+/// </summary>
 Game::~Game() {
-	std::cout << "Deconstructed Game Object.\n";
+	//std::cout << "Deconstructed Game Object.\n";
 }
 
+/// <summary>
+/// Draws all the objects associated with the Game menu. These include the UI, the Canvas, etc.
+/// </summary>
+/// <param name="target"></param>
+/// <param name="states"></param>
 void Game::draw(sf::RenderTarget& target, sf::RenderStates states) const{
 	
 
@@ -81,17 +97,24 @@ void Game::draw(sf::RenderTarget& target, sf::RenderStates states) const{
 
 }
 
-
+/// <summary>
+/// Performs updates to the game that are needed every frame such as interpreting network messages.
+/// </summary>
 void Game::update(){
 	//Debug
 	//std::cout << "Should Game Close? " << getShouldClose();
 
 	//FPS
 	sf::Time frameTime = fpsClock.restart();
-	float fps = 1.f / frameTime.asSeconds();
+	int fps = 1.f / frameTime.asSeconds();
 	fpsText.setString(std::to_string(fps));
 
 	//Update from all networking commands.
+	if (!networkManager->getIsConnected()) {
+		save(false);
+		close();
+	}
+
 	std::vector<DNDProto::NetworkMessage> inMessages;
 	inMessages = networkManager->getMessagesOfType(DNDProto::NetworkMessage::MessageType::NetworkMessage_MessageType_Update);
 	for (int i = 0; i < inMessages.size(); i++) {
@@ -101,8 +124,10 @@ void Game::update(){
 
 		if (message.has_tileupdate()) {
 			DNDProto::TileUpdate tileUpdate = message.tileupdate();
-			if (tileUpdate.has_newcolor())
+			if (tileUpdate.has_newcolor()) {
 				canvas.paintTile(tileUpdate.posx(), tileUpdate.posy(), sf::Color(tileUpdate.newcolor()), false);
+				canvas.expand();
+			}
 			if (tileUpdate.has_newfogged())
 				if (tileUpdate.newfogged())
 					canvas.fogTile(sf::Vector2f(tileUpdate.posx(), tileUpdate.posy()), false);
@@ -122,8 +147,15 @@ void Game::update(){
 			}
 			else {
 				Token* change_token = canvas.getTokenFromID(tokenUpdate.id());
-				if (tokenUpdate.has_name())
+				if (tokenUpdate.has_name()) {
 					change_token->setName(tokenUpdate.name());
+					if (mouseAction == MouseAction::tokenMoving && change_token == selectedToken) { //If we are moving a token we got a network update for, kick us off.
+						selectedToken = nullptr;
+						mouseAction = MouseAction::none;
+					}
+					change_token->updateName();
+					change_token->updateNameLocation();
+				}
 				if (tokenUpdate.has_posx() && tokenUpdate.has_posy())
 					change_token->setPosition(sf::Vector2f(tokenUpdate.posx(), tokenUpdate.posy()));
 			}
@@ -144,6 +176,7 @@ void Game::update(){
 		sf::Vector2f moveVector = panLockLoc - currentMouseLoc;
 		camera.move(moveVector);
 	}
+
 
 	//Update the selected token (Mainly for blinking cursor logic).
 	if (mouseAction == MouseAction::changingName && selectedToken != nullptr) {
@@ -217,6 +250,8 @@ void Game::update(){
 	ui.updateElementsScales(zoomFactor);
 	ui.updateElementsAnimations(frameTime, selectedColor);
 
+	//More FPS text logic
+	fpsText.setPosition(window->mapPixelToCoords(sf::Vector2i(0, 0)));
 
 
 	std::vector<DNDProto::NetworkMessage> gameIDMessages = networkManager->getMessagesOfType(DNDProto::NetworkMessage::MessageType::NetworkMessage_MessageType_ID);
@@ -237,6 +272,10 @@ void Game::update(){
 	}
 }
 
+/// <summary>
+/// Interprets the events fed through and uses them for the game accordingly. This is called from the Manager's menuStack.
+/// </summary>
+/// <param name="pollingEvent:">The event to be processed.</param>
 void Game::interpretEvent(sf::Event pollingEvent){
 
 	//Switch Statement Logic.
@@ -320,7 +359,7 @@ void Game::interpretEvent(sf::Event pollingEvent){
 						break;
 
 					case ToolType::tokenTool:
-						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) {
+						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift) && isDM) {
 							selectedToken = canvas.getClickedToken(window->mapPixelToCoords(mouseWindowLocation));
 							if (selectedToken == nullptr) {
 								canvas.createToken(window->mapPixelToCoords(mouseWindowLocation), selectedColor, true);
@@ -380,15 +419,17 @@ void Game::interpretEvent(sf::Event pollingEvent){
 					break;
 
 				case ToolType::tokenTool: //Token tool selected + right click
-					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) { //Shift Right Click
-						canvas.eraseToken(window->mapPixelToCoords(mouseWindowLocation), true);
-					}
-					else { //Non shift Right Click
-						selectedToken = canvas.getClickedToken(window->mapPixelToCoords(mouseWindowLocation));
-						if (selectedToken != nullptr) {
-							selectedToken->setIsEditing(true);
-							window->setKeyRepeatEnabled(true);
-							mouseAction = MouseAction::changingName;
+					if (isDM) { //Only allow if we are DM for both deleting and renaming.
+						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) { //Shift Right Click
+							canvas.eraseToken(window->mapPixelToCoords(mouseWindowLocation), true);
+						}
+						else { //Non shift Right Click
+							selectedToken = canvas.getClickedToken(window->mapPixelToCoords(mouseWindowLocation));
+							if (selectedToken != nullptr) {
+								selectedToken->setIsEditing(true);
+								window->setKeyRepeatEnabled(true);
+								mouseAction = MouseAction::changingName;
+							}
 						}
 					}
 					break;
@@ -470,6 +511,8 @@ void Game::interpretEvent(sf::Event pollingEvent){
 
 		if (mouseAction == MouseAction::changingName) {
 
+			bool shouldSendNetworkUpdate = false;
+
 			int newKey = -1;
 			std::cout << "Size: " << (sizeof(ALLOWEDKEYS) / sizeof(*ALLOWEDKEYS)) << std::endl;
 			for (int i = 0; i < (sizeof(ALLOWEDKEYS) / sizeof(*ALLOWEDKEYS)); i++) {
@@ -483,6 +526,7 @@ void Game::interpretEvent(sf::Event pollingEvent){
 				else { //Shift isn't pressed, add lower case letter.
 					selectedToken->addNameLetter(LOWERCASEALPHABET[newKey]);
 				}
+
 				//Networking
 				DNDProto::NetworkMessage message;
 				message.set_messagetype(DNDProto::NetworkMessage::MessageType::NetworkMessage_MessageType_Update);
@@ -494,6 +538,7 @@ void Game::interpretEvent(sf::Event pollingEvent){
 			}
 			else if (pollingEvent.key.code == sf::Keyboard::Key::Backspace) {
 				selectedToken->removeNameLetter();
+				
 				//Networking
 				DNDProto::NetworkMessage message;
 				message.set_messagetype(DNDProto::NetworkMessage::MessageType::NetworkMessage_MessageType_Update);
@@ -506,6 +551,16 @@ void Game::interpretEvent(sf::Event pollingEvent){
 			else if (pollingEvent.key.code == sf::Keyboard::Key::Enter) {
 				selectedToken->setIsEditing(false);
 				window->setKeyRepeatEnabled(false);
+
+				//Networking
+				DNDProto::NetworkMessage message;
+				message.set_messagetype(DNDProto::NetworkMessage::MessageType::NetworkMessage_MessageType_Update);
+				DNDProto::Token* token = new DNDProto::Token;
+				token->set_id(selectedToken->getID());
+				token->set_name(selectedToken->getName());
+				message.set_allocated_tokenupdate(token);
+				networkManager->sendMessage(message);
+
 				selectedToken = nullptr;
 				mouseAction = MouseAction::none;
 			}
@@ -543,13 +598,17 @@ void Game::interpretEvent(sf::Event pollingEvent){
 
 }
 
+/// <summary>
+/// This function calls Canvas::saveMap, writes that to file, and (potentially) sends that map to the network periodically.
+/// </summary>
+/// <param name="send:">Whether or not to also send the map to the server.</param>
 void Game::save(bool send) {
 	DNDProto::Map map;
 	canvas.saveMap(map);
 
-	std::fstream output(m_filename + ".cam", std::ios::out | std::ios::trunc | std::ios::binary);
+	std::fstream output("saves/" + m_filename + ".cam", std::ios::out | std::ios::trunc | std::ios::binary);
 	if (!map.SerializeToOstream(&output)) {
-		printf("Failed to write map to file &s", (m_filename + ".cam").c_str());
+		printf("Failed to write map to file &s", ("saves/" + m_filename + ".cam").c_str());
 	}
 	//Also send it to network
 
@@ -566,6 +625,9 @@ void Game::save(bool send) {
 	saveClock.restart();
 }
 
+/// <summary>
+/// Moves the camera so that it isn't outside of the tilemap.
+/// </summary>
 void Game::restrictCamera(){
 	window->setView(camera);
 	if (window->mapPixelToCoords(sf::Vector2i(0, 0)).x < 1) {

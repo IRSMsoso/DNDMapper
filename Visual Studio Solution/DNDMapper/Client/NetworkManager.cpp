@@ -5,6 +5,14 @@ NetworkManager::NetworkManager(): connectThread(&NetworkManager::connect, this),
 	isConnected = false;
 }
 
+/// <summary>
+/// Destructor for network manager. Makes sure that we properly shutdown (terminate all threads) before we deconstruct the object.
+/// </summary>
+NetworkManager::~NetworkManager() {
+	listenThread.terminate();
+	connectThread.terminate();
+}
+
 bool NetworkManager::startConnect(sf::IpAddress address) {
 	if (!isConnected && !isConnecting) {
 		std::cout << "Starting the thread to connect to the server...\n";
@@ -90,6 +98,9 @@ void NetworkManager::listenForMessages() {
 		size_t bytes_to_receive = 4;
 		do {
 			socket.receive(data_buffer.data(), bytes_to_receive, received_size);
+			std::cout << "Received Size: " << received_size << std::endl;
+			if (received_size == 0)
+				break;
 
 			//Iterate through and copy the bytes from the data buffer into the entire data message.
 
@@ -115,6 +126,8 @@ void NetworkManager::listenForMessages() {
 			sf::Socket::Status tempStatus = socket.receive(data_buffer.data(), bytes_to_receive, received_size);
 			if (tempStatus != sf::Socket::Status::Done)
 				status = tempStatus;
+			if (received_size == 0)
+				break;
 
 			for (int i = (message_size - bytes_to_receive); i < (message_size - bytes_to_receive + received_size); i++) {
 				data[i] = data_buffer[i - (message_size - bytes_to_receive)];
@@ -156,17 +169,17 @@ void NetworkManager::listenForMessages() {
 //Shutdown the Network Manager and reset it to default settings.
 void NetworkManager::shutdown() {
 	std::cout << "Shutting Down Network Manager.\n";
-	socket.disconnect();
 	resetManager();
 
 }
 
 //Reset the network manager to default settings and terminates all threads. startConnect() will need to be called again.
 void NetworkManager::resetManager() {
-	std::cout << "Resetting Network Manager.\n;";
+	std::cout << "Resetting Network Manager.\n";
 	isConnected = false;
 	isConnecting = false;
 	ipAddress = sf::IpAddress::None;
+	socket.disconnect();
 	listenThread.terminate();
 	connectThread.terminate();
 }

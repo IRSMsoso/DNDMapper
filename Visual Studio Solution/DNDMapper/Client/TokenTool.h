@@ -4,7 +4,7 @@
 
 class TokenTool: public UIElement{
 public:
-	TokenTool(sf::RenderWindow*);
+	TokenTool(ResourceManager* newResourceManager);
 	virtual ~TokenTool();
 
 	virtual void draw(sf::RenderTarget&, sf::RenderStates) const;

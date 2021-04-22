@@ -1,6 +1,6 @@
 #include "TokenTool.h"
 
-TokenTool::TokenTool(sf::RenderWindow* newWindow) {
+TokenTool::TokenTool(ResourceManager* newResourceManager): UIElement(newResourceManager) {
 	tokenToolButton.setRadius(20);
 	tokenToolButton.move(10, 10);
 	tokenToolButton.setOutlineColor(sf::Color::White);

@@ -81,10 +81,13 @@
     <ClCompile Include="InputMenu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ConnectingMenu.cpp">
+    <ClCompile Include="DNDMapper.pb.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DNDMapper.pb.cc">
+    <ClCompile Include="ResourceManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -152,10 +155,19 @@
     <ClInclude Include="InputMenu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ConnectingMenu.h">
+    <ClInclude Include="DNDMapper.pb.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DNDMapper.pb.h">
+    <ClInclude Include="ResourceManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="json.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceObjects.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

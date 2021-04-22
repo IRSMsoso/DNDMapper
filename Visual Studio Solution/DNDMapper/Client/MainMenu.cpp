@@ -1,23 +1,9 @@
 #include "MainMenu.h"
 
-MainMenu::MainMenu(sf::RenderWindow* newWindow, std::vector<std::unique_ptr<Menu>>* newStack, NetworkManager* newNetworkManager): Menu(newWindow, newStack, newNetworkManager){
-
-	//Animated Sprites
-	cam::loadAnimation(flameAnimation, flameTexture, "Firesmile.png", 100, 100, 125);
-	cam::loadAnimation(fireEyeAnimation, fireEyeTexture, "Fireeye.png", 41, 45, 120);
-	cam::loadAnimation(fireJoinAnimation, fireJoinTexture, "fireplay.png", 39, 45, 120);
-	cam::loadAnimation(connectedAnimation, connectedTexture, "Heartrate Monitor.png", 20, 11, 29);
-	cam::loadAnimation(disconnectedAnimation, disconnectedTexture, "Heartrate Flatline.png", 20, 11, 30);
-	cam::loadAnimation(fireLoadAnimation, fireLoadTexture, "Firesoul.png", 65, 82, 90);
+MainMenu::MainMenu(MenuInfo menuInfo): Menu(menuInfo){
 	
-
-	flamesSprite1.setLooped(true);
-	flamesSprite2.setLooped(true);
-	newGameSprite.setLooped(true);
-	joinGameSprite.setLooped(true);
-	connectedSprite.setLooped(true);
-	disconnectedSprite.setLooped(true);
-	loadGameSprite.setLooped(true);
+	
+	//Set frame timings for all the animations.
 	loadGameSprite.setFrameTime(sf::milliseconds(20));
 	flamesSprite1.setFrameTime(sf::milliseconds(20));
 	flamesSprite2.setFrameTime(sf::milliseconds(20));
@@ -47,13 +33,13 @@ MainMenu::MainMenu(sf::RenderWindow* newWindow, std::vector<std::unique_ptr<Menu
 	disconnectedSprite.setPosition(0, 0);
 	disconnectedSprite.setScale(4, 4);
 
-	flamesSprite1.play(flameAnimation);
-	flamesSprite2.play(flameAnimation);
-	newGameSprite.play(fireEyeAnimation);
-	joinGameSprite.play(fireJoinAnimation);
-	connectedSprite.play(connectedAnimation);
-	disconnectedSprite.play(disconnectedAnimation);
-	loadGameSprite.play(fireLoadAnimation);
+	flamesSprite1.play(*resourceManager->getAnimationResource("firesmileanimation"));
+	flamesSprite2.play(*resourceManager->getAnimationResource("firesmileanimation"));
+	newGameSprite.play(*resourceManager->getAnimationResource("newgameanimation"));
+	joinGameSprite.play(*resourceManager->getAnimationResource("joingameanimation"));
+	connectedSprite.play(*resourceManager->getAnimationResource("connectedanimation"));
+	disconnectedSprite.play(*resourceManager->getAnimationResource("disconnectedanimation"));
+	loadGameSprite.play(*resourceManager->getAnimationResource("loadgameanimation"));
 
 
 	//Cursors
@@ -97,19 +83,19 @@ void MainMenu::interpretEvent(sf::Event pollingEvent) {
 
 		if (cam::isSpriteClicked(newGameSprite, window->mapPixelToCoords(sf::Mouse::getPosition(*window)))) {
 			if (isConnected) {
-				menuStack->push_back(std::unique_ptr<InputMenu>(new InputMenu(window, menuStack, networkManager, GameAction::newGame)));
+				menuStack->push_back(std::unique_ptr<InputMenu>(new InputMenu(getMenuInfo(), GameAction::newGame)));
 			}
 		}
 
 		if (cam::isSpriteClicked(joinGameSprite, window->mapPixelToCoords(sf::Mouse::getPosition(*window)))) {
 			if (isConnected) {
-				menuStack->push_back(std::unique_ptr<InputMenu>(new InputMenu(window, menuStack, networkManager, GameAction::joinGame))); //Load game just for now
+				menuStack->push_back(std::unique_ptr<InputMenu>(new InputMenu(getMenuInfo(), GameAction::joinGame))); //Load game just for now
 			}
 		}
 
 		if (cam::isSpriteClicked(loadGameSprite, window->mapPixelToCoords(sf::Mouse::getPosition(*window)))) {
 			if (isConnected) {
-				menuStack->push_back(std::unique_ptr<InputMenu>(new InputMenu(window, menuStack, networkManager, GameAction::loadGame))); //Load game just for now
+				menuStack->push_back(std::unique_ptr<InputMenu>(new InputMenu(getMenuInfo(), GameAction::loadGame))); //Load game just for now
 			}
 		}
 

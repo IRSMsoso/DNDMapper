@@ -5,7 +5,7 @@
 
 class FogTool : public UIElement {
 public:
-	FogTool(sf::RenderWindow*);
+	FogTool(ResourceManager* newResourceManager);
 	virtual ~FogTool();
 
 	virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
@@ -14,6 +14,5 @@ public:
 private: 
 
 	sf::Sprite fogSprite;
-	sf::Texture fogTexture;
 };
 

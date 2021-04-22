@@ -1,6 +1,6 @@
 #include "Tab.h"
 
-Tab::Tab(sf::RenderWindow* newWindow) {
+Tab::Tab(ResourceManager* newResourceManager): UIElement(newResourceManager) {
 
 
 	//changeUIRectangle(sf::IntRect(0, 300, 60, 500));

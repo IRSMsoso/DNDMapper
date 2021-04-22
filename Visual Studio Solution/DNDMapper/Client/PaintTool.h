@@ -6,7 +6,7 @@
 
 class PaintTool: public UIElement{
 public:
-	PaintTool(sf::RenderWindow*);
+	PaintTool(ResourceManager* resourceManager);
 	virtual ~PaintTool();
 
 	virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
@@ -14,7 +14,5 @@ public:
 
 private:
 	AnimatedSprite paintSprite;
-	Animation flowingAnimation;
-	sf::Texture paintTexture;
 };
 

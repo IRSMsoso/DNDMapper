@@ -48,7 +48,7 @@ const float CAMERAMOVESPEED = 200.f;
 class Game: public Menu {
 
 public:
-	Game(sf::RenderWindow*, std::vector<std::unique_ptr<Menu>>*, NetworkManager*, GameAction, std::string filename);
+	Game(MenuInfo menuInfo, GameAction, std::string filename);
 	virtual ~Game();
 
 
@@ -102,7 +102,6 @@ private:
 
 	//FPS Text
 	sf::Text fpsText;
-	sf::Font algerFont;
 	sf::Clock fpsClock;
 
 	//Wrangling Camera.

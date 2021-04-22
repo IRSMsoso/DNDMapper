@@ -4,6 +4,7 @@
 #include <iostream>
 #include "Manager.h"
 #include <Windows.h>
+#include "ResourceManager.h"
 
 
 
@@ -22,7 +23,9 @@ int main()
 
 	manager.mainLoop();
 
+	
 	//std::system("pause");
+
 
 	return 0;
 }
