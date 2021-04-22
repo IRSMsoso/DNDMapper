@@ -5,6 +5,14 @@ NetworkManager::NetworkManager(): connectThread(&NetworkManager::connect, this),
 	isConnected = false;
 }
 
+/// <summary>
+/// Destructor for network manager. Makes sure that we properly shutdown (terminate all threads) before we deconstruct the object.
+/// </summary>
+NetworkManager::~NetworkManager() {
+	listenThread.terminate();
+	connectThread.terminate();
+}
+
 bool NetworkManager::startConnect(sf::IpAddress address) {
 	if (!isConnected && !isConnecting) {
 		std::cout << "Starting the thread to connect to the server...\n";

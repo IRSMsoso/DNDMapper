@@ -226,8 +226,6 @@ void Game::update(){
 	//Update Canvas
 	canvas.update();
 
-	//More FPS text logic
-	fpsText.setPosition(window->mapPixelToCoords(sf::Vector2i(0, 0)));
 
 	//Restrict the Camera
 	restrictCamera();
@@ -238,6 +236,8 @@ void Game::update(){
 	ui.updateElementsScales(zoomFactor);
 	ui.updateElementsAnimations(frameTime, selectedColor);
 
+	//More FPS text logic
+	fpsText.setPosition(window->mapPixelToCoords(sf::Vector2i(0, 0)));
 
 
 	std::vector<DNDProto::NetworkMessage> gameIDMessages = networkManager->getMessagesOfType(DNDProto::NetworkMessage::MessageType::NetworkMessage_MessageType_ID);

@@ -12,6 +12,7 @@ class NetworkManager {
 
 public:
 	NetworkManager();
+	~NetworkManager();
 
 	bool startConnect(sf::IpAddress);
 
