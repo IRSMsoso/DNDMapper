@@ -20,7 +20,7 @@ void Tile::setFog(bool newFog) {
 }
 
 
-bool Tile::getFog() {
+bool Tile::getFog() const{
 	if (isFogged) {
 		return true;
 	}

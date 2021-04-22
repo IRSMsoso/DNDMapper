@@ -53,6 +53,8 @@ public:
 	void saveMap(DNDProto::Map& map);
 	bool loadMap(DNDProto::Map& map);
 
+	void setHiddenFog(bool hiddenFog) { drawHiddenFog = hiddenFog; }
+
 private:
 	void removeRow(unsigned int);
 	void removeColumn(unsigned int);
@@ -77,4 +79,7 @@ private:
 
 	//Pointer to Camera so that it can be moved upon expanding borders in negative coordinate directions
 	sf::View* camera;
+
+	//Whether we should draw transparent or hidden fog textures.
+	bool drawHiddenFog;
 };

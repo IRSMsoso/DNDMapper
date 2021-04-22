@@ -104,5 +104,10 @@
 		"id":"arialfont",
 		"filename":"arial.ttf",
 		"type":"font"
+	},
+	{
+		"id":"fogtilehiddentexture",
+		"filename":"FogCloudHidden.png",
+		"type":"texture"
 	}
 ]}

@@ -21,7 +21,7 @@ Canvas::Canvas(sf::View* newView, NetworkManager* newNetworkManager, ResourceMan
 	}
 	reconstruct();
 
-
+	setHiddenFog(true);
 
 	std::cout << "Canvas setup took " << setupClock.getElapsedTime().asSeconds() << " seconds.\n";
 }
@@ -546,12 +546,19 @@ void Canvas::draw(sf::RenderTarget& target, sf::RenderStates states) const{
 
 	//int numDrawn = 0;
 	for (int i = 0; i < tokenList.size(); i++) {
-		target.draw(tokenList.at(i));
+		if (!drawHiddenFog)
+			target.draw(tokenList.at(i));
+		else if (!tileGrid.at(tokenList.at(i).getPosition().y / TILESIZE).at(tokenList.at(i).getPosition().x / TILESIZE).getFog()){
+			target.draw(tokenList.at(i));
+		}
 		//numDrawn += 1;
 	}
 	//std::cout << numDrawn << " tokens drawn\n";
 
-	target.draw(fogVertexes, resourceManager->getTextureResource("fogtiletexture"));
+	if (drawHiddenFog)
+		target.draw(fogVertexes, resourceManager->getTextureResource("fogtilehiddentexture"));
+	else
+		target.draw(fogVertexes, resourceManager->getTextureResource("fogtiletexture"));
 }
 
 

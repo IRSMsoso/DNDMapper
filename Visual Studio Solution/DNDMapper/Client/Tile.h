@@ -8,7 +8,7 @@ public:
 
 	void changeColor(sf::Color);
 	void setFog(bool);
-	bool getFog();
+	bool getFog() const;
 	sf::Color getColor();
 
 

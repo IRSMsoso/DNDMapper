@@ -39,15 +39,14 @@ Game::Game(MenuInfo menuInfo, GameAction action, std::string filename) : Menu(me
 	//DM VS NON DM SPECIFIC SETUP
 	if (action == GameAction::newGame || action == GameAction::loadGame) {
 		isDM = true;
+		selectedTool = ToolType::paintingTool;
+		canvas.setHiddenFog(false);
 	}
 	else {
 		isDM = false;
-	}
-
-	if (isDM)
-		selectedTool = ToolType::paintingTool;
-	else
 		selectedTool = ToolType::tokenTool;
+		canvas.setHiddenFog(true);
+	}
 
 	//UI setup
 	ui.setup(isDM);
