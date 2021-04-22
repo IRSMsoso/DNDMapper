@@ -146,8 +146,15 @@ void Game::update(){
 			}
 			else {
 				Token* change_token = canvas.getTokenFromID(tokenUpdate.id());
-				if (tokenUpdate.has_name())
+				if (tokenUpdate.has_name()) {
 					change_token->setName(tokenUpdate.name());
+					if (mouseAction == MouseAction::tokenMoving && change_token == selectedToken) { //If we are moving a token we got a network update for, kick us off.
+						selectedToken = nullptr;
+						mouseAction = MouseAction::none;
+					}
+					change_token->updateName();
+					change_token->updateNameLocation();
+				}
 				if (tokenUpdate.has_posx() && tokenUpdate.has_posy())
 					change_token->setPosition(sf::Vector2f(tokenUpdate.posx(), tokenUpdate.posy()));
 			}
@@ -351,7 +358,7 @@ void Game::interpretEvent(sf::Event pollingEvent){
 						break;
 
 					case ToolType::tokenTool:
-						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) {
+						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift) && isDM) {
 							selectedToken = canvas.getClickedToken(window->mapPixelToCoords(mouseWindowLocation));
 							if (selectedToken == nullptr) {
 								canvas.createToken(window->mapPixelToCoords(mouseWindowLocation), selectedColor, true);
@@ -411,15 +418,17 @@ void Game::interpretEvent(sf::Event pollingEvent){
 					break;
 
 				case ToolType::tokenTool: //Token tool selected + right click
-					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) { //Shift Right Click
-						canvas.eraseToken(window->mapPixelToCoords(mouseWindowLocation), true);
-					}
-					else { //Non shift Right Click
-						selectedToken = canvas.getClickedToken(window->mapPixelToCoords(mouseWindowLocation));
-						if (selectedToken != nullptr) {
-							selectedToken->setIsEditing(true);
-							window->setKeyRepeatEnabled(true);
-							mouseAction = MouseAction::changingName;
+					if (isDM) { //Only allow if we are DM for both deleting and renaming.
+						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) { //Shift Right Click
+							canvas.eraseToken(window->mapPixelToCoords(mouseWindowLocation), true);
+						}
+						else { //Non shift Right Click
+							selectedToken = canvas.getClickedToken(window->mapPixelToCoords(mouseWindowLocation));
+							if (selectedToken != nullptr) {
+								selectedToken->setIsEditing(true);
+								window->setKeyRepeatEnabled(true);
+								mouseAction = MouseAction::changingName;
+							}
 						}
 					}
 					break;
@@ -501,6 +510,8 @@ void Game::interpretEvent(sf::Event pollingEvent){
 
 		if (mouseAction == MouseAction::changingName) {
 
+			bool shouldSendNetworkUpdate = false;
+
 			int newKey = -1;
 			std::cout << "Size: " << (sizeof(ALLOWEDKEYS) / sizeof(*ALLOWEDKEYS)) << std::endl;
 			for (int i = 0; i < (sizeof(ALLOWEDKEYS) / sizeof(*ALLOWEDKEYS)); i++) {
@@ -514,6 +525,7 @@ void Game::interpretEvent(sf::Event pollingEvent){
 				else { //Shift isn't pressed, add lower case letter.
 					selectedToken->addNameLetter(LOWERCASEALPHABET[newKey]);
 				}
+
 				//Networking
 				DNDProto::NetworkMessage message;
 				message.set_messagetype(DNDProto::NetworkMessage::MessageType::NetworkMessage_MessageType_Update);
@@ -525,6 +537,7 @@ void Game::interpretEvent(sf::Event pollingEvent){
 			}
 			else if (pollingEvent.key.code == sf::Keyboard::Key::Backspace) {
 				selectedToken->removeNameLetter();
+				
 				//Networking
 				DNDProto::NetworkMessage message;
 				message.set_messagetype(DNDProto::NetworkMessage::MessageType::NetworkMessage_MessageType_Update);
@@ -537,6 +550,16 @@ void Game::interpretEvent(sf::Event pollingEvent){
 			else if (pollingEvent.key.code == sf::Keyboard::Key::Enter) {
 				selectedToken->setIsEditing(false);
 				window->setKeyRepeatEnabled(false);
+
+				//Networking
+				DNDProto::NetworkMessage message;
+				message.set_messagetype(DNDProto::NetworkMessage::MessageType::NetworkMessage_MessageType_Update);
+				DNDProto::Token* token = new DNDProto::Token;
+				token->set_id(selectedToken->getID());
+				token->set_name(selectedToken->getName());
+				message.set_allocated_tokenupdate(token);
+				networkManager->sendMessage(message);
+
 				selectedToken = nullptr;
 				mouseAction = MouseAction::none;
 			}

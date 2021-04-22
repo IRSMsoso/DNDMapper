@@ -442,6 +442,8 @@ bool Canvas::loadMap(DNDProto::Map& map) {
 		DNDProto::Token tokenMessage = map.tokens(i);
 		Token token(sf::Color(tokenMessage.color()), sf::Vector2f(tokenMessage.posx(), tokenMessage.posy()), *resourceManager->getFontResource("arialfont"), tokenMessage.id());
 		token.setName(tokenMessage.name());
+		token.updateName();
+		token.updateNameLocation();
 		tokenList.push_back(token);
 	}
 

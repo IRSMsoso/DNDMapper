@@ -32,6 +32,8 @@ public:
 
 	void snap();
 
+	void updateName();
+	void updateNameLocation();
 private:
 	sf::CircleShape circle;
 	sf::Vector2i size;
@@ -42,8 +44,6 @@ private:
 	bool beingEdited;
 	bool cursorVisible;
 
-	void updateName();
-	void updateNameLocation();
 
 	sf::Clock cursorBlink;
 };
