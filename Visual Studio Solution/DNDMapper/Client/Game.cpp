@@ -124,8 +124,10 @@ void Game::update(){
 
 		if (message.has_tileupdate()) {
 			DNDProto::TileUpdate tileUpdate = message.tileupdate();
-			if (tileUpdate.has_newcolor())
+			if (tileUpdate.has_newcolor()) {
 				canvas.paintTile(tileUpdate.posx(), tileUpdate.posy(), sf::Color(tileUpdate.newcolor()), false);
+				canvas.expand();
+			}
 			if (tileUpdate.has_newfogged())
 				if (tileUpdate.newfogged())
 					canvas.fogTile(sf::Vector2f(tileUpdate.posx(), tileUpdate.posy()), false);
