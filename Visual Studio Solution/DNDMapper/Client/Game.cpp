@@ -47,9 +47,9 @@ Game::Game(MenuInfo menuInfo, GameAction action, std::string filename) : Menu(me
 	//Loading
 	if (action == GameAction::loadGame) {
 		DNDProto::Map map;
-		std::fstream input(filename + ".cam", std::ios::in | std::ios::binary);
+		std::fstream input("saves/" + filename + ".cam", std::ios::in | std::ios::binary);
 		if (!map.ParseFromIstream(&input)) {
-			printf("Error, could not parse map from file %s", (filename + ".cam").c_str());
+			printf("Error, could not parse map from file %s", ("saves/" + filename + ".cam").c_str());
 			close();
 		}
 		else {
@@ -546,9 +546,9 @@ void Game::save(bool send) {
 	DNDProto::Map map;
 	canvas.saveMap(map);
 
-	std::fstream output(m_filename + ".cam", std::ios::out | std::ios::trunc | std::ios::binary);
+	std::fstream output("saves/" + m_filename + ".cam", std::ios::out | std::ios::trunc | std::ios::binary);
 	if (!map.SerializeToOstream(&output)) {
-		printf("Failed to write map to file &s", (m_filename + ".cam").c_str());
+		printf("Failed to write map to file &s", ("saves/" + m_filename + ".cam").c_str());
 	}
 	//Also send it to network
 
