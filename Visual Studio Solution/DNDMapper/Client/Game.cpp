@@ -1,9 +1,16 @@
 #include "Game.h"
 
+/// <summary>
+/// Constructor for the Game menu. Sets up a lot of what is needed for this menu to function properly.
+/// </summary>
+/// <param name="menuInfo:">MenuInfo object containing neccessary pointers to important resources the game needs to function.</param>
+/// <param name="action:">What the game menu's objective is, whether that be creating a new game, loading a game, or joining a new one.</param>
+/// <param name="filename:">The filename of the save file this game menu will be working with.</param>
 Game::Game(MenuInfo menuInfo, GameAction action, std::string filename) : Menu(menuInfo), ui(window, menuInfo.resourceManager), canvas(&camera, networkManager, resourceManager) {
 	camera.move(10, 10);
 
-	window->setView(camera);
+	//Some window setup.
+	window->setView(camera); //Set the window view to be our view so we can move and scale it around.
 	window->setKeyRepeatEnabled(false);
 
 
@@ -16,29 +23,31 @@ Game::Game(MenuInfo menuInfo, GameAction action, std::string filename) : Menu(me
 	//Set cursor to default to start
 	window->setMouseCursor(defaultCursor);
 
-	if (isDM)
-		selectedTool = ToolType::paintingTool;
-	else
-		selectedTool = ToolType::tokenTool;
-
 	mouseAction = MouseAction::none;
 	previousAction = MouseAction::none;
 
 	selectedColor = sf::Color::White;
 
-
+	//FPS text.
 	fpsText.setFillColor(sf::Color::Blue);
 	fpsText.setFont(*resourceManager->getFontResource("arialfont"));
 
 
 	gameIDAquired = false;
 
+
+	//DM VS NON DM SPECIFIC SETUP
 	if (action == GameAction::newGame || action == GameAction::loadGame) {
 		isDM = true;
 	}
 	else {
 		isDM = false;
 	}
+
+	if (isDM)
+		selectedTool = ToolType::paintingTool;
+	else
+		selectedTool = ToolType::tokenTool;
 
 	//UI setup
 	ui.setup(isDM);
@@ -62,10 +71,18 @@ Game::Game(MenuInfo menuInfo, GameAction action, std::string filename) : Menu(me
 	}
 }
 
+/// <summary>
+/// Destructor for the Game menu.
+/// </summary>
 Game::~Game() {
-	std::cout << "Deconstructed Game Object.\n";
+	//std::cout << "Deconstructed Game Object.\n";
 }
 
+/// <summary>
+/// Draws all the objects associated with the Game menu. These include the UI, the Canvas, etc.
+/// </summary>
+/// <param name="target"></param>
+/// <param name="states"></param>
 void Game::draw(sf::RenderTarget& target, sf::RenderStates states) const{
 	
 
@@ -80,14 +97,16 @@ void Game::draw(sf::RenderTarget& target, sf::RenderStates states) const{
 
 }
 
-
+/// <summary>
+/// Performs updates to the game that are needed every frame such as interpreting network messages.
+/// </summary>
 void Game::update(){
 	//Debug
 	//std::cout << "Should Game Close? " << getShouldClose();
 
 	//FPS
 	sf::Time frameTime = fpsClock.restart();
-	float fps = 1.f / frameTime.asSeconds();
+	int fps = 1.f / frameTime.asSeconds();
 	fpsText.setString(std::to_string(fps));
 
 	//Update from all networking commands.
@@ -143,6 +162,7 @@ void Game::update(){
 		sf::Vector2f moveVector = panLockLoc - currentMouseLoc;
 		camera.move(moveVector);
 	}
+
 
 	//Update the selected token (Mainly for blinking cursor logic).
 	if (mouseAction == MouseAction::changingName && selectedToken != nullptr) {
@@ -206,6 +226,8 @@ void Game::update(){
 	//Update Canvas
 	canvas.update();
 
+	//More FPS text logic
+	fpsText.setPosition(window->mapPixelToCoords(sf::Vector2i(0, 0)));
 
 	//Restrict the Camera
 	restrictCamera();
@@ -236,6 +258,10 @@ void Game::update(){
 	}
 }
 
+/// <summary>
+/// Interprets the events fed through and uses them for the game accordingly. This is called from the Manager's menuStack.
+/// </summary>
+/// <param name="pollingEvent:">The event to be processed.</param>
 void Game::interpretEvent(sf::Event pollingEvent){
 
 	//Switch Statement Logic.
@@ -542,6 +568,10 @@ void Game::interpretEvent(sf::Event pollingEvent){
 
 }
 
+/// <summary>
+/// This function calls Canvas::saveMap, writes that to file, and (potentially) sends that map to the network periodically.
+/// </summary>
+/// <param name="send:">Whether or not to also send the map to the server.</param>
 void Game::save(bool send) {
 	DNDProto::Map map;
 	canvas.saveMap(map);
@@ -565,6 +595,9 @@ void Game::save(bool send) {
 	saveClock.restart();
 }
 
+/// <summary>
+/// Moves the camera so that it isn't outside of the tilemap.
+/// </summary>
 void Game::restrictCamera(){
 	window->setView(camera);
 	if (window->mapPixelToCoords(sf::Vector2i(0, 0)).x < 1) {
