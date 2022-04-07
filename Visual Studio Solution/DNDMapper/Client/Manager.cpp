@@ -14,7 +14,7 @@ Manager::Manager(sf::ContextSettings settings): window(sf::VideoMode(WINDOWX, WI
 	menuStack.push_back(std::unique_ptr<MainMenu>(new MainMenu(menuInfo)));
 
 	//Start the connection to the server.
-	networkManager.startConnect(sf::IpAddress("173.24.79.165"));
+	networkManager.startConnect(sf::IpAddress("localhost"));
 
 	
 	window.setFramerateLimit(144);
